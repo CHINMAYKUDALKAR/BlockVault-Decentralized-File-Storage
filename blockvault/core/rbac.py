@@ -7,7 +7,14 @@ from typing import Any, Dict, Optional, Tuple
 
 from flask import current_app, abort, request
 from web3 import Web3
-from web3.middleware import geth_poa_middleware
+try:
+    from web3.middleware import geth_poa_middleware
+except ImportError:
+    try:
+        from web3.middleware import ExtraDataToPOAMiddleware as geth_poa_middleware
+    except ImportError:
+        # Fallback for newer Web3 versions
+        geth_poa_middleware = None
 
 
 class Role(IntEnum):
@@ -66,10 +73,11 @@ def _get_contract() -> Optional[Tuple[Web3, Any]]:
         try:
             w3 = Web3(Web3.HTTPProvider(rpc_url))
             # Inject PoA middleware for testnets like Sepolia
-            try:
-                w3.middleware_onion.inject(geth_poa_middleware, layer=0)
-            except (ValueError, AttributeError):  # middleware already present
-                pass
+            if geth_poa_middleware is not None:
+                try:
+                    w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+                except (ValueError, AttributeError):  # middleware already present
+                    pass
             contract = w3.eth.contract(address=Web3.to_checksum_address(contract_addr), abi=_ROLE_ABI)
             _contract_cache[key] = (w3, contract)
             return _contract_cache[key]

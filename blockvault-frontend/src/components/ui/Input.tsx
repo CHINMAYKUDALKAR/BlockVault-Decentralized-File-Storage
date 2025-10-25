@@ -1,41 +1,53 @@
-import React, { useState } from 'react';
-import clsx from 'clsx';
+import React from 'react';
+import { clsx } from 'clsx';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  error?: string;
   label?: string;
-  description?: string;
-  mono?: boolean;
-  revealToggle?: boolean; // adds an eye icon to toggle visibility
 }
 
-export const Input: React.FC<InputProps> = ({ label, description, mono, revealToggle, type='text', className, ...rest }) => {
-  const [visible, setVisible] = useState(false);
-  const actualType = revealToggle ? (visible ? 'text' : 'password') : type;
+export const Input: React.FC<InputProps> = ({
+  leftIcon,
+  rightIcon,
+  error,
+  label,
+  className,
+  ...props
+}) => {
   return (
-    <label className="flex flex-col gap-1 text-sm">
-      {label && <span className="text-text-secondary/80 font-medium tracking-tight">{label}</span>}
-      <div className="relative group">
+    <div className="space-y-2">
+      {label && (
+        <label className="block text-sm font-medium text-slate-300">
+          {label}
+        </label>
+      )}
+      <div className="relative">
+        {leftIcon && (
+          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400">
+            {leftIcon}
+          </div>
+        )}
         <input
-          type={actualType}
           className={clsx(
-            'w-full px-3 py-2 rounded-md bg-background-tertiary/70 border border-border/60 focus:border-accent-blue/80 focus:ring-2 focus:ring-accent-blue/40 outline-none transition text-text-primary placeholder:text-text-secondary/40',
-            mono && 'font-mono text-[13px] tracking-tight',
+            'w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200 backdrop-blur-sm',
+            leftIcon && 'pl-10',
+            rightIcon && 'pr-10',
+            error && 'border-red-500/50 focus:ring-red-500/50',
             className
           )}
-          {...rest}
+          {...props}
         />
-        {revealToggle && (
-          <button
-            type="button"
-            onClick={() => setVisible(v => !v)}
-            className="absolute top-1/2 -translate-y-1/2 right-2 text-[11px] text-text-secondary hover:text-accent-blue transition"
-            tabIndex={-1}
-          >
-            {visible ? 'Hide' : 'Show'}
-          </button>
+        {rightIcon && (
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400">
+            {rightIcon}
+          </div>
         )}
       </div>
-      {description && <span className="text-[11px] text-text-secondary/60 leading-snug">{description}</span>}
-    </label>
+      {error && (
+        <p className="text-sm text-red-400">{error}</p>
+      )}
+    </div>
   );
 };

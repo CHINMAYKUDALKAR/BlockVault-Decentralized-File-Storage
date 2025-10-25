@@ -67,6 +67,10 @@ def create_app() -> Flask:
     app.register_blueprint(files_bp, url_prefix="/files")
     app.register_blueprint(users_bp, url_prefix="/users")
     app.register_blueprint(settings_bp, url_prefix="/settings")
+    
+    # Register case management routes
+    from .mock_cases import register_case_routes
+    register_case_routes(app)
 
     @app.get('/status')
     def status():  # runtime capability flags for frontend label (Off-Chain / Anchored / Hybrid)

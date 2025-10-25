@@ -1,11 +1,11 @@
 Flask<4.0.0,>=3.0.0
 python-dotenv<2.0.0,>=1.0.0
-web3<7.0.0,>=6.15.0
 PyJWT<3.0.0,>=2.9.0
 pymongo<5.0.0,>=4.8.0
 ipfshttpclient<1.0.0,>=0.8.0a2
 Flask-Cors<5.0.0,>=4.0.0
 cryptography<43.0.0,>=42.0.0
+web3<7.0.0,>=6.20.0
 
 [dev]
 pytest<9.0.0,>=8.0.0

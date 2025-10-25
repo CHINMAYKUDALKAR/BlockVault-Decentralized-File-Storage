@@ -1,15 +1,36 @@
-[restart] No existing process on port 5000
-[restart] Starting backend with ALLOW_DEV_TOKEN=1 MONGO_URI=mongodb://localhost:27017/blockvault
-Traceback (most recent call last):
-  File "/workspaces/BlockVault/scripts/run_backend.py", line 5, in <module>
-    from blockvault import create_app
-  File "/workspaces/BlockVault/blockvault/__init__.py", line 6, in <module>
-    from .api.auth import bp as auth_bp
-  File "/workspaces/BlockVault/blockvault/api/auth.py", line 8, in <module>
-    from ..core.security import generate_jwt, require_auth
-  File "/workspaces/BlockVault/blockvault/core/security.py", line 8, in <module>
-    from .rbac import attach_role
-  File "/workspaces/BlockVault/blockvault/core/rbac.py", line 128
-    *** End of File
-    ^^
-SyntaxError: invalid syntax
+ * Serving Flask app 'blockvault'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.29.238:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 127-589-208
+127.0.0.1 - - [25/Oct/2025 00:48:46] "OPTIONS /auth/get_nonce HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:48:46] "POST /auth/get_nonce HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:48:55] "OPTIONS /auth/get_nonce HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:48:55] "POST /auth/get_nonce HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:22] "OPTIONS /auth/get_nonce HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:22] "POST /auth/get_nonce HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:25] "OPTIONS /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [25/Oct/2025 00:49:25] "POST /auth/login HTTP/1.1" 200 -
+/opt/homebrew/Cellar/python@3.11/3.11.13/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

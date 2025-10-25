@@ -2,145 +2,138 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-@layer base {
-  :root {
-    /* BlockVault Design System - Friendly & Secure */
-    
-    /* Deep navy background - professional yet approachable */
-    --background: 214 35% 15%;
-    --foreground: 0 0% 88%;
-    
-    /* Card backgrounds with subtle elevation */
-    --card: 214 30% 18%;
-    --card-foreground: 0 0% 88%;
-    --card-hover: 214 28% 22%;
-    
-    /* Popover styling */
-    --popover: 214 30% 18%;
-    --popover-foreground: 0 0% 88%;
-    
-    /* Vibrant teal accent - positive and engaging */
-    --primary: 174 47% 52%;
-    --primary-foreground: 214 35% 15%;
-    --primary-glow: 174 47% 65%;
-    
-    /* Secondary actions - softer teal */
-    --secondary: 174 30% 35%;
-    --secondary-foreground: 0 0% 88%;
-    
-    /* Muted elements */
-    --muted: 214 25% 25%;
-    --muted-foreground: 0 0% 65%;
-    
-    /* Accent highlights */
-    --accent: 174 45% 45%;
-    --accent-foreground: 0 0% 95%;
-    
-    /* Success - warm green */
-    --success: 130 35% 65%;
-    --success-foreground: 214 35% 15%;
-    
-    /* Destructive actions */
-    --destructive: 0 65% 60%;
-    --destructive-foreground: 0 0% 95%;
-    
-    /* Borders and inputs - subtle */
-    --border: 214 25% 28%;
-    --input: 214 25% 25%;
-    --ring: 174 47% 52%;
-    
-    /* Generous rounded corners */
-    --radius: 1rem;
-    --radius-lg: 1.5rem;
-    
-    /* Custom gradients for delightful effects */
-    --gradient-primary: linear-gradient(135deg, hsl(174 47% 52%), hsl(174 47% 65%));
-    --gradient-card: linear-gradient(135deg, hsl(214 30% 18%), hsl(214 28% 20%));
-    --gradient-glow: radial-gradient(circle at center, hsl(174 47% 52% / 0.15), transparent 70%);
-    
-    /* Shadows for depth */
-    --shadow-sm: 0 2px 8px hsl(214 35% 10% / 0.3);
-    --shadow-md: 0 4px 16px hsl(214 35% 10% / 0.4);
-    --shadow-lg: 0 8px 32px hsl(214 35% 10% / 0.5);
-    --shadow-glow: 0 0 40px hsl(174 47% 52% / 0.3);
-    
-    /* Smooth transitions */
-    --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%);
+  color: #f1f5f9;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.3);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.5);
+}
+
+/* Selection styles */
+::selection {
+  background: rgba(59, 130, 246, 0.3);
+  color: #ffffff;
+}
+
+/* Focus styles */
+*:focus {
+  outline: 2px solid rgba(59, 130, 246, 0.5);
+  outline-offset: 2px;
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(59, 130, 246, 0.5);
+}
+
+/* Button animations */
+.btn-animate {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-animate::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.btn-animate:hover::before {
+  left: 100%;
+}
+
+/* Loading animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
 
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "cv11", "ss01";
-    font-optical-sizing: auto;
+/* Fade in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-  
-  /* Custom utility classes for delightful interactions */
-  .hover-lift {
-    transition: var(--transition-bounce);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .hover-lift:hover {
-    transform: translateY(-2px);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
   }
-  
-  .hover-glow {
-    transition: var(--transition-base);
+  50% {
+    opacity: 0.5;
   }
-  
-  .hover-glow:hover {
-    box-shadow: var(--shadow-glow);
-  }
-  
-  .bounce-in {
-    animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  
-  @keyframes bounceIn {
-    0% {
-      opacity: 0;
-      transform: scale(0.3);
-    }
-    50% {
-      opacity: 1;
-      transform: scale(1.05);
-    }
-    70% {
-      transform: scale(0.9);
-    }
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-  
-  @keyframes shimmer {
-    0% {
-      background-position: -1000px 0;
-    }
-    100% {
-      background-position: 1000px 0;
-    }
-  }
-  
-  .shimmer {
-    animation: shimmer 2s infinite linear;
-    background: linear-gradient(
-      to right,
-      transparent 0%,
-      hsl(174 47% 52% / 0.3) 50%,
-      transparent 100%
-    );
-    background-size: 1000px 100%;
-  }
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

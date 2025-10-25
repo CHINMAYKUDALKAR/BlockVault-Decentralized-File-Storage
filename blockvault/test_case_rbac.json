@@ -1,0 +1,46 @@
+{
+  "id": "case_001",
+  "title": "Smith vs. Jones Discovery",
+  "description": "Corporate litigation case",
+  "clientName": "Smith Corporation",
+  "matterNumber": "2024-001",
+  "practiceArea": "litigation",
+  "priority": "high",
+  "status": "active",
+  "team": [
+    {
+      "walletAddress": "0x1234567890abcdef...",
+      "role": "lead_attorney",
+      "name": "Alice Johnson",
+      "email": "alice@lawfirm.com",
+      "addedAt": 1761294691801,
+      "addedBy": "0x1234567890abcdef..."
+    },
+    {
+      "walletAddress": "0xabcdef1234567890...",
+      "role": "associate",
+      "name": "Bob Smith",
+      "email": "bob@lawfirm.com",
+      "addedAt": 1761294691801,
+      "addedBy": "0x1234567890abcdef..."
+    },
+    {
+      "walletAddress": "0x9876543210fedcba...",
+      "role": "paralegal",
+      "name": "Carol Davis",
+      "email": "carol@lawfirm.com",
+      "addedAt": 1761294691801,
+      "addedBy": "0x1234567890abcdef..."
+    },
+    {
+      "walletAddress": "0xfedcba0987654321...",
+      "role": "client",
+      "name": "David Wilson",
+      "email": "david@smithcorp.com",
+      "addedAt": 1761294691801,
+      "addedBy": "0x1234567890abcdef..."
+    }
+  ],
+  "createdAt": 1761294691801,
+  "updatedAt": 1761294691801
+}

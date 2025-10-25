@@ -1,0 +1,34 @@
+[
+  {
+    "id": "doc_001",
+    "file_id": "file_001",
+    "name": "Employment Agreement - Smith.pdf",
+    "docHash": "a1b2c3d4e5f6...",
+    "cid": "QmXyZ123...",
+    "status": "registered",
+    "timestamp": 1761293003292,
+    "owner": "current-user"
+  },
+  {
+    "id": "doc_002",
+    "file_id": "file_002",
+    "name": "Redacted_Employment Agreement - Smith.pdf",
+    "docHash": "d4e5f6a1b2c3...",
+    "cid": "QmGhI012...",
+    "status": "registered",
+    "timestamp": 1761293003292,
+    "owner": "current-user",
+    "parentHash": "a1b2c3d4e5f6...",
+    "transformationType": "redaction",
+    "redactionRules": {
+      "removeChunks": [
+        1,
+        3,
+        5
+      ],
+      "replaceWith": 0,
+      "customRules": ""
+    },
+    "originalDocumentId": "file_001"
+  }
+]

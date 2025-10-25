@@ -1,0 +1,10 @@
+C:\Users\Harichandra\Desktop\capBlock\BlockVault\blockvault_crypto\target\release\deps\anstyle_wincon-7f1a082d95d59c25.d: C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\lib.rs C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\ansi.rs C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\stream.rs C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\windows.rs
+
+C:\Users\Harichandra\Desktop\capBlock\BlockVault\blockvault_crypto\target\release\deps\libanstyle_wincon-7f1a082d95d59c25.rlib: C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\lib.rs C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\ansi.rs C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\stream.rs C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\windows.rs
+
+C:\Users\Harichandra\Desktop\capBlock\BlockVault\blockvault_crypto\target\release\deps\libanstyle_wincon-7f1a082d95d59c25.rmeta: C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\lib.rs C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\ansi.rs C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\stream.rs C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\windows.rs
+
+C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\lib.rs:
+C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\ansi.rs:
+C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\stream.rs:
+C:\Users\Harichandra\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\anstyle-wincon-3.0.10\src\windows.rs:

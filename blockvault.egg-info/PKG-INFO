@@ -8,12 +8,12 @@ Requires-Python: >=3.10
 Description-Content-Type: text/markdown
 Requires-Dist: Flask<4.0.0,>=3.0.0
 Requires-Dist: python-dotenv<2.0.0,>=1.0.0
-Requires-Dist: web3<7.0.0,>=6.15.0
 Requires-Dist: PyJWT<3.0.0,>=2.9.0
 Requires-Dist: pymongo<5.0.0,>=4.8.0
 Requires-Dist: ipfshttpclient<1.0.0,>=0.8.0a2
 Requires-Dist: Flask-Cors<5.0.0,>=4.0.0
 Requires-Dist: cryptography<43.0.0,>=42.0.0
+Requires-Dist: web3<7.0.0,>=6.20.0
 Provides-Extra: dev
 Requires-Dist: pytest<9.0.0,>=8.0.0; extra == "dev"
 Requires-Dist: black<25.0.0,>=24.0.0; extra == "dev"
@@ -22,21 +22,27 @@ Requires-Dist: mypy<2.0.0,>=1.11.0; extra == "dev"
 Requires-Dist: types-PyJWT; extra == "dev"
 Requires-Dist: types-requests; extra == "dev"
 
-# BlockVault (Phase 5 · On‑Chain RBAC & Secure Sharing)
+# BlockVault – Encrypted File Vault (Off‑Chain Simplified Edition)
 
-BlockVault is an end‑to‑end encrypted vault for Web3 users. MetaMask provides authentication, a Solidity contract supplies role-based access control, and RSA public keys enable encrypted file sharing. Phase 5 introduces everything needed for production-ready secure collaboration: on-chain RBAC checks, shareable file secrets, IPFS metadata, refined React UX, and deployment guidance.
+This edition removes legacy on‑chain role / access control logic and wallet network coupling. Core functionality now focuses on:
+
+* Local (or MongoDB) metadata storage
+* AES‑GCM client‑side encryption with user‑provided passphrases
+* Optional RSA public key registration + encrypted share distribution
+* Clean React UI for upload, preview, verify, share, and download flows
+
+* All legacy RBAC contracts removed. An optional light on-chain anchoring layer (FileRegistry) can record file hashes + CIDs for auditability without reintroducing access gating.
 
 ---
 
 ## Feature Highlights
 
-- **Wallet Auth + JWT** – MetaMask signature flow (`/auth/get_nonce` → `/auth/login`) mints short-lived JWTs for the SPA.
-- **On-Chain Roles** – The backend calls the deployed `RoleRegistry` Solidity contract via `web3.py`, caching results and enforcing `viewer`, `owner`, and `admin` permissions.
-- **RSA-Based Sharing** – Users upload PEM public keys. File owners encrypt the data-passphrase with RSA OAEP and share it with specific addresses.
-- **Share Management APIs** – Create, list, and revoke shares; recipients pull encrypted keys from `/files/shared`.
-- **Configurable Storage** – MongoDB for metadata (with memory fallback) and optional IPFS pinning + gateway URLs.
-- **Refined Frontend** – React cards for uploads, file management, and a new Sharing Center for key management and share dashboards, complete with network activity indicators and modal flows.
-- **Deployment Ready** – Environment-driven CORS, structured `.env` template, and guidance for hosting the Flask API plus React SPA.
+- **JWT Auth (Optional Wallet Signature)** – You can keep a simple address + dev token flow; full signature login can be disabled.
+- **RSA‑Based Sharing** – Register PEM public keys; passphrases delivered encrypted per recipient.
+- **Encrypted Files** – Client encrypts before upload, server never sees plaintext.
+- **Share Management APIs** – Create, list, revoke encrypted passphrase shares.
+- **Optional IPFS Integration** – Configure pinning + gateway if desired.
+- **Lightweight UI** – Network / on‑chain role controls removed.
 
 ---
 
@@ -48,7 +54,6 @@ BlockVault/
 │   ├── api/                    # Auth, file, and user blueprints
 │   ├── core/                   # Config, security, RBAC, crypto helper
 │   └── __init__.py             # App factory registering routes & CORS
-├── contracts/RoleRegistry.sol  # Solidity RBAC registry
 ├── blockvault-frontend/        # React single page app
 ├── .env.example                # Reference environment configuration
 ├── pyproject.toml / requirements.txt
@@ -75,7 +80,7 @@ pip install -e .[dev]
 
 # copy environment template
 cp .env.example .env
-# edit .env with your secrets, Mongo URI, and Sepolia RPC + RoleRegistry address
+# edit .env with your secrets and Mongo URI (no contract addresses needed)
 ```
 
 _Key environment variables_
@@ -84,8 +89,12 @@ _Key environment variables_
 | --- | --- |
 | `MONGO_URI` | Mongo connection string (`memory://` for in-memory dev) |
 | `SECRET_KEY` / `JWT_SECRET` | Flask & JWT secrets |
-| `ETH_RPC_URL` | RPC endpoint (Sepolia recommended) |
-| `ROLE_REGISTRY_ADDRESS` | Deployed `RoleRegistry` contract address |
+| `ETH_RPC_URL` | (Optional) Only needed if reintroducing blockchain features |
+| `ETH_RPC_URL` | (Optional) Needed for on-chain anchoring |
+| `ETH_PRIVATE_KEY` | (Optional) Deployer/signing key for anchoring txs |
+| `FILE_REGISTRY_ADDRESS` | (Optional) Deployed FileRegistry contract address |
+| `ROLE_REGISTRY_ADDRESS` | (Deprecated) Ignored |
+| `FILE_ACCESS_CONTRACT` | (Deprecated) Ignored |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated frontend origins (or `*` for dev) |
 | `IPFS_ENABLED` / `IPFS_API_URL` | Optional IPFS pinning configuration |
 | `ALLOW_DEV_TOKEN` | Set to `1` in dev to use `/auth/dev_token` shortcut |
@@ -113,13 +122,13 @@ The SPA expects `REACT_APP_API_BASE` (optional). By default it assumes the API i
 
 ---
 
-## API Overview (Phase 5)
+## API Overview
 
 | Endpoint | Method | Role | Description |
 | --- | --- | --- | --- |
 | `/auth/get_nonce` | POST | public | Issue login nonce for wallet signature |
 | `/auth/login` | POST | public | Verify signature → JWT |
-| `/auth/me` | GET | any | Returns wallet address + role name/value |
+| `/auth/me` | GET | any | Returns stored address / identity info |
 | `/files` | POST | owner | Upload encrypted file (AES-256-GCM CLI helper) |
 | `/files` | GET | owner | List your files (supports `limit`/`after`) |
 | `/files/<id>` | GET | owner/viewer | Download (requires passphrase) |
@@ -155,29 +164,39 @@ All authenticated routes require `Authorization: Bearer <jwt>`.
 
 ---
 
-## Solidity Role Registry
+## Optional On‑Chain Anchoring Layer
 
-Located at `contracts/RoleRegistry.sol`.
+You may deploy a minimal `FileRegistry` contract that exposes:
 
-- Roles: `None`, `Viewer`, `Owner`, `Admin`.
-- Admin = deployer or addresses promoted via `promoteAdmin`/`setRole`.
-- Suggested deployment (Sepolia):
-  ```bash
-  forge create RoleRegistry --rpc-url $ETH_RPC_URL --private-key $PK
-  ```
-- After deployment, configure the backend (`ROLE_REGISTRY_ADDRESS`) and use the contract to assign roles:
-  ```solidity
-  setRole(0xUploader, Role.Owner);
-  setRole(0xViewer, Role.Viewer);
-  ```
+```
+function anchorFile(bytes32 fileHash, uint256 size, string cid) external
+```
 
-If the contract address or RPC URL is unavailable, the backend logs a warning once and defaults to `admin` (useful for local development).
+When `ETH_RPC_URL`, `ETH_PRIVATE_KEY`, and `FILE_REGISTRY_ADDRESS` are supplied, uploads will attempt to send a transaction calling `anchorFile` with:
+
+* `fileHash`: sha256 (32 bytes) of the original plaintext
+* `size`: original size in bytes
+* `cid`: IPFS CID if available (empty string otherwise)
+
+Response objects then include `anchor_tx` (transaction hash or a simulated tag when anchoring disabled). Listing endpoints also surface `anchor_tx`.
+
+Anchoring failures are non-fatal and logged; upload still succeeds locally/IPFS.
+
+Security note: Only include the sha256 if you are comfortable revealing file integrity fingerprints publicly (could aid confirmation of possession for known documents). For stronger privacy keep anchoring disabled or salt/transform future variants.
+
+All Solidity contracts, manifests, and role enforcement layers were removed. If you want to restore them later:
+1. Recreate a `contracts/` folder and add Solidity sources.
+2. Reintroduce Hardhat (or Foundry) tooling.
+3. Expose the deployed addresses through environment variables.
+4. Rebuild frontend wallet + network UI.
+
+Until then, access control is purely off‑chain: possession of a file ID + decrypted passphrase = access.
 
 ---
 
 ## Frontend Highlights
 
-- **Network progress bar:** Tracks concurrent API calls via `useNetworkStore`.
+- **Network activity bar:** Tracks concurrent API calls via `useNetworkStore` (purely HTTP now).
 - **Upload card:** Drag & drop, passphrase + optional AAD fields, in-app toast notifications, and custom event to refresh listings.
 - **Files card:** Inline actions (download, share, verify, delete), copy CID/SHA, download modal requiring passphrase entry.
 - **Sharing Center:**
@@ -198,11 +217,11 @@ pytest -q
 
 ### Manual Smoke (recommended after each deployment)
 
-1. **Auth Flow** – Connect wallet in the SPA, sign login message, confirm JWT.
-2. **Upload & Verify** – Upload file, ensure it appears in list, verify blob.
-3. **Share** – Share file with a second wallet; confirm entries in both sharing lists and ability to decrypt passphrase offline.
-4. **RBAC Enforcement** – Assign `viewer` role and attempt upload (expect 403), assign `owner` role and retry (expect success).
-5. **CORS** – Access API from deployed frontend domain; confirm no blocked preflight requests.
+1. **Auth (Optional)** – Use dev token flow or simplified address login.
+2. **Upload & Verify** – Upload file; verify integrity endpoint.
+3. **Share Cycle** – Share passphrase → recipient decrypts → downloads file.
+4. **Revocation** – Revoke share and confirm it's removed from recipient list.
+5. **CORS** – Confirm API accessible from deployed origin.
 
 ---
 
@@ -212,6 +231,10 @@ pytest -q
 - **Frontend (React):** Deploy to Netlify, Vercel, or static S3 hosting. Configure `REACT_APP_API_BASE` to the backend URL and ensure the backend’s `CORS_ALLOWED_ORIGINS` includes the deployed origin.
 - **Secrets Management:** Never commit `.env`. For production, rotate JWT and Flask secrets and supply a production-grade MongoDB connection string.
 - **Monitoring:** Tail `backend.log` (or platform logs) for RBAC cache warnings and IPFS failures. Consider wrapping endpoints with structured logging before launch.
+
+### Chain / Manifest Features
+
+Removed. `/settings/import-manifest` now returns a placeholder response if invoked.
 
 ---
 
@@ -223,8 +246,8 @@ pytest -q
 | `missing bearer token` | Frontend lost JWT | Re-login; ensure toast host shows success |
 | `recipient has not registered a sharing public key` | Recipient skipped key upload | Have them POST `/users/public_key` |
 | Shares disappear after restart | Using memory DB | Switch to MongoDB instance |
-| `RBAC contract not configured` warning | Missing env vars | Set `ETH_RPC_URL` + `ROLE_REGISTRY_ADDRESS` |
+| `RBAC contract not configured` warning | Legacy log line (if any remains) | Safe to ignore (feature removed) |
 
 ---
 
-Happy hacking! Phase 5 delivers the full secure-sharing experience; extend it with auditing, notifications, or mobile clients as the next frontier.
+Happy hacking! This simplified edition focuses on core encrypted storage and sharing—add blockchain layers only if they add real value.

@@ -1,0 +1,53 @@
+[
+  {
+    "id": "ai_doc_001",
+    "documentId": "file_001",
+    "documentName": "Employment Agreement - Smith.pdf",
+    "action": "AI Analysis Performed",
+    "timestamp": 1761293432806,
+    "user": "AI System",
+    "details": "AI analysis performed using ZKML protocol. Model: Linear Regression, Result: 0.85",
+    "type": "analysis",
+    "verified": true,
+    "hash": "a1b2c3d4e5f6..."
+  },
+  {
+    "id": "sign_doc_001_0",
+    "documentId": "file_001",
+    "documentName": "Employment Agreement - Smith.pdf",
+    "action": "Document Signed",
+    "timestamp": 1761293431806,
+    "user": "0x1234567890abcdef...",
+    "details": "Document electronically signed by 0x1234567890abcdef...",
+    "type": "signature",
+    "hash": "a1b2c3d4e5f6..."
+  },
+  {
+    "id": "redact_doc_002",
+    "documentId": "file_002",
+    "documentName": "Redacted_Employment Agreement - Smith.pdf",
+    "action": "Document Redacted",
+    "timestamp": 1761293430806,
+    "user": "current-user",
+    "details": "Document redacted using ZKPT protocol. Rules: {'removeChunks': [1, 3, 5], 'replaceWith': 0}",
+    "type": "transformation",
+    "transformationType": "redaction",
+    "parentHash": "a1b2c3d4e5f6...",
+    "originalDocumentId": "file_001",
+    "hash": "d4e5f6a1b2c3...",
+    "cid": "QmGhI012..."
+  },
+  {
+    "id": "create_doc_001",
+    "documentId": "file_001",
+    "documentName": "Employment Agreement - Smith.pdf",
+    "action": "Document Notarized",
+    "timestamp": 1761293429806,
+    "user": "current-user",
+    "details": "Document uploaded, hashed, and registered on blockchain",
+    "type": "creation",
+    "hash": "a1b2c3d4e5f6...",
+    "cid": "QmXyZ123...",
+    "status": "registered"
+  }
+]
