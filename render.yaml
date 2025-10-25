@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: blockvault-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: MONGO_URI
+        value: memory://dev
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXP_MINUTES
+        value: 60
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://blockvaulttt.netlify.app
+      - key: ALLOW_DEV_TOKEN
+        value: 1
+      - key: IPFS_ENABLED
+        value: 0
