@@ -37,9 +37,9 @@ export const Header: React.FC = () => {
             {isAuthenticated && (
               <nav className="flex items-center space-x-1">
                 <Link
-                  to="/"
+                  to="/dashboard"
                   className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    location.pathname === '/'
+                    location.pathname === '/dashboard'
                       ? 'bg-blue-500/20 text-blue-400'
                       : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
                   }`}

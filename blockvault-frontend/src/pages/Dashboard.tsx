@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Upload, FolderOpen, Share2, Download, Plus, Search } from 'lucide-react';
+import { FolderOpen, Share2, Download, Plus, Search } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useFiles } from '../contexts/FileContext';
 import { FileUpload } from '../components/FileUpload';
 import { FileList } from '../components/FileList';
 import { ShareModal } from '../components/ShareModal';
+import { LoginPage } from '../components/LoginPage';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { Card } from '../components/ui/Card';
 
 export const Dashboard: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -19,25 +19,7 @@ export const Dashboard: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   if (!isAuthenticated) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Card className="text-center p-8 max-w-md mx-auto">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Upload className="w-8 h-8 text-white" />
-          </div>
-          <h2 className="text-2xl font-bold text-white mb-2">Welcome to BlockVault</h2>
-          <p className="text-slate-400 mb-6">
-            Connect your wallet and login to start storing your files securely with end-to-end encryption.
-          </p>
-          <div className="text-sm text-slate-500">
-            <p>• End-to-end encryption</p>
-            <p>• Web3 authentication</p>
-            <p>• Secure file sharing</p>
-            <p>• IPFS integration</p>
-          </div>
-        </Card>
-      </div>
-    );
+    return <LoginPage />;
   }
 
   const filteredFiles = (files || []).filter(file =>
