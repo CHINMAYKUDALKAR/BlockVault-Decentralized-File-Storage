@@ -157,20 +157,54 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       if (provider) {
         // Handle mobile wallet providers
+        const message = `BlockVault login nonce: ${nonce}`;
+        console.log('Mobile wallet login attempt:', { provider, message, address: user.address });
+        
         try {
-          // Try to use the provider directly for signing
+          // Method 1: Try personal_sign with message first
+          console.log('Trying personal_sign method...');
           signature = await provider.request({
             method: 'personal_sign',
-            params: [`BlockVault login nonce: ${nonce}`, user.address],
+            params: [message, user.address],
           });
+          console.log('personal_sign successful:', signature);
         } catch (error) {
-          // Fallback: try to create ethers provider from the mobile provider
+          console.log('personal_sign failed, trying eth_sign...', error);
+          
           try {
-            const ethersProvider = new ethers.BrowserProvider(provider);
-            const signer = await ethersProvider.getSigner();
-            signature = await signer.signMessage(`BlockVault login nonce: ${nonce}`);
-          } catch (fallbackError) {
-            throw new Error('Failed to sign message with mobile wallet');
+            // Method 2: Try eth_sign
+            console.log('Trying eth_sign method...');
+            signature = await provider.request({
+              method: 'eth_sign',
+              params: [user.address, ethers.keccak256(ethers.toUtf8Bytes(message))],
+            });
+            console.log('eth_sign successful:', signature);
+          } catch (error2) {
+            console.log('eth_sign failed, trying ethers provider...', error2);
+            
+            try {
+              // Method 3: Try ethers provider
+              console.log('Trying ethers provider method...');
+              const ethersProvider = new ethers.BrowserProvider(provider);
+              const signer = await ethersProvider.getSigner();
+              signature = await signer.signMessage(message);
+              console.log('ethers provider successful:', signature);
+            } catch (error3) {
+              console.log('ethers provider failed, trying direct signing...', error3);
+              
+              try {
+                // Method 4: Try direct signing with different message format
+                console.log('Trying direct signing with hash...');
+                signature = await provider.request({
+                  method: 'personal_sign',
+                  params: [ethers.keccak256(ethers.toUtf8Bytes(message)), user.address],
+                });
+                console.log('direct signing successful:', signature);
+              } catch (error4) {
+                console.error('All signing methods failed:', { error, error2, error3, error4 });
+                throw new Error(`Failed to sign message with mobile wallet. Please try again or use desktop MetaMask.`);
+              }
+            }
           }
         }
       } else {

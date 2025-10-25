@@ -43,9 +43,11 @@ export const MobileWalletConnect: React.FC<MobileWalletConnectProps> = ({
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       if (typeof window.ethereum !== 'undefined') {
+        console.log('MetaMask detected:', window.ethereum);
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         
         if (accounts && accounts.length > 0) {
+          console.log('MetaMask connected:', accounts[0]);
           onConnect(accounts[0], window.ethereum);
         } else {
           onError('No accounts found. Please make sure your wallet is unlocked.');
