@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 
 interface ZKMLAnalysisModalProps {
   document: {
+    id?: string;
     file_id: string;
     name: string;
     docHash: string;
@@ -92,7 +93,7 @@ export const ZKMLAnalysisModal: React.FC<ZKMLAnalysisModalProps> = ({ document, 
       // Update the document in localStorage
       const existingDocs = JSON.parse(localStorage.getItem('legal_documents') || '[]');
       const updatedDocs = existingDocs.map((doc: any) => 
-        doc.id === document.id 
+        (doc.id === document.id || doc.file_id === document.file_id)
           ? { ...doc, aiAnalysis: analysisData }
           : doc
       );

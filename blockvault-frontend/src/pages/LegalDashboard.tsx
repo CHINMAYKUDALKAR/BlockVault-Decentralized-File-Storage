@@ -316,7 +316,7 @@ export const LegalDashboard: React.FC = () => {
 
   // Calculate statistics
   const totalDocuments = legalDocuments.length;
-  const totalSignatures = legalDocuments.filter(doc => doc.signatures?.completed > 0).length;
+  const totalSignatures = legalDocuments.filter(doc => doc.signatures?.completed && doc.signatures.completed > 0).length;
   const totalAnalysis = legalDocuments.filter(doc => doc.aiAnalysis).length;
   const totalChainEntries = chainOfCustody.length;
 
@@ -634,7 +634,7 @@ export const LegalDashboard: React.FC = () => {
                         <div className={`flex ${viewMode === 'list' ? 'flex-wrap gap-1' : 'flex-wrap gap-2'}`}>
                           {canPerformAction('canCreateRedactions') ? (
                             <Button
-                              size={viewMode === 'list' ? "xs" : "sm"}
+                              size="sm"
                               variant="outline"
                               onClick={() => handleDocumentAction('redact', document)}
                             >
@@ -643,7 +643,7 @@ export const LegalDashboard: React.FC = () => {
                             </Button>
                           ) : (
                             <Button
-                              size={viewMode === 'list' ? "xs" : "sm"}
+                              size="sm"
                               variant="outline"
                               disabled
                               className="opacity-50 cursor-not-allowed"
@@ -657,7 +657,7 @@ export const LegalDashboard: React.FC = () => {
 
                           {canPerformAction('canRequestSignatures') ? (
                             <Button
-                              size={viewMode === 'list' ? "xs" : "sm"}
+                              size="sm"
                               variant="outline"
                               onClick={() => handleDocumentAction('request-signature', document)}
                             >
@@ -666,7 +666,7 @@ export const LegalDashboard: React.FC = () => {
                             </Button>
                           ) : (
                             <Button
-                              size={viewMode === 'list' ? "xs" : "sm"}
+                              size="sm"
                               variant="outline"
                               disabled
                               className="opacity-50 cursor-not-allowed"
@@ -679,7 +679,7 @@ export const LegalDashboard: React.FC = () => {
 
                           {canPerformAction('canRunZKMLAnalysis') ? (
                             <Button
-                              size={viewMode === 'list' ? "xs" : "sm"}
+                              size="sm"
                               variant="outline"
                               onClick={() => handleDocumentAction('analyze', document)}
                             >
@@ -688,7 +688,7 @@ export const LegalDashboard: React.FC = () => {
                             </Button>
                           ) : (
                             <Button
-                              size={viewMode === 'list' ? "xs" : "sm"}
+                              size="sm"
                               variant="outline"
                               disabled
                               className="opacity-50 cursor-not-allowed"
@@ -700,7 +700,7 @@ export const LegalDashboard: React.FC = () => {
                           )}
 
                           <Button
-                            size={viewMode === 'list' ? "xs" : "sm"}
+                            size="sm"
                             variant="outline"
                             onClick={() => window.open(`/documents/${document.file_id}/download`, '_blank')}
                           >
