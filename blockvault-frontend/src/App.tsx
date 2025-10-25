@@ -5,6 +5,7 @@ import { Header } from './components/Header';
 import { Dashboard } from './pages/Dashboard';
 import { LegalDashboard } from './pages/LegalDashboard';
 import { LandingPage } from './components/LandingPage';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthProvider } from './contexts/AuthContext';
 import { FileProvider } from './contexts/FileContext';
 import { RBACProvider } from './contexts/RBACContext';
@@ -18,20 +19,24 @@ function App() {
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/dashboard" element={
-                <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-                  <Header />
-                  <main className="container mx-auto px-4 py-8">
-                    <Dashboard />
-                  </main>
-                </div>
+                <ProtectedRoute>
+                  <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+                    <Header />
+                    <main className="container mx-auto px-4 py-8">
+                      <Dashboard />
+                    </main>
+                  </div>
+                </ProtectedRoute>
               } />
               <Route path="/legal" element={
-                <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-                  <Header />
-                  <main className="container mx-auto px-4 py-8">
-                    <LegalDashboard />
-                  </main>
-                </div>
+                <ProtectedRoute>
+                  <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+                    <Header />
+                    <main className="container mx-auto px-4 py-8">
+                      <LegalDashboard />
+                    </main>
+                  </div>
+                </ProtectedRoute>
               } />
             </Routes>
           </Router>

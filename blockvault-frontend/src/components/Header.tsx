@@ -24,13 +24,31 @@ export const Header: React.FC = () => {
           {/* Logo & Navigation */}
           <div className="flex items-center space-x-8">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-white">BlockVault</h1>
-                <p className="text-xs text-slate-400">Secure File Storage</p>
-              </div>
+              <button
+                onClick={() => window.location.reload()}
+                className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-200"
+                title="Click to refresh page"
+              >
+                <div className="w-10 h-10 rounded-xl overflow-hidden">
+                  <img 
+                    src="/logo.png" 
+                    alt="BlockVault Logo" 
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      // Fallback to icon if image fails to load
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                    }}
+                  />
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center hidden">
+                    <Shield className="w-6 h-6 text-white" />
+                  </div>
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-white">BlockVault</h1>
+                  <p className="text-xs text-slate-400">Secure File Storage</p>
+                </div>
+              </button>
             </div>
 
             {/* Navigation Links */}

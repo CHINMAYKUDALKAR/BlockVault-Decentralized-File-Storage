@@ -16,8 +16,7 @@ import {
   TrendingUp,
   Grid,
   List,
-  Eye,
-  EyeOff
+  RefreshCw
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
@@ -39,6 +38,7 @@ import { WalletConnection } from '../components/auth/WalletConnection';
 import { debugUserPermissions } from '../utils/debugPermissions';
 import { testAllPermissions } from '../utils/testPermissions';
 import { testPermissionMapping } from '../utils/testPermissionMapping';
+import { useCase } from '../contexts/CaseContext';
 import toast from 'react-hot-toast';
 
 interface LegalDocument {
@@ -66,6 +66,180 @@ interface LegalDocument {
     verified: boolean;
   };
 }
+
+const CaseManagementTab: React.FC = () => {
+  const { cases, loading, error, getCases } = useCase();
+  const [showCreateCaseModal, setShowCreateCaseModal] = useState(false);
+
+  const handleRefresh = async () => {
+    try {
+      await getCases();
+      toast.success('Cases refreshed successfully');
+    } catch (error) {
+      console.error('Error refreshing cases:', error);
+      toast.error('Failed to refresh cases');
+    }
+  };
+
+  if (loading && cases.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-white mb-2">Error Loading Cases</h3>
+        <p className="text-slate-400 mb-4">{error}</p>
+        <Button onClick={handleRefresh}>
+          Try Again
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-semibold text-white">Case Management</h3>
+          <p className="text-sm text-slate-400">
+            Create and manage legal case files with role-based access control
+          </p>
+        </div>
+        <div className="flex items-center space-x-3">
+          <div className="text-sm text-slate-400">
+            {cases.length} cases
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            leftIcon={<RefreshCw className="w-4 h-4" />}
+            className="bg-slate-800/50 border-slate-700/50"
+          >
+            Refresh
+          </Button>
+          <Button
+            onClick={() => setShowCreateCaseModal(true)}
+            className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+            leftIcon={<Plus className="w-4 h-4" />}
+          >
+            New Case
+          </Button>
+        </div>
+      </div>
+
+      {cases.length === 0 ? (
+        <div className="text-center py-12">
+          <Users className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-white mb-2">No Cases Found</h3>
+          <p className="text-slate-400 mb-4">
+            Create your first legal case to get started with case management
+          </p>
+          <Button
+            onClick={() => setShowCreateCaseModal(true)}
+            className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+            leftIcon={<Plus className="w-4 h-4" />}
+          >
+            Create First Case
+          </Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {cases.map((caseItem) => (
+            <Card key={caseItem.id} className="hover:bg-slate-800/50 transition-colors">
+              <div className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
+                      <Users className="w-5 h-5 text-blue-500" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-white">{caseItem.title}</h3>
+                      <p className="text-sm text-slate-400">
+                        {new Date(caseItem.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      caseItem.status === 'active' ? 'bg-green-500/10 text-green-400' :
+                      caseItem.status === 'closed' ? 'bg-red-500/10 text-red-400' :
+                      'bg-yellow-500/10 text-yellow-400'
+                    }`}>
+                      {caseItem.status}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-2 mb-4">
+                  <p className="text-sm text-slate-300 line-clamp-2">{caseItem.description}</p>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-400">Case ID:</span>
+                    <span className="text-white font-mono text-xs">
+                      {caseItem.id.slice(0, 8)}...
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-slate-400">Priority:</span>
+                    <span className={`text-xs ${
+                      caseItem.priority === 'high' ? 'text-red-400' :
+                      caseItem.priority === 'medium' ? 'text-yellow-400' :
+                      'text-green-400'
+                    }`}>
+                      {caseItem.priority}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      // Navigate to case details
+                      console.log('View case:', caseItem.id);
+                    }}
+                  >
+                    <Eye className="w-3 h-3 mr-1" />
+                    View
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      // Edit case
+                      console.log('Edit case:', caseItem.id);
+                    }}
+                  >
+                    <Edit className="w-3 h-3 mr-1" />
+                    Edit
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {showCreateCaseModal && (
+        <CreateCaseModal
+          onClose={() => setShowCreateCaseModal(false)}
+          onSuccess={(caseId) => {
+            setShowCreateCaseModal(false);
+            handleRefresh();
+            toast.success('Case created successfully!');
+          }}
+        />
+      )}
+    </div>
+  );
+};
 
 export const LegalDashboard: React.FC = () => {
   const { currentUser, canPerformAction, isOnboarded, completeOnboarding, userProfile, setCurrentUser } = useRBAC();
@@ -483,6 +657,15 @@ export const LegalDashboard: React.FC = () => {
             />
           </div>
           <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={refreshDocuments}
+              leftIcon={<RefreshCw className="w-4 h-4" />}
+              className="bg-slate-800/50 border-slate-700/50"
+            >
+              Refresh
+            </Button>
             <div className="flex bg-slate-800/50 rounded-lg p-1">
               <button
                 onClick={() => setViewMode('grid')}
@@ -548,15 +731,7 @@ export const LegalDashboard: React.FC = () => {
         <div className="mt-8">
           {selectedTab === 'cases' && (
             <CaseProvider>
-              <div className="space-y-6">
-                <div className="text-center py-12">
-                  <Users className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-white mb-2">Case Management</h3>
-                  <p className="text-slate-400">
-                    Create and manage legal case files with role-based access control
-                  </p>
-                </div>
-              </div>
+              <CaseManagementTab />
             </CaseProvider>
           )}
 
@@ -727,8 +902,19 @@ export const LegalDashboard: React.FC = () => {
                     Verifiable AI analysis results using ZKML protocols
                   </p>
                 </div>
-                <div className="text-sm text-slate-400">
-                  {legalDocuments.filter(doc => doc.aiAnalysis).length} analyzed documents
+                <div className="flex items-center space-x-3">
+                  <div className="text-sm text-slate-400">
+                    {legalDocuments.filter(doc => doc.aiAnalysis).length} analyzed documents
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={refreshDocuments}
+                    leftIcon={<RefreshCw className="w-4 h-4" />}
+                    className="bg-slate-800/50 border-slate-700/50"
+                  >
+                    Refresh
+                  </Button>
                 </div>
               </div>
 
@@ -827,8 +1013,19 @@ export const LegalDashboard: React.FC = () => {
                     Complete audit trail of all document actions and transformations
                   </p>
                 </div>
-                <div className="text-sm text-slate-400">
-                  {chainOfCustody.length} entries
+                <div className="flex items-center space-x-3">
+                  <div className="text-sm text-slate-400">
+                    {chainOfCustody.length} entries
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={refreshDocuments}
+                    leftIcon={<RefreshCw className="w-4 h-4" />}
+                    className="bg-slate-800/50 border-slate-700/50"
+                  >
+                    Refresh
+                  </Button>
                 </div>
               </div>
 
