@@ -7,6 +7,8 @@
   # Set your production backend API URL here (or via Netlify UI > Site settings > Environment)
   # Example: "https://api.blockvault.example.com"
   REACT_APP_API_URL = "https://blockvault-decentralized-file-storage.onrender.com"
+  NODE_VERSION = "18"
+  CI = "false"
 
 # SPA fallback so React Router routes work on refresh
 [[redirects]]
