@@ -418,8 +418,46 @@ export const LegalDashboard: React.FC = () => {
       case 'analyze':
         setShowZKMLModal(true);
         break;
+      case 'view':
+        handleViewDocument(document);
+        break;
+      case 'download':
+        handleDownloadDocument(document);
+        break;
       default:
         break;
+    }
+  };
+
+  const handleViewDocument = (doc: LegalDocument) => {
+    try {
+      // For now, we'll create a simple viewer using the document's CID or file_id
+      // In a real implementation, this would fetch the document from IPFS or storage
+      const viewerUrl = `https://ipfs.io/ipfs/${doc.cid}`;
+      window.open(viewerUrl, '_blank');
+      toast.success('Opening document viewer...');
+    } catch (error) {
+      console.error('Error viewing document:', error);
+      toast.error('Failed to open document viewer');
+    }
+  };
+
+  const handleDownloadDocument = (doc: LegalDocument) => {
+    try {
+      // Create a download link for the document
+      // In a real implementation, this would fetch the document from IPFS or storage
+      const downloadUrl = `https://ipfs.io/ipfs/${doc.cid}`;
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = doc.name;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success('Download started...');
+    } catch (error) {
+      console.error('Error downloading document:', error);
+      toast.error('Failed to download document');
     }
   };
 
@@ -878,7 +916,16 @@ export const LegalDashboard: React.FC = () => {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => window.open(`/documents/${document.file_id}/download`, '_blank')}
+                            onClick={() => handleDocumentAction('view', document)}
+                          >
+                            <Eye className="w-3 h-3 mr-1" />
+                            View
+                          </Button>
+
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDocumentAction('download', document)}
                           >
                             <Download className="w-3 h-3 mr-1" />
                             Download
@@ -991,7 +1038,7 @@ export const LegalDashboard: React.FC = () => {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => window.open(`/documents/${document.file_id}/download`, '_blank')}
+                            onClick={() => handleDocumentAction('download', document)}
                           >
                             <Download className="w-3 h-3 mr-1" />
                             Download

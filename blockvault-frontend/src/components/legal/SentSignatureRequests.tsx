@@ -254,8 +254,9 @@ export const SentSignatureRequests: React.FC = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      // Open document in new tab or download
-                      window.open(`/api/documents/${request.documentId}/download`, '_blank');
+                      // View document using IPFS
+                      const viewerUrl = `https://ipfs.io/ipfs/${request.documentId}`;
+                      window.open(viewerUrl, '_blank');
                     }}
                   >
                     <ExternalLink className="w-4 h-4 mr-2" />
@@ -266,6 +267,17 @@ export const SentSignatureRequests: React.FC = () => {
                       variant="outline"
                       size="sm"
                       className="text-green-400 border-green-400 hover:bg-green-400/10"
+                      onClick={() => {
+                        // Download signed document
+                        const downloadUrl = `https://ipfs.io/ipfs/${request.documentId}`;
+                        const link = document.createElement('a');
+                        link.href = downloadUrl;
+                        link.download = `signed-${request.documentName}`;
+                        link.target = '_blank';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      }}
                     >
                       <CheckCircle className="w-4 h-4 mr-2" />
                       Download Signed Document

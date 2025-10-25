@@ -290,8 +290,9 @@ export const SignatureRequests: React.FC = () => {
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        // Open document in new tab or download
-                        window.open(`/api/documents/${request.documentId}/download`, '_blank');
+                        // View document using IPFS
+                        const viewerUrl = `https://ipfs.io/ipfs/${request.documentId}`;
+                        window.open(viewerUrl, '_blank');
                       }}
                     >
                       <ExternalLink className="w-4 h-4 mr-2" />

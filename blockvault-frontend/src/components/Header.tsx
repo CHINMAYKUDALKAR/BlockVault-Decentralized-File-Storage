@@ -14,7 +14,29 @@ export const Header: React.FC = () => {
   const location = useLocation();
 
   React.useEffect(() => {
-    setHasRSAKeys(rsaKeyManager.hasKeyPair());
+    const checkRSAKeys = () => {
+      setHasRSAKeys(rsaKeyManager.hasKeyPair());
+    };
+    
+    // Check initially
+    checkRSAKeys();
+    
+    // Listen for storage changes (when RSA keys are generated)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'blockvault_rsa_keys') {
+        checkRSAKeys();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also check periodically in case of same-tab changes
+    const interval = setInterval(checkRSAKeys, 1000);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
   }, []);
 
   return (
