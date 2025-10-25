@@ -1,7 +1,7 @@
 [build]
   base = "blockvault-frontend"
   publish = "build"
-  command = "npm ci && npm run build"
+  command = "npm install && npm run build"
 
 [build.environment]
   # Set your production backend API URL here (or via Netlify UI > Site settings > Environment)
