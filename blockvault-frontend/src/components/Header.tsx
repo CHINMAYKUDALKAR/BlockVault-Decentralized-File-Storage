@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { Shield, Wallet, LogOut, User, AlertCircle, Key, Scale } from 'lucide-react';
+import { Shield, Wallet, LogOut, User, AlertCircle, Key, Scale, Smartphone } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { RSAManager } from './RSAManager';
+import { MobileWalletModal } from './MobileWalletModal';
 import { rsaKeyManager } from '../utils/rsa';
 import { Link, useLocation } from 'react-router-dom';
 
 export const Header: React.FC = () => {
-  const { user, loading, error, connectWallet, login, logout, isConnected, isAuthenticated } = useAuth();
+  const { user, loading, error, connectWallet, login, logout, isConnected, isAuthenticated, isMobile } = useAuth();
   const [showRSAManager, setShowRSAManager] = useState(false);
+  const [showMobileWallet, setShowMobileWallet] = useState(false);
   const [hasRSAKeys, setHasRSAKeys] = useState(false);
   const location = useLocation();
 
@@ -63,14 +65,29 @@ export const Header: React.FC = () => {
           {/* Wallet Status & Actions */}
           <div className="flex items-center space-x-4">
             {!isConnected && (
-              <button
-                onClick={connectWallet}
-                disabled={loading}
-                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Wallet className="w-4 h-4" />
-                <span>Connect Wallet</span>
-              </button>
+              <div className="flex items-center space-x-2">
+                {!isMobile && (
+                  <button
+                    onClick={connectWallet}
+                    disabled={loading}
+                    className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Wallet className="w-4 h-4" />
+                    <span>Connect Wallet</span>
+                  </button>
+                )}
+                
+                {isMobile && (
+                  <button
+                    onClick={() => setShowMobileWallet(true)}
+                    disabled={loading}
+                    className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Smartphone className="w-4 h-4" />
+                    <span>Connect Mobile Wallet</span>
+                  </button>
+                )}
+              </div>
             )}
 
             {isConnected && !isAuthenticated && (
@@ -144,6 +161,11 @@ export const Header: React.FC = () => {
       {/* RSA Manager Modal */}
       {showRSAManager && (
         <RSAManager onClose={() => setShowRSAManager(false)} />
+      )}
+
+      {/* Mobile Wallet Modal */}
+      {showMobileWallet && (
+        <MobileWalletModal onClose={() => setShowMobileWallet(false)} />
       )}
     </header>
   );

@@ -16,6 +16,8 @@ interface AuthContextType {
   logout: () => void;
   isConnected: boolean;
   isAuthenticated: boolean;
+  isMobile: boolean;
+  setUser: (user: User | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,9 +38,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const isConnected = !!user?.address;
   const isAuthenticated = !!(user?.address && user?.jwt);
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+    };
+    setIsMobile(checkMobile());
+  }, []);
 
   // Check for existing session on mount and validate token
   useEffect(() => {
@@ -195,6 +208,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     isConnected,
     isAuthenticated,
+    isMobile,
+    setUser,
   };
 
   return (
