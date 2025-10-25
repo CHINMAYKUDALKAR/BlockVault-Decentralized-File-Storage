@@ -8,7 +8,7 @@ import { Card } from './ui/Card';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, isMobile, connectWallet, loading, error } = useAuth();
+  const { isAuthenticated, isMobile, connectWallet, login, loading, error, isConnected, user } = useAuth();
   const [showMobileWallet, setShowMobileWallet] = useState(false);
   const [currentFeature, setCurrentFeature] = useState(0);
 
@@ -160,44 +160,73 @@ export const LoginPage: React.FC = () => {
 
               {/* Login Options */}
               <div className="space-y-4">
-                {!isMobile ? (
-                  <Button
-                    onClick={connectWallet}
-                    disabled={loading}
-                    className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 disabled:opacity-50"
-                  >
-                    {loading ? (
-                      <div className="flex items-center space-x-2">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Connecting...</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center space-x-2">
-                        <Wallet className="w-5 h-5" />
-                        <span>Connect Wallet</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
-                    )}
-                  </Button>
+                {!isConnected ? (
+                  !isMobile ? (
+                    <Button
+                      onClick={connectWallet}
+                      disabled={loading}
+                      className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 disabled:opacity-50"
+                    >
+                      {loading ? (
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <span>Connecting...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-2">
+                          <Wallet className="w-5 h-5" />
+                          <span>Connect Wallet</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
+                      )}
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => setShowMobileWallet(true)}
+                      disabled={loading}
+                      className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 disabled:opacity-50"
+                    >
+                      {loading ? (
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <span>Connecting...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-2">
+                          <Smartphone className="w-5 h-5" />
+                          <span>Connect Mobile Wallet</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
+                      )}
+                    </Button>
+                  )
                 ) : (
-                  <Button
-                    onClick={() => setShowMobileWallet(true)}
-                    disabled={loading}
-                    className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 disabled:opacity-50"
-                  >
-                    {loading ? (
-                      <div className="flex items-center space-x-2">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Connecting...</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center space-x-2">
-                        <Smartphone className="w-5 h-5" />
-                        <span>Connect Mobile Wallet</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
-                    )}
-                  </Button>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-center space-x-3 bg-slate-800/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-slate-700/50">
+                      <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                      <span className="text-slate-300 font-mono">
+                        {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}
+                      </span>
+                    </div>
+                    <Button
+                      onClick={login}
+                      disabled={loading}
+                      className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 disabled:opacity-50"
+                    >
+                      {loading ? (
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <span>Signing Message...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-2">
+                          <Shield className="w-5 h-5" />
+                          <span>Complete Login</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
+                      )}
+                    </Button>
+                  </div>
                 )}
 
                 {/* Features List */}
