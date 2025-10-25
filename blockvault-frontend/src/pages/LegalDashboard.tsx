@@ -12,14 +12,19 @@ import {
   CheckCircle, 
   Clock, 
   AlertCircle,
-  Download
+  Download,
+  TrendingUp,
+  Grid,
+  List,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Input } from '../components/ui/Input';
 import { NotarizeDocumentModal } from '../components/legal/NotarizeDocumentModal';
 import { RedactionModal } from '../components/legal/RedactionModal';
-import { ESignatureModal } from '../components/legal/ESignatureModal';
+import { RequestSignatureModal } from '../components/legal/RequestSignatureModal';
 import { ZKMLAnalysisModal } from '../components/legal/ZKMLAnalysisModal';
 import { SignatureRequests } from '../components/legal/SignatureRequests';
 import { SentSignatureRequests } from '../components/legal/SentSignatureRequests';
@@ -69,13 +74,13 @@ export const LegalDashboard: React.FC = () => {
   const [chainOfCustody, setChainOfCustody] = useState<any[]>([]);
   const [showNotarizeModal, setShowNotarizeModal] = useState(false);
   const [showRedactionModal, setShowRedactionModal] = useState(false);
-  const [showESignatureModal, setShowESignatureModal] = useState(false);
   const [showZKMLModal, setShowZKMLModal] = useState(false);
   const [showCreateCaseModal, setShowCreateCaseModal] = useState(false);
   const [showRequestSignatureModal, setShowRequestSignatureModal] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<LegalDocument | null>(null);
   const [showDebugPanel, setShowDebugPanel] = useState(false);
   const [debugResults, setDebugResults] = useState<any>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Load legal documents from localStorage only (no mock data)
   const [legalDocuments, setLegalDocuments] = useState<LegalDocument[]>(() => {
@@ -232,9 +237,6 @@ export const LegalDashboard: React.FC = () => {
       case 'redact':
         setShowRedactionModal(true);
         break;
-      case 'sign':
-        setShowESignatureModal(true);
-        break;
       case 'request-signature':
         setShowRequestSignatureModal(true);
         break;
@@ -312,37 +314,76 @@ export const LegalDashboard: React.FC = () => {
     debugUserPermissions(currentUser.currentRole);
   }
 
+  // Calculate statistics
+  const totalDocuments = legalDocuments.length;
+  const totalSignatures = legalDocuments.filter(doc => doc.signatures?.completed > 0).length;
+  const totalAnalysis = legalDocuments.filter(doc => doc.aiAnalysis).length;
+  const totalChainEntries = chainOfCustody.length;
+
+  const statsCards = [
+    {
+      title: 'Legal Documents',
+      value: totalDocuments,
+      icon: FileText,
+      color: 'blue',
+      change: '+12%'
+    },
+    {
+      title: 'Signatures',
+      value: totalSignatures,
+      icon: PenTool,
+      color: 'green',
+      change: '+8%'
+    },
+    {
+      title: 'AI Analysis',
+      value: totalAnalysis,
+      icon: Brain,
+      color: 'purple',
+      change: '+5%'
+    },
+    {
+      title: 'Chain Entries',
+      value: totalChainEntries,
+      icon: Shield,
+      color: 'orange',
+      change: '+3%'
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-slate-900">
-      {/* Header */}
-      <div className="bg-slate-800 border-b border-slate-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      {/* Header Section */}
+      <div className="bg-slate-900/50 backdrop-blur-lg border-b border-slate-700/50 sticky top-0 z-40">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <Shield className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-white">BlockVault Legal</h1>
-        <div className="flex items-center space-x-2">
-          <p className="text-sm text-slate-400">ZK-powered legal document management</p>
-          {currentUser?.currentRole && (
-            <>
-              <span className="text-slate-500">•</span>
-              <span className="text-sm text-blue-400 font-medium">
-                {getRoleDisplayName(currentUser.currentRole)}
-              </span>
-            </>
-          )}
-          {userProfile?.firmName && (
-            <>
-              <span className="text-slate-500">•</span>
-              <span className="text-sm text-green-400 font-medium">
-                {userProfile.firmName}
-              </span>
-            </>
-          )}
-        </div>
+                <h1 className="text-3xl font-bold text-white mb-2">
+                  BlockVault <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Legal</span>
+                </h1>
+                <div className="flex items-center space-x-2">
+                  <p className="text-slate-400">ZK-powered legal document management</p>
+                  {currentUser?.currentRole && (
+                    <>
+                      <span className="text-slate-500">•</span>
+                      <span className="text-sm text-blue-400 font-medium">
+                        {getRoleDisplayName(currentUser.currentRole)}
+                      </span>
+                    </>
+                  )}
+                  {userProfile?.firmName && (
+                    <>
+                      <span className="text-slate-500">•</span>
+                      <span className="text-sm text-green-400 font-medium">
+                        {userProfile.firmName}
+                      </span>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
             <div className="flex space-x-3">
@@ -351,6 +392,7 @@ export const LegalDashboard: React.FC = () => {
                 variant="outline" 
                 size="sm"
                 onClick={() => setShowDebugPanel(!showDebugPanel)}
+                className="bg-slate-800/50 border-slate-700/50"
               >
                 Debug
               </Button>
@@ -360,6 +402,27 @@ export const LegalDashboard: React.FC = () => {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Statistics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {statsCards.map((stat, index) => (
+              <Card key={index} className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50 hover:bg-slate-800/70 transition-all duration-200">
+                <div className="flex items-center justify-between p-4">
+                  <div>
+                    <p className="text-sm text-slate-400 mb-1">{stat.title}</p>
+                    <p className="text-2xl font-bold text-white">{stat.value}</p>
+                    <p className="text-xs text-green-400 flex items-center mt-1">
+                      <TrendingUp className="w-3 h-3 mr-1" />
+                      {stat.change}
+                    </p>
+                  </div>
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center bg-${stat.color}-500/10`}>
+                    <stat.icon className={`w-6 h-6 text-${stat.color}-400`} />
+                  </div>
+                </div>
+              </Card>
+            ))}
           </div>
         </div>
       </div>
@@ -406,55 +469,72 @@ export const LegalDashboard: React.FC = () => {
       )}
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container mx-auto px-4 py-8">
         {/* Search and Actions */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex-1 max-w-md">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
-              <Input
-                placeholder="Search documents..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+        <div className="flex flex-col lg:flex-row gap-4 mb-6">
+          <div className="flex-1">
+            <Input
+              type="text"
+              placeholder="Search legal documents..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              leftIcon={<Search className="w-4 h-4" />}
+              className="bg-slate-800/50 border-slate-700/50"
+            />
           </div>
-          <div className="flex space-x-3">
+          <div className="flex items-center space-x-2">
+            <div className="flex bg-slate-800/50 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-2 rounded-md transition-colors ${
+                  viewMode === 'grid' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Grid className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-2 rounded-md transition-colors ${
+                  viewMode === 'list' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <List className="w-4 h-4" />
+              </button>
+            </div>
             {canPerformAction('canNotarizeDocuments') && (
               <Button
                 onClick={() => setShowNotarizeModal(true)}
-                className="flex items-center space-x-2"
+                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                leftIcon={<Plus className="w-4 h-4" />}
               >
-                <Plus className="w-4 h-4" />
-                <span>Notarize Document</span>
+                Notarize Document
               </Button>
             )}
             {canPerformAction('canCreateCase') && (
               <Button
                 variant="outline"
                 onClick={() => setShowCreateCaseModal(true)}
-                className="flex items-center space-x-2"
+                leftIcon={<Plus className="w-4 h-4" />}
+                className="bg-slate-800/50 border-slate-700/50"
               >
-                <Plus className="w-4 h-4" />
-                <span>New Case</span>
+                New Case
               </Button>
             )}
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex space-x-1 bg-slate-800 rounded-lg p-1">
+        <div className="flex space-x-1 bg-slate-800/50 p-1 rounded-lg mb-6">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setSelectedTab(tab.id as any)}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-md transition-all duration-200 ${
                   selectedTab === tab.id
-                    ? 'bg-blue-500 text-white'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-700'
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -491,14 +571,17 @@ export const LegalDashboard: React.FC = () => {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className={viewMode === 'grid' 
+                  ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" 
+                  : "space-y-4"
+                }>
                   {filteredDocuments.map((document) => (
                     <Card key={document.id} className="hover:bg-slate-800/50 transition-colors">
-                      <div className="p-6">
-                        <div className="flex items-start justify-between mb-4">
+                      <div className={viewMode === 'list' ? "p-4" : "p-6"}>
+                        <div className={`flex items-start justify-between ${viewMode === 'list' ? 'mb-2' : 'mb-4'}`}>
                           <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                              <FileText className="w-5 h-5 text-blue-500" />
+                            <div className={`${viewMode === 'list' ? 'w-8 h-8' : 'w-10 h-10'} bg-blue-500/10 rounded-lg flex items-center justify-center`}>
+                              <FileText className={`${viewMode === 'list' ? 'w-4 h-4' : 'w-5 h-5'} text-blue-500`} />
                             </div>
                             <div>
                               <h3 className="font-medium text-white">{document.name}</h3>
@@ -515,41 +598,43 @@ export const LegalDashboard: React.FC = () => {
                           </div>
                         </div>
 
-                        <div className="space-y-2 mb-4">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-slate-400">Hash:</span>
-                            <span className="text-white font-mono text-xs">
-                              {document.docHash.slice(0, 8)}...
-                            </span>
-                          </div>
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-slate-400">IPFS CID:</span>
-                            <span className="text-white font-mono text-xs">
-                              {document.cid.slice(0, 8)}...
-                            </span>
-                          </div>
-                          {document.parentHash && (
+                        {viewMode === 'grid' && (
+                          <div className="space-y-2 mb-4">
                             <div className="flex items-center justify-between text-sm">
-                              <span className="text-slate-400">Parent Document:</span>
-                              <span className="text-blue-400 font-mono text-xs">
-                                {document.parentHash.slice(0, 8)}...
+                              <span className="text-slate-400">Hash:</span>
+                              <span className="text-white font-mono text-xs">
+                                {document.docHash.slice(0, 8)}...
                               </span>
                             </div>
-                          )}
-                          {document.transformationType && (
                             <div className="flex items-center justify-between text-sm">
-                              <span className="text-slate-400">Transformation:</span>
-                              <span className="text-purple-400 capitalize">
-                                {document.transformationType}
+                              <span className="text-slate-400">IPFS CID:</span>
+                              <span className="text-white font-mono text-xs">
+                                {document.cid.slice(0, 8)}...
                               </span>
                             </div>
-                          )}
-                        </div>
+                            {document.parentHash && (
+                              <div className="flex items-center justify-between text-sm">
+                                <span className="text-slate-400">Parent Document:</span>
+                                <span className="text-blue-400 font-mono text-xs">
+                                  {document.parentHash.slice(0, 8)}...
+                                </span>
+                              </div>
+                            )}
+                            {document.transformationType && (
+                              <div className="flex items-center justify-between text-sm">
+                                <span className="text-slate-400">Transformation:</span>
+                                <span className="text-purple-400 capitalize">
+                                  {document.transformationType}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        )}
 
-                        <div className="flex flex-wrap gap-2">
+                        <div className={`flex ${viewMode === 'list' ? 'flex-wrap gap-1' : 'flex-wrap gap-2'}`}>
                           {canPerformAction('canCreateRedactions') ? (
                             <Button
-                              size="sm"
+                              size={viewMode === 'list' ? "xs" : "sm"}
                               variant="outline"
                               onClick={() => handleDocumentAction('redact', document)}
                             >
@@ -558,7 +643,7 @@ export const LegalDashboard: React.FC = () => {
                             </Button>
                           ) : (
                             <Button
-                              size="sm"
+                              size={viewMode === 'list' ? "xs" : "sm"}
                               variant="outline"
                               disabled
                               className="opacity-50 cursor-not-allowed"
@@ -569,31 +654,10 @@ export const LegalDashboard: React.FC = () => {
                             </Button>
                           )}
 
-                          {canPerformAction('canSignDocuments') ? (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleDocumentAction('sign', document)}
-                            >
-                              <PenTool className="w-3 h-3 mr-1" />
-                              Sign
-                            </Button>
-                          ) : (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              disabled
-                              className="opacity-50 cursor-not-allowed"
-                              title={`${getRoleDisplayName(currentUser?.currentRole || 'client')} role cannot sign documents`}
-                            >
-                              <Lock className="w-3 h-3 mr-1" />
-                              Sign
-                            </Button>
-                          )}
 
                           {canPerformAction('canRequestSignatures') ? (
                             <Button
-                              size="sm"
+                              size={viewMode === 'list' ? "xs" : "sm"}
                               variant="outline"
                               onClick={() => handleDocumentAction('request-signature', document)}
                             >
@@ -602,7 +666,7 @@ export const LegalDashboard: React.FC = () => {
                             </Button>
                           ) : (
                             <Button
-                              size="sm"
+                              size={viewMode === 'list' ? "xs" : "sm"}
                               variant="outline"
                               disabled
                               className="opacity-50 cursor-not-allowed"
@@ -615,7 +679,7 @@ export const LegalDashboard: React.FC = () => {
 
                           {canPerformAction('canRunZKMLAnalysis') ? (
                             <Button
-                              size="sm"
+                              size={viewMode === 'list' ? "xs" : "sm"}
                               variant="outline"
                               onClick={() => handleDocumentAction('analyze', document)}
                             >
@@ -624,7 +688,7 @@ export const LegalDashboard: React.FC = () => {
                             </Button>
                           ) : (
                             <Button
-                              size="sm"
+                              size={viewMode === 'list' ? "xs" : "sm"}
                               variant="outline"
                               disabled
                               className="opacity-50 cursor-not-allowed"
@@ -636,7 +700,7 @@ export const LegalDashboard: React.FC = () => {
                           )}
 
                           <Button
-                            size="sm"
+                            size={viewMode === 'list' ? "xs" : "sm"}
                             variant="outline"
                             onClick={() => window.open(`/documents/${document.file_id}/download`, '_blank')}
                           >
@@ -655,12 +719,102 @@ export const LegalDashboard: React.FC = () => {
           {selectedTab === 'signatures' && <SignatureRequests />}
           {selectedTab === 'sent-signatures' && <SentSignatureRequests />}
           {selectedTab === 'analysis' && (
-            <div className="text-center py-12">
-              <Brain className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-white mb-2">AI Analysis</h3>
-              <p className="text-slate-400">
-                Run verifiable AI analysis on your legal documents using ZKML protocols
-              </p>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-white">AI Analysis Results</h3>
+                  <p className="text-sm text-slate-400">
+                    Verifiable AI analysis results using ZKML protocols
+                  </p>
+                </div>
+                <div className="text-sm text-slate-400">
+                  {legalDocuments.filter(doc => doc.aiAnalysis).length} analyzed documents
+                </div>
+              </div>
+
+              {legalDocuments.filter(doc => doc.aiAnalysis).length === 0 ? (
+                <div className="text-center py-12">
+                  <Brain className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-white mb-2">No AI Analysis Results</h3>
+                  <p className="text-slate-400">
+                    Run AI analysis on your legal documents to see results here
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {legalDocuments.filter(doc => doc.aiAnalysis).map((document) => (
+                    <Card key={document.id} className="hover:bg-slate-800/50 transition-colors">
+                      <div className="p-6">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center">
+                              <Brain className="w-5 h-5 text-purple-500" />
+                            </div>
+                            <div>
+                              <h3 className="font-medium text-white">{document.name}</h3>
+                              <p className="text-sm text-slate-400">
+                                {new Date(document.timestamp).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            {document.aiAnalysis?.verified ? (
+                              <CheckCircle className="w-4 h-4 text-green-500" />
+                            ) : (
+                              <AlertCircle className="w-4 h-4 text-yellow-500" />
+                            )}
+                            <span className="text-xs text-slate-400">
+                              {document.aiAnalysis?.verified ? 'Verified' : 'Pending'}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-slate-400">Model:</span>
+                            <span className="text-white font-mono text-xs">
+                              {document.aiAnalysis?.model || 'Unknown'}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-slate-400">Result:</span>
+                            <span className="text-white font-mono text-xs">
+                              {document.aiAnalysis?.result || 'N/A'}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-slate-400">Status:</span>
+                            <span className={`text-xs ${
+                              document.aiAnalysis?.verified ? 'text-green-400' : 'text-yellow-400'
+                            }`}>
+                              {document.aiAnalysis?.verified ? 'Verified' : 'Unverified'}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDocumentAction('analyze', document)}
+                          >
+                            <Brain className="w-3 h-3 mr-1" />
+                            Re-analyze
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => window.open(`/documents/${document.file_id}/download`, '_blank')}
+                          >
+                            <Download className="w-3 h-3 mr-1" />
+                            Download
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -813,18 +967,18 @@ export const LegalDashboard: React.FC = () => {
         />
       )}
 
-      {showESignatureModal && selectedDocument && (
-        <ESignatureModal
+      {showRequestSignatureModal && selectedDocument && (
+        <RequestSignatureModal
           document={selectedDocument}
           onClose={() => {
-            setShowESignatureModal(false);
+            setShowRequestSignatureModal(false);
             setSelectedDocument(null);
           }}
           onSuccess={() => {
-            setShowESignatureModal(false);
+            setShowRequestSignatureModal(false);
             setSelectedDocument(null);
             refreshDocuments();
-            toast.success('Document signed successfully!');
+            toast.success('Signature request sent successfully!');
           }}
         />
       )}
@@ -857,38 +1011,6 @@ export const LegalDashboard: React.FC = () => {
         </CaseProvider>
       )}
 
-      {showRequestSignatureModal && selectedDocument && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-slate-800 rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-white mb-4">Request Signature</h3>
-            <p className="text-slate-400 mb-4">
-              Request signature functionality will be implemented here.
-            </p>
-            <div className="flex space-x-3">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowRequestSignatureModal(false);
-                  setSelectedDocument(null);
-                }}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => {
-                  setShowRequestSignatureModal(false);
-                  setSelectedDocument(null);
-                  toast.success('Signature request sent!');
-                }}
-                className="flex-1"
-              >
-                Send Request
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

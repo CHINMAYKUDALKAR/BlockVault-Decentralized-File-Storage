@@ -81,6 +81,23 @@ export const ZKMLAnalysisModal: React.FC<ZKMLAnalysisModalProps> = ({ document, 
         proofHash: `0x${Math.random().toString(36).substring(2, 15)}`
       });
 
+      // Save analysis result to document
+      const analysisData = {
+        model: analysisConfig.modelType,
+        result: actualOutput,
+        verified: true,
+        timestamp: Date.now()
+      };
+
+      // Update the document in localStorage
+      const existingDocs = JSON.parse(localStorage.getItem('legal_documents') || '[]');
+      const updatedDocs = existingDocs.map((doc: any) => 
+        doc.id === document.id 
+          ? { ...doc, aiAnalysis: analysisData }
+          : doc
+      );
+      localStorage.setItem('legal_documents', JSON.stringify(updatedDocs));
+
       setStep('complete');
       toast.success('AI analysis verified on-chain!');
       onSuccess();
