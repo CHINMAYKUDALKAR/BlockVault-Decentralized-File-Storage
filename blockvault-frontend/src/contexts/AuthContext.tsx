@@ -12,7 +12,7 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   connectWallet: () => Promise<void>;
-  login: () => Promise<void>;
+  login: (provider?: any) => Promise<void>;
   logout: () => void;
   isConnected: boolean;
   isAuthenticated: boolean;
@@ -127,7 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const login = async () => {
+  const login = async (provider?: any) => {
     if (!user?.address) {
       toast.error('Please connect your wallet first');
       return;
@@ -153,8 +153,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const { nonce } = await nonceResponse.json();
 
       // Sign message with wallet
-      const provider = new ethers.BrowserProvider(window.ethereum!);
-      const signer = await provider.getSigner();
+      const ethersProvider = provider || new ethers.BrowserProvider(window.ethereum!);
+      const signer = await ethersProvider.getSigner();
       const message = `BlockVault login nonce: ${nonce}`;
       const signature = await signer.signMessage(message);
 

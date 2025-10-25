@@ -40,17 +40,40 @@ export const MobileWalletConnect: React.FC<MobileWalletConnectProps> = ({
     try {
       setIsConnecting(true);
 
+      // Wait a bit for wallet to load if redirected
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
       if (typeof window.ethereum !== 'undefined') {
         const provider = new ethers.BrowserProvider(window.ethereum);
         const accounts = await provider.send('eth_requestAccounts', []);
         
         if (accounts && accounts.length > 0) {
           onConnect(accounts[0], provider);
+        } else {
+          onError('No accounts found. Please make sure your wallet is unlocked.');
         }
       } else {
         // Try to open MetaMask app
         const metamaskUrl = 'metamask://dapp/' + window.location.host;
         window.location.href = metamaskUrl;
+        
+        // Wait for user to return and try again
+        setTimeout(async () => {
+          if (typeof window.ethereum !== 'undefined') {
+            try {
+              const provider = new ethers.BrowserProvider(window.ethereum);
+              const accounts = await provider.send('eth_requestAccounts', []);
+              
+              if (accounts && accounts.length > 0) {
+                onConnect(accounts[0], provider);
+              }
+            } catch (error: any) {
+              onError('Please connect your wallet in the MetaMask app and return to this page.');
+            }
+          } else {
+            onError('MetaMask not detected. Please install MetaMask mobile app.');
+          }
+        }, 3000);
       }
     } catch (error: any) {
       console.error('MetaMask error:', error);

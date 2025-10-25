@@ -11,7 +11,7 @@ interface MobileWalletModalProps {
 export const MobileWalletModal: React.FC<MobileWalletModalProps> = ({
   onClose,
 }) => {
-  const { setUser } = useAuth();
+  const { setUser, login } = useAuth();
   const [isConnecting, setIsConnecting] = useState(false);
 
   const handleWalletConnect = async (address: string, provider: any) => {
@@ -25,7 +25,11 @@ export const MobileWalletModal: React.FC<MobileWalletModalProps> = ({
       // Save to localStorage
       localStorage.setItem('blockvault_user', JSON.stringify(user));
       
-      toast.success('Wallet connected successfully!');
+      toast.success('Wallet connected! Now signing in...');
+      
+      // Automatically trigger login flow with the provider
+      await login(provider);
+      
       onClose();
     } catch (error: any) {
       console.error('Wallet connection error:', error);
