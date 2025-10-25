@@ -41,3 +41,6 @@ dist/
 
 # Storage
 storage/
+
+# Local Netlify folder
+.netlify

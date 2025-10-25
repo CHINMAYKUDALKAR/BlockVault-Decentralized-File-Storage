@@ -62,10 +62,7 @@ export const FileProvider: React.FC<FileProviderProps> = ({ children }) => {
   const [error, setError] = useState<string | null>(null);
 
   const getApiBase = () => {
-    if (process.env.NODE_ENV === 'development') {
-      return 'http://localhost:5000';
-    }
-    return '';
+    return process.env.REACT_APP_API_URL || 'http://localhost:5000';
   };
 
   const getAuthHeaders = () => {

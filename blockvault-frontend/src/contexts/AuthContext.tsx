@@ -206,8 +206,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 // Helper function to get API base URL
 function getApiBase(): string {
-  if (process.env.NODE_ENV === 'development') {
-    return 'http://localhost:5000';
-  }
-  return '';
+  return process.env.REACT_APP_API_URL || 'http://localhost:5000';
 }

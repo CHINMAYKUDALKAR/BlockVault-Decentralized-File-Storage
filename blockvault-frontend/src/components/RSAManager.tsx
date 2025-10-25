@@ -138,10 +138,7 @@ export const RSAManager: React.FC<RSAManagerProps> = ({ onClose }) => {
   };
 
   const getApiBase = () => {
-    if (process.env.NODE_ENV === 'development') {
-      return 'http://localhost:5000';
-    }
-    return '';
+    return process.env.REACT_APP_API_URL || 'http://localhost:5000';
   };
 
   return createPortal(
