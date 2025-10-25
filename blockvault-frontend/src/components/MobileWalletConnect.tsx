@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
 
 interface MobileWalletConnectProps {
   onConnect: (address: string, provider: any) => void;
@@ -44,11 +43,10 @@ export const MobileWalletConnect: React.FC<MobileWalletConnectProps> = ({
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       if (typeof window.ethereum !== 'undefined') {
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        const accounts = await provider.send('eth_requestAccounts', []);
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         
         if (accounts && accounts.length > 0) {
-          onConnect(accounts[0], provider);
+          onConnect(accounts[0], window.ethereum);
         } else {
           onError('No accounts found. Please make sure your wallet is unlocked.');
         }
@@ -61,11 +59,10 @@ export const MobileWalletConnect: React.FC<MobileWalletConnectProps> = ({
         setTimeout(async () => {
           if (typeof window.ethereum !== 'undefined') {
             try {
-              const provider = new ethers.BrowserProvider(window.ethereum);
-              const accounts = await provider.send('eth_requestAccounts', []);
+              const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
               
               if (accounts && accounts.length > 0) {
-                onConnect(accounts[0], provider);
+                onConnect(accounts[0], window.ethereum);
               }
             } catch (error: any) {
               onError('Please connect your wallet in the MetaMask app and return to this page.');
@@ -93,11 +90,10 @@ export const MobileWalletConnect: React.FC<MobileWalletConnectProps> = ({
       
       // Fallback: try to detect if Trust Wallet is available
       if (typeof window.ethereum !== 'undefined' && (window.ethereum as any).isTrust) {
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        const accounts = await provider.send('eth_requestAccounts', []);
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         
         if (accounts && accounts.length > 0) {
-          onConnect(accounts[0], provider);
+          onConnect(accounts[0], window.ethereum);
         }
       }
     } catch (error: any) {
@@ -118,11 +114,10 @@ export const MobileWalletConnect: React.FC<MobileWalletConnectProps> = ({
       
       // Fallback: try to detect if Coinbase Wallet is available
       if (typeof window.ethereum !== 'undefined' && (window.ethereum as any).isCoinbaseWallet) {
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        const accounts = await provider.send('eth_requestAccounts', []);
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         
         if (accounts && accounts.length > 0) {
-          onConnect(accounts[0], provider);
+          onConnect(accounts[0], window.ethereum);
         }
       }
     } catch (error: any) {

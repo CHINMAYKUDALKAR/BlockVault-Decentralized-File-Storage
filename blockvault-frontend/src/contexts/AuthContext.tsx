@@ -153,10 +153,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const { nonce } = await nonceResponse.json();
 
       // Sign message with wallet
-      const ethersProvider = provider || new ethers.BrowserProvider(window.ethereum!);
-      const signer = await ethersProvider.getSigner();
-      const message = `BlockVault login nonce: ${nonce}`;
-      const signature = await signer.signMessage(message);
+      let signature: string;
+      
+      if (provider) {
+        // Handle mobile wallet providers
+        try {
+          // Try to use the provider directly for signing
+          signature = await provider.request({
+            method: 'personal_sign',
+            params: [`BlockVault login nonce: ${nonce}`, user.address],
+          });
+        } catch (error) {
+          // Fallback: try to create ethers provider from the mobile provider
+          try {
+            const ethersProvider = new ethers.BrowserProvider(provider);
+            const signer = await ethersProvider.getSigner();
+            signature = await signer.signMessage(`BlockVault login nonce: ${nonce}`);
+          } catch (fallbackError) {
+            throw new Error('Failed to sign message with mobile wallet');
+          }
+        }
+      } else {
+        // Handle desktop MetaMask
+        const ethersProvider = new ethers.BrowserProvider(window.ethereum!);
+        const signer = await ethersProvider.getSigner();
+        signature = await signer.signMessage(`BlockVault login nonce: ${nonce}`);
+      }
 
       // Send signature to backend for verification
       const loginResponse = await fetch(`${getApiBase()}/auth/login`, {
