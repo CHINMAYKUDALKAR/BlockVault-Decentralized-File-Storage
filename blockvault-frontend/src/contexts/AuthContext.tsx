@@ -154,9 +154,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // Sign message with wallet
       let signature: string;
+      console.log('Login function called with:', { provider, isMobile, hasProvider: !!provider });
       
-      if (provider) {
-        // Handle mobile wallet providers
+      if (provider && isMobile) {
+        // Handle mobile wallet providers (only on mobile devices)
         const message = `BlockVault login nonce: ${nonce}`;
         console.log('Mobile wallet login attempt:', { provider, message, address: user.address });
         
