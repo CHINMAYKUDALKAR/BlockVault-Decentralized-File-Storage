@@ -1,12 +1,12 @@
 [build]
   base = "blockvault-frontend"
-  publish = "blockvault-frontend/build"
+  publish = "build"
   command = "npm ci && npm run build"
 
 [build.environment]
   # Set your production backend API URL here (or via Netlify UI > Site settings > Environment)
   # Example: "https://api.blockvault.example.com"
-  REACT_APP_API_URL = ""
+  REACT_APP_API_URL = "https://blockvault-decentralized-file-storage.onrender.com"
 
 # SPA fallback so React Router routes work on refresh
 [[redirects]]
