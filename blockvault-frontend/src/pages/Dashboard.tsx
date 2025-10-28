@@ -12,7 +12,8 @@ import {
   Users,
   FileText,
   Eye,
-  EyeOff
+  EyeOff,
+  RefreshCw
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useFiles } from '../contexts/FileContext';
@@ -26,7 +27,7 @@ import { Card } from '../components/ui/Card';
 
 export const Dashboard: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
-  const { files, sharedFiles, outgoingShares } = useFiles();
+  const { files, sharedFiles, outgoingShares, refreshSharedFiles, loading } = useFiles();
   const [activeTab, setActiveTab] = useState<'my-files' | 'shared' | 'shares'>('my-files');
   const [searchQuery, setSearchQuery] = useState('');
   const [showUpload, setShowUpload] = useState(false);
@@ -37,6 +38,7 @@ export const Dashboard: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [filterType, setFilterType] = useState<'all' | 'images' | 'documents' | 'videos' | 'audio' | 'archives'>('all');
   const [showStats, setShowStats] = useState(true);
+  const [refreshingShared, setRefreshingShared] = useState(false);
 
   if (!isAuthenticated) {
     return <LoginPage />;
@@ -54,6 +56,15 @@ export const Dashboard: React.FC = () => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const handleRefreshSharedFiles = async () => {
+    setRefreshingShared(true);
+    try {
+      await refreshSharedFiles();
+    } finally {
+      setRefreshingShared(false);
+    }
   };
 
   const getFileType = (fileName: string) => {
@@ -117,7 +128,7 @@ export const Dashboard: React.FC = () => {
       title: 'Shared Files',
       value: totalSharedFiles,
       icon: Share2,
-      color: 'purple',
+      color: 'blue',
       change: '+5%'
     },
     {
@@ -137,7 +148,7 @@ export const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-3xl font-bold text-white mb-2">
-                Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-accent-400">
                   {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}
                 </span>
               </h1>
@@ -152,13 +163,13 @@ export const Dashboard: React.FC = () => {
               >
                 {showStats ? 'Hide Stats' : 'Show Stats'}
               </Button>
-              <Button
-                onClick={() => setShowUpload(true)}
-                leftIcon={<Plus className="w-4 h-4" />}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-              >
-                Upload File
-              </Button>
+               <Button
+                 onClick={() => setShowUpload(true)}
+                 leftIcon={<Plus className="w-4 h-4" />}
+                 className="bg-gradient-to-r from-primary-500 to-accent-400 hover:from-primary-600 hover:to-accent-500"
+               >
+                 Upload File
+               </Button>
             </div>
           </div>
 
@@ -257,7 +268,7 @@ export const Dashboard: React.FC = () => {
             onClick={() => setActiveTab('my-files')}
             className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-md transition-all duration-200 ${
               activeTab === 'my-files'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                ? 'bg-gradient-to-r from-primary-500 to-accent-400 text-white shadow-lg'
                 : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
             }`}
           >
@@ -269,7 +280,7 @@ export const Dashboard: React.FC = () => {
             onClick={() => setActiveTab('shared')}
             className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-md transition-all duration-200 ${
               activeTab === 'shared'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                ? 'bg-gradient-to-r from-primary-500 to-accent-400 text-white shadow-lg'
                 : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
             }`}
           >
@@ -281,7 +292,7 @@ export const Dashboard: React.FC = () => {
             onClick={() => setActiveTab('shares')}
             className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-md transition-all duration-200 ${
               activeTab === 'shares'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                ? 'bg-gradient-to-r from-primary-500 to-accent-400 text-white shadow-lg'
                 : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
             }`}
           >
@@ -305,11 +316,32 @@ export const Dashboard: React.FC = () => {
             />
           )}
           {activeTab === 'shared' && (
-            <FileList
-              files={filteredSharedFiles}
-              type="shared"
-              viewMode={viewMode}
-            />
+            <div className="space-y-6">
+              {/* Shared Files Header with Refresh Button */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-bold text-text-primary font-display tracking-tight">Shared with Me</h3>
+                  <p className="text-text-secondary text-base font-medium">Files that others have shared with you</p>
+                </div>
+                <Button
+                  onClick={handleRefreshSharedFiles}
+                  disabled={refreshingShared}
+                  variant="secondary"
+                  size="sm"
+                  className="flex items-center space-x-2"
+                >
+                  <RefreshCw className={`w-4 h-4 ${refreshingShared ? 'animate-spin' : ''}`} />
+                  <span>{refreshingShared ? 'Refreshing...' : 'Refresh'}</span>
+                </Button>
+              </div>
+              
+              {/* File List */}
+              <FileList
+                files={filteredSharedFiles}
+                type="shared"
+                viewMode={viewMode}
+              />
+            </div>
           )}
           {activeTab === 'shares' && (
             <FileList

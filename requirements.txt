@@ -6,3 +6,10 @@ ipfshttpclient>=0.8.0a2,<1.0.0
 Flask-Cors>=4.0.0,<5.0.0
 cryptography>=42.0.0,<43.0.0
 web3>=6.20.0,<7.0.0
+
+# ZKML Dependencies
+torch>=2.0.0,<3.0.0
+transformers>=4.35.0,<5.0.0
+onnxruntime>=1.16.0,<2.0.0
+PyPDF2>=3.0.0,<4.0.0
+numpy>=1.24.0,<2.0.0

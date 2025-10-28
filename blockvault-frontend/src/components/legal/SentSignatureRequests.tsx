@@ -56,16 +56,27 @@ export const SentSignatureRequests: React.FC = () => {
   const loadSentSignatureRequests = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${getApiBase()}/signature-requests-sent?user_address=${user?.address || ''}`, {
-        headers: getAuthHeaders(),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to load sent signature requests: ${response.status}`);
+      if (!user?.address) {
+        setSignatureRequests([]);
+        setLoading(false);
+        return;
       }
 
-      const data = await response.json();
-      setSignatureRequests(data.signatureRequests);
+      console.log('📤 Loading sent signature requests for:', user.address);
+      
+      // Get all signature requests from localStorage
+      const allRequests = JSON.parse(localStorage.getItem('blockvault_signature_requests') || '[]');
+      console.log('📋 All signature requests in storage:', allRequests.length);
+      
+      // Filter requests sent BY this user (where requestedBy matches current user)
+      const sentRequests = allRequests.filter((req: any) => 
+        req.requestedBy?.toLowerCase() === user.address?.toLowerCase()
+      );
+      
+      console.log(`📤 Found ${sentRequests.length} signature requests sent by you`);
+      
+      setSignatureRequests(sentRequests);
+      setError(null);
     } catch (error) {
       console.error('Error loading sent signature requests:', error);
       setError('Failed to load sent signature requests');
@@ -74,9 +85,27 @@ export const SentSignatureRequests: React.FC = () => {
     }
   }, [user?.address]);
 
-  // Load sent signature requests on mount
+  // Load sent signature requests on mount and listen for updates
   useEffect(() => {
     loadSentSignatureRequests();
+    
+    // Listen for signature updates
+    const handleSignatureUpdate = () => {
+      console.log('🔔 Signature request updated, reloading sent requests...');
+      loadSentSignatureRequests();
+    };
+    
+    window.addEventListener('signatureRequestUpdated', handleSignatureUpdate);
+    window.addEventListener('storage', handleSignatureUpdate);
+    
+    // Reload periodically (every 5 seconds)
+    const interval = setInterval(loadSentSignatureRequests, 5000);
+    
+    return () => {
+      window.removeEventListener('signatureRequestUpdated', handleSignatureUpdate);
+      window.removeEventListener('storage', handleSignatureUpdate);
+      clearInterval(interval);
+    };
   }, [loadSentSignatureRequests]);
 
   const getStatusColor = (status: string) => {

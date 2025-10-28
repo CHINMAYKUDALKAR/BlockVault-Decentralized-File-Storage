@@ -6,6 +6,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   rightIcon?: React.ReactNode;
   error?: string;
   label?: string;
+  variant?: 'default' | 'premium';
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -13,40 +14,43 @@ export const Input: React.FC<InputProps> = ({
   rightIcon,
   error,
   label,
+  variant = 'default',
   className,
   ...props
 }) => {
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 group">
       {label && (
-        <label className="block text-sm font-medium text-slate-300">
+        <label className="block text-sm font-semibold text-text-primary mb-3 tracking-wide">
           {label}
         </label>
       )}
       <div className="relative">
         {leftIcon && (
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400">
+          <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary transition-colors duration-200 group-focus-within:text-accent-400">
             {leftIcon}
           </div>
         )}
         <input
           className={clsx(
-            'w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200 backdrop-blur-sm',
-            leftIcon && 'pl-10',
-            rightIcon && 'pr-10',
-            error && 'border-red-500/50 focus:ring-red-500/50',
+            'w-full px-5 py-4 text-text-primary placeholder-text-secondary/60 focus:outline-none focus:ring-2 transition-all duration-300 backdrop-blur-xl font-medium',
+            variant === 'default' && 'glass rounded-xl border border-secondary-600/40 focus:ring-accent-400/50 focus:border-accent-400/60 hover:border-secondary-600/60',
+            variant === 'premium' && 'glass-premium rounded-2xl border border-accent-400/30 focus:ring-accent-400/60 focus:border-accent-400/80 premium-shadow hover:premium-shadow-lg',
+            leftIcon && 'pl-12',
+            rightIcon && 'pr-12',
+            error && 'border-status-error/50 focus:ring-status-error/50 focus:border-status-error',
             className
           )}
           {...props}
         />
         {rightIcon && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400">
+          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-secondary transition-colors duration-200 group-focus-within:text-accent-400">
             {rightIcon}
           </div>
         )}
       </div>
       {error && (
-        <p className="text-sm text-red-400">{error}</p>
+        <p className="text-sm text-status-error font-medium mt-2 animate-slide-down">{error}</p>
       )}
     </div>
   );

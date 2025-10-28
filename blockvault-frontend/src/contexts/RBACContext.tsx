@@ -21,6 +21,8 @@ interface RBACContextType {
   loadUserProfile: () => void;
   updateUserProfile: (profile: Partial<UserProfile>) => void;
   completeOnboarding: (role: UserRole, firmName?: string) => void;
+  logoutFromFirm: () => void;
+  changeRole: (newRole: UserRole) => void;
   
   // Permission checks
   hasPermission: (permission: keyof CasePermissions) => boolean;
@@ -218,6 +220,42 @@ export const RBACProvider: React.FC<RBACProviderProps> = ({ children }) => {
     });
   };
 
+  const logoutFromFirm = () => {
+    // Clear user profile and RBAC context
+    localStorage.removeItem('user_profile');
+    localStorage.removeItem('rbac_user_context');
+    setUserProfile(null);
+    setCurrentUser(null);
+    setIsOnboarded(false);
+    setCurrentCaseId(null);
+    setCurrentCaseMembers([]);
+    setUserPermissions(null);
+  };
+
+  const changeRole = (newRole: UserRole) => {
+    if (!userProfile || !currentUser) return;
+    
+    // Update user profile with new role
+    const updatedProfile = {
+      ...userProfile,
+      role: newRole,
+      lastUpdated: new Date().toISOString()
+    };
+    
+    setUserProfile(updatedProfile);
+    saveUserProfile(updatedProfile);
+    
+    // Update current user context
+    setCurrentUser({
+      ...currentUser,
+      currentRole: newRole
+    });
+    
+    // Update permissions based on new role
+    const newPermissions = getPermissionsForRole(newRole);
+    setUserPermissions(newPermissions);
+  };
+
   const value: RBACContextType = {
     currentUser,
     currentCaseMembers,
@@ -233,6 +271,8 @@ export const RBACProvider: React.FC<RBACProviderProps> = ({ children }) => {
     loadUserProfile: loadUserProfileFromStorage,
     updateUserProfile,
     completeOnboarding,
+    logoutFromFirm,
+    changeRole,
     hasPermission,
     canPerformAction,
     getUserRole,

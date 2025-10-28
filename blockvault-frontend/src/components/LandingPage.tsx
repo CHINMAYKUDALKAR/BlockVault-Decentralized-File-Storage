@@ -89,31 +89,33 @@ export const LandingPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-20" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23334155' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-      }}></div>
+    <div className="min-h-screen bg-gradient-to-br from-background-primary via-background-secondary to-background-primary grid-pattern noise-texture relative overflow-hidden">
+      {/* Premium Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-20 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-20 right-20 w-80 h-80 bg-accent-400/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-accent-400/5 to-transparent rounded-full"></div>
+      </div>
       
       {/* Hero Section */}
       <div className={`relative z-10 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="container mx-auto px-4 py-16">
           <div className="text-center mb-16">
             <div className="inline-flex items-center space-x-3 mb-8">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
-                <Shield className="w-8 h-8 text-white" />
+              <div className="w-20 h-20 bg-gradient-to-br from-primary-500 via-primary-600 to-accent-400 rounded-3xl flex items-center justify-center premium-shadow-lg animate-glow">
+                <Shield className="w-10 h-10 text-white drop-shadow-lg" />
               </div>
-              <h1 className="text-4xl font-bold text-white">BlockVault</h1>
+              <h1 className="text-5xl font-black text-white tracking-tight font-display drop-shadow-xl">BlockVault</h1>
             </div>
             
-            <h2 className="text-6xl lg:text-7xl font-bold text-white mb-8 leading-tight">
+            <h2 className="text-7xl lg:text-8xl font-black text-white mb-12 leading-none font-display tracking-tighter">
               Secure Your
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent block">
+              <span className="text-gradient block animate-shimmer bg-size-200">
                 Digital Life
               </span>
             </h2>
             
-            <p className="text-xl text-slate-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-2xl text-text-secondary mb-16 max-w-4xl mx-auto leading-relaxed font-medium">
               The most secure way to store, share, and manage your files with 
               blockchain technology, end-to-end encryption, and zero-knowledge architecture.
             </p>
@@ -125,7 +127,9 @@ export const LandingPage: React.FC = () => {
                   <Button
                     onClick={connectWallet}
                     disabled={loading}
-                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-4 px-8 rounded-xl font-semibold text-lg transition-all duration-200 disabled:opacity-50"
+                    variant="primary"
+                    size="lg"
+                    className="text-lg font-bold tracking-wide shadow-2xl"
                   >
                     {loading ? (
                       <div className="flex items-center space-x-2">
@@ -144,7 +148,9 @@ export const LandingPage: React.FC = () => {
                   <Button
                     onClick={() => setShowMobileWallet(true)}
                     disabled={loading}
-                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-4 px-8 rounded-xl font-semibold text-lg transition-all duration-200 disabled:opacity-50"
+                    variant="primary"
+                    size="lg"
+                    className="text-lg font-bold tracking-wide shadow-2xl"
                   >
                     {loading ? (
                       <div className="flex items-center space-x-2">
@@ -162,9 +168,9 @@ export const LandingPage: React.FC = () => {
                 )
               ) : (
                 <div className="flex flex-col items-center space-y-4">
-                  <div className="flex items-center space-x-3 bg-slate-800/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-slate-700/50">
-                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                    <span className="text-slate-300 font-mono text-lg">
+                  <div className="flex items-center space-x-3 bg-secondary-800/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-secondary-700/50">
+                    <div className="w-3 h-3 bg-status-success rounded-full animate-pulse"></div>
+                    <span className="text-text-secondary font-mono text-lg">
                       {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}
                     </span>
                   </div>
@@ -194,11 +200,11 @@ export const LandingPage: React.FC = () => {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-accent-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <stat.icon className="w-8 h-8 text-white" />
                   </div>
                   <div className="text-3xl font-bold text-white mb-2">{stat.number}</div>
-                  <div className="text-slate-400">{stat.label}</div>
+                  <div className="text-text-secondary">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -211,23 +217,23 @@ export const LandingPage: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h3 className="text-4xl font-bold text-white mb-4">Why Choose BlockVault?</h3>
-            <p className="text-xl text-slate-300 max-w-2xl mx-auto">
+            <p className="text-xl text-text-secondary max-w-2xl mx-auto">
               Built with cutting-edge technology to provide the most secure file storage experience
             </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
             {/* Features Carousel */}
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-3xl p-8 border border-slate-700/50">
+            <div className="bg-secondary-800/50 backdrop-blur-sm rounded-3xl p-8 border border-secondary-700/50">
               <div className="flex items-start space-x-6 mb-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-accent-400 rounded-2xl flex items-center justify-center flex-shrink-0">
                   {React.createElement(features[currentFeature].icon, { className: "w-8 h-8 text-white" })}
                 </div>
                 <div>
                   <h4 className="text-2xl font-bold text-white mb-3">
                     {features[currentFeature].title}
                   </h4>
-                  <p className="text-slate-300 text-lg leading-relaxed">
+                  <p className="text-text-secondary text-lg leading-relaxed">
                     {features[currentFeature].description}
                   </p>
                 </div>
@@ -241,8 +247,8 @@ export const LandingPage: React.FC = () => {
                     onClick={() => setCurrentFeature(index)}
                     className={`h-2 rounded-full transition-all duration-300 ${
                       index === currentFeature 
-                        ? 'bg-blue-500 w-12' 
-                        : 'bg-slate-600 hover:bg-slate-500 w-3'
+                        ? 'bg-accent-400 w-12' 
+                        : 'bg-secondary-600 hover:bg-secondary-500 w-3'
                     }`}
                   />
                 ))}
@@ -260,8 +266,8 @@ export const LandingPage: React.FC = () => {
                 "Cross-platform compatibility"
               ].map((feature, index) => (
                 <div key={index} className="flex items-center space-x-4">
-                  <CheckCircle className="w-6 h-6 text-green-400 flex-shrink-0" />
-                  <span className="text-slate-300 text-lg">{feature}</span>
+                  <CheckCircle className="w-6 h-6 text-status-success flex-shrink-0" />
+                  <span className="text-text-secondary text-lg">{feature}</span>
                 </div>
               ))}
             </div>
@@ -270,25 +276,25 @@ export const LandingPage: React.FC = () => {
       </div>
 
       {/* Testimonials Section */}
-      <div className="relative z-10 py-16 bg-slate-800/30">
+      <div className="relative z-10 py-16 bg-secondary-800/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h3 className="text-4xl font-bold text-white mb-4">Trusted by Users</h3>
-            <p className="text-xl text-slate-300">See what our community says about BlockVault</p>
+            <p className="text-xl text-text-secondary">See what our community says about BlockVault</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="p-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700/50">
+              <Card key={index} className="p-6 bg-secondary-800/50 backdrop-blur-sm border border-secondary-700/50">
                 <div className="flex items-center space-x-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                    <Star key={i} className="w-5 h-5 text-status-warning fill-current" />
                   ))}
                 </div>
-                <p className="text-slate-300 mb-4 italic">"{testimonial.content}"</p>
+                <p className="text-text-secondary mb-4 italic">"{testimonial.content}"</p>
                 <div>
                   <div className="font-semibold text-white">{testimonial.name}</div>
-                  <div className="text-slate-400 text-sm">{testimonial.role}</div>
+                  <div className="text-text-secondary text-sm">{testimonial.role}</div>
                 </div>
               </Card>
             ))}
@@ -300,7 +306,7 @@ export const LandingPage: React.FC = () => {
       <div className="relative z-10 py-16">
         <div className="container mx-auto px-4 text-center">
           <h3 className="text-4xl font-bold text-white mb-4">Ready to Secure Your Files?</h3>
-          <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
             Join thousands of users who trust BlockVault with their most important files
           </p>
           
@@ -309,7 +315,7 @@ export const LandingPage: React.FC = () => {
               <Button
                 onClick={connectWallet}
                 disabled={loading}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-4 px-8 rounded-xl font-semibold text-lg transition-all duration-200 disabled:opacity-50"
+                className="text-lg font-bold tracking-wide shadow-2xl"
               >
                 {loading ? (
                   <div className="flex items-center space-x-2">
@@ -328,7 +334,7 @@ export const LandingPage: React.FC = () => {
               <Button
                 onClick={() => setShowMobileWallet(true)}
                 disabled={loading}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-4 px-8 rounded-xl font-semibold text-lg transition-all duration-200 disabled:opacity-50"
+                className="text-lg font-bold tracking-wide shadow-2xl"
               >
                 {loading ? (
                   <div className="flex items-center space-x-2">
@@ -346,9 +352,9 @@ export const LandingPage: React.FC = () => {
             )
           ) : (
             <div className="flex flex-col items-center space-y-4">
-              <div className="flex items-center space-x-3 bg-slate-800/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-slate-700/50">
-                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-slate-300 font-mono text-lg">
+              <div className="flex items-center space-x-3 bg-secondary-800/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-secondary-700/50">
+                <div className="w-3 h-3 bg-status-success rounded-full animate-pulse"></div>
+                <span className="text-text-secondary font-mono text-lg">
                   {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}
                 </span>
               </div>

@@ -6,11 +6,13 @@ import {
   AlertTriangle, 
   Calendar,
   MessageSquare,
-  ExternalLink
+  Download,
+  X
 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { useAuth } from '../../contexts/AuthContext';
+import { getSignatureRequestsForUser, updateSignatureRequestStatus, StoredSignatureRequest } from '../../utils/signatureRequestStorage';
 import toast from 'react-hot-toast';
 
 interface SignatureRequest {
@@ -29,6 +31,7 @@ export const SignatureRequests: React.FC = () => {
   const [signatureRequests, setSignatureRequests] = useState<SignatureRequest[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadingPreview, setLoadingPreview] = useState(false);
 
   // API Base URL
   const getApiBase = () => {
@@ -47,22 +50,67 @@ export const SignatureRequests: React.FC = () => {
     };
   };
 
-  // Load signature requests
+  // Load signature requests (server-first, then fallback/merge with localStorage)
   const loadSignatureRequests = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${getApiBase()}/signature-requests?user_address=${user?.address || ''}`, {
-        headers: getAuthHeaders(),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to load signature requests: ${response.status}`);
+      if (!user?.address) {
+        console.log('⚠️ No user address, cannot load signature requests');
+        setSignatureRequests([]);
+        setLoading(false);
+        return;
       }
 
-      const data = await response.json();
-      setSignatureRequests(data.signatureRequests);
+      console.log('🔍 Loading signature requests for address:', user.address);
+
+      // 1) Try to fetch server-side signature requests (mock server supports /signature-requests)
+      let serverRequests: StoredSignatureRequest[] = [];
+      try {
+        const resp = await fetch(`${getApiBase()}/signature-requests?user_address=${encodeURIComponent(user.address)}`, {
+          headers: getAuthHeaders(),
+        });
+
+        if (resp.ok) {
+          const body = await resp.json();
+          const items = body.signatureRequests || body.signature_requests || [];
+          console.log('📡 Server signature requests:', items);
+
+          // Map server shape to local StoredSignatureRequest shape
+          serverRequests = items.map((it: any) => ({
+            id: it.id,
+            documentId: it.documentId || it.document_id || it.documentId,
+            documentName: it.documentName || it.document_name || it.documentName || '',
+            requestedBy: (it.requestedBy || it.requested_by || '').toLowerCase(),
+            requestedTo: (user.address || '').toLowerCase(),
+            status: (it.status || 'pending') as StoredSignatureRequest['status'],
+            message: it.message || it.msg || '',
+            createdAt: it.createdAt || it.created_at || new Date().toISOString(),
+            expiresAt: it.expiresAt ? (typeof it.expiresAt === 'number' ? it.expiresAt : Date.parse(it.expiresAt)) : Date.now() + 7 * 24 * 60 * 60 * 1000,
+          } as StoredSignatureRequest));
+        } else {
+          console.warn('⚠️ Server rejected signature-requests fetch', await resp.text());
+        }
+      } catch (err) {
+        console.warn('⚠️ Could not fetch signature requests from server:', err);
+      }
+
+      // 2) Load from localStorage and merge (local items may include ones created on this device)
+      const localRequests = getSignatureRequestsForUser(user.address);
+      console.log('📋 Local signature requests:', localRequests);
+
+      // Combine server + local, dedupe by id (prefer server entry if exists)
+      const combinedMap = new Map<string, StoredSignatureRequest>();
+      [...serverRequests, ...localRequests].forEach((r) => {
+        combinedMap.set(r.id, r);
+      });
+
+      const combined = Array.from(combinedMap.values()).filter(req => req.status !== 'declined');
+
+      console.log(`✅ Combined signature requests count: ${combined.length}`);
+      setSignatureRequests(combined as any);
+      setError(null);
     } catch (error) {
-      console.error('Error loading signature requests:', error);
+      console.error('❌ Error loading signature requests:', error);
       setError('Failed to load signature requests');
     } finally {
       setLoading(false);
@@ -70,36 +118,51 @@ export const SignatureRequests: React.FC = () => {
   }, [user?.address]);
 
   // Sign a document
-  const signDocument = async (documentId: string) => {
+  const signDocument = async (requestId: string, documentId: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`${getApiBase()}/documents/${documentId}/sign`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({
-          signerAddress: user?.address || '',
-          signature: `signature_${Date.now()}`, // Mock signature
-        }),
-      });
+      console.log('✍️ Signing document:', { requestId, documentId });
+      
+      // Update signature request status in localStorage
+      updateSignatureRequestStatus(requestId, 'signed');
+      console.log('✅ Updated status to signed in localStorage');
 
-      if (!response.ok) {
-        throw new Error(`Failed to sign document: ${response.status}`);
+      // Persist the signature action to the server so sender and other devices see the update
+      try {
+        const resp = await fetch(`${getApiBase()}/documents/${documentId}/sign`, {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({ signerAddress: user?.address || '', signature: 'signed-via-ui' })
+        });
+        if (!resp.ok) {
+          console.warn('⚠️ Server sign endpoint returned non-OK', await resp.text());
+        } else {
+          console.log('📡 Signed on server');
+        }
+      } catch (err) {
+        console.warn('⚠️ Could not notify server of signing action:', err);
       }
-
-      await response.json();
+      
+      // Update local state immediately to show signed status
+      setSignatureRequests(prev => {
+        const updated = prev.map(req => 
+          req.id === requestId 
+            ? { ...req, status: 'signed' as const }
+            : req
+        );
+        console.log(`📋 Updated UI state. Request ${requestId} is now signed.`);
+        return updated;
+      });
+      
       toast.success('Document signed successfully!');
       
-      // Update local state immediately
-      setSignatureRequests(prev => 
-        prev.map(req => 
-          req.documentId === documentId 
-            ? { ...req, status: 'signed' }
-            : req
-        )
-      );
+      // Dispatch custom event to notify sender (if on same device/browser)
+      window.dispatchEvent(new CustomEvent('signatureRequestUpdated', {
+        detail: { requestId, documentId, status: 'signed' }
+      }));
       
-      // Reload signature requests to get latest data
-      await loadSignatureRequests();
+      // Reload signature requests to ensure consistency
+      setTimeout(() => loadSignatureRequests(), 500);
     } catch (error) {
       console.error('Error signing document:', error);
       toast.error('Failed to sign document');
@@ -109,14 +172,47 @@ export const SignatureRequests: React.FC = () => {
   };
 
   // Decline a signature request
-  const declineSignature = async (requestId: string) => {
+  const declineSignature = async (requestId: string, documentId: string) => {
     setLoading(true);
     try {
-      // In a real implementation, this would call a decline endpoint
+      console.log('❌ Declining signature request:', { requestId, documentId });
+      
+      // Update status in localStorage
+      updateSignatureRequestStatus(requestId, 'declined');
+      console.log('✅ Updated status to declined in localStorage');
+      
+      // Immediately remove from UI
+      setSignatureRequests(prev => {
+        const filtered = prev.filter(req => req.id !== requestId);
+        console.log(`📋 Removed request from UI. Before: ${prev.length}, After: ${filtered.length}`);
+        return filtered;
+      });
+
+      // Persist decline to server so sender and other devices see the update
+      try {
+        const resp = await fetch(`${getApiBase()}/signature-requests/${requestId}/status`, {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({ status: 'declined', signer: user?.address || '' })
+        });
+        if (!resp.ok) {
+          console.warn('⚠️ Server decline endpoint returned non-OK', await resp.text());
+        } else {
+          console.log('📡 Decline persisted on server');
+        }
+      } catch (err) {
+        console.warn('⚠️ Could not notify server of decline action:', err);
+      }
+      
       toast.success('Signature request declined');
       
-      // Remove from local state
-      setSignatureRequests(prev => prev.filter(req => req.id !== requestId));
+      // Dispatch custom event to notify sender (if on same device/browser)
+      window.dispatchEvent(new CustomEvent('signatureRequestUpdated', {
+        detail: { requestId, documentId, status: 'declined' }
+      }));
+      
+      // Reload to ensure consistency (slight delay to allow state to settle)
+      setTimeout(() => loadSignatureRequests(), 500);
     } catch (error) {
       console.error('Error declining signature:', error);
       toast.error('Failed to decline signature request');
@@ -125,9 +221,100 @@ export const SignatureRequests: React.FC = () => {
     }
   };
 
-  // Load signature requests on mount
+  // Download document for signature
+  const handleDownloadDocument = async (request: SignatureRequest) => {
+    setLoadingPreview(true);
+    
+    try {
+      console.log('⬇️ Downloading document for signature:', request.documentId);
+      
+      // Fetch shared files to get the encrypted key
+      const sharedData = await fetch(`${getApiBase()}/files/shared`, {
+        headers: getAuthHeaders(),
+      }).then(res => res.json());
+      
+      const sharedFile = sharedData.shares?.find((share: any) => 
+        share.file_id === request.documentId || share._id === request.documentId
+      );
+
+      if (!sharedFile || !sharedFile.encrypted_key) {
+        toast.error('Document access key not found. Please contact the document owner.');
+        setLoadingPreview(false);
+        return;
+      }
+
+      // Decrypt the encrypted key using RSA private key
+      const { rsaKeyManager } = await import('../../utils/rsa');
+      const privateKey = rsaKeyManager.getPrivateKey();
+      
+      if (!privateKey) {
+        toast.error('RSA private key not found. Please generate RSA keys first.');
+        setLoadingPreview(false);
+        return;
+      }
+
+      const forge = (await import('node-forge')).default;
+      const privateKeyObj = forge.pki.privateKeyFromPem(privateKey);
+      const encryptedBytes = forge.util.decode64(sharedFile.encrypted_key);
+      
+      const decryptedKey = privateKeyObj.decrypt(encryptedBytes, 'RSA-OAEP', {
+        md: forge.md.sha256.create(),
+        mgf1: forge.mgf.mgf1.create(forge.md.sha256.create())
+      });
+
+      // Fetch and download the document
+      const response = await fetch(
+        `${getApiBase()}/files/${request.documentId}?key=${encodeURIComponent(decryptedKey)}`,
+        {
+          headers: getAuthHeaders(),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch document');
+      }
+
+      // Create blob and trigger download
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = request.documentName || 'document.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast.success('Document downloaded successfully');
+    } catch (error) {
+      console.error('Error downloading document:', error);
+      toast.error('Failed to download document: ' + (error as Error).message);
+    } finally {
+      setLoadingPreview(false);
+    }
+  };
+
+  // Load signature requests on mount and listen for updates
   useEffect(() => {
     loadSignatureRequests();
+    
+    // Listen for new signature requests
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'blockvault_signature_requests') {
+        console.log('Signature requests updated, reloading...');
+        loadSignatureRequests();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also reload periodically (in case of same-tab changes)
+    const interval = setInterval(loadSignatureRequests, 5000);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
   }, [loadSignatureRequests]);
 
   const getStatusColor = (status: string) => {
@@ -195,6 +382,38 @@ export const SignatureRequests: React.FC = () => {
     );
   }
 
+  const debugStorage = () => {
+    console.log('🔍 DEBUG: Signature Request Storage');
+    console.log('=====================================');
+    console.log('Current user address:', user?.address);
+    
+    const rawStorage = localStorage.getItem('blockvault_signature_requests');
+    console.log('Raw localStorage value:', rawStorage);
+    
+    if (rawStorage) {
+      const parsed = JSON.parse(rawStorage);
+      console.log('Parsed signature requests:', parsed);
+      console.log('Total count:', parsed.length);
+      
+      if (parsed.length > 0) {
+        parsed.forEach((req: any, idx: number) => {
+          console.log(`Request ${idx + 1}:`, {
+            id: req.id,
+            documentName: req.documentName,
+            requestedBy: req.requestedBy,
+            requestedTo: req.requestedTo,
+            status: req.status
+          });
+        });
+      }
+    } else {
+      console.log('No signature requests in localStorage');
+    }
+    
+    console.log('=====================================');
+    toast.success('Check browser console for debug info');
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -203,9 +422,14 @@ export const SignatureRequests: React.FC = () => {
           <h2 className="text-2xl font-bold text-white">Signature Requests</h2>
           <p className="text-slate-400">Documents waiting for your signature</p>
         </div>
-        <Button onClick={loadSignatureRequests} variant="outline">
-          Refresh
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={debugStorage} variant="outline" size="sm">
+            Debug Storage
+          </Button>
+          <Button onClick={loadSignatureRequests} variant="outline">
+            Refresh
+          </Button>
+        </div>
       </div>
 
       {/* Signature Requests List */}
@@ -272,7 +496,7 @@ export const SignatureRequests: React.FC = () => {
                 {request.status === 'pending' && !isExpired(request.expiresAt) && (
                   <div className="flex space-x-3">
                     <Button
-                      onClick={() => signDocument(request.documentId)}
+                      onClick={() => signDocument(request.id, request.documentId)}
                       disabled={loading}
                       className="bg-green-600 hover:bg-green-700"
                     >
@@ -280,7 +504,7 @@ export const SignatureRequests: React.FC = () => {
                       Sign Document
                     </Button>
                     <Button
-                      onClick={() => declineSignature(request.id)}
+                      onClick={() => declineSignature(request.id, request.documentId)}
                       variant="outline"
                       disabled={loading}
                     >
@@ -289,14 +513,11 @@ export const SignatureRequests: React.FC = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => {
-                        // View document using IPFS
-                        const viewerUrl = `https://ipfs.io/ipfs/${request.documentId}`;
-                        window.open(viewerUrl, '_blank');
-                      }}
+                      onClick={() => handleDownloadDocument(request)}
+                      disabled={loadingPreview}
                     >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      View Document
+                      <Download className="w-4 h-4 mr-2" />
+                      {loadingPreview ? 'Downloading...' : 'Download Document'}
                     </Button>
                   </div>
                 )}
@@ -312,6 +533,7 @@ export const SignatureRequests: React.FC = () => {
           ))}
         </div>
       )}
+
     </div>
   );
 };

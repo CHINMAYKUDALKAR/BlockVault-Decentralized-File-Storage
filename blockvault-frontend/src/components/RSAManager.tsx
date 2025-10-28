@@ -59,8 +59,46 @@ export const RSAManager: React.FC<RSAManagerProps> = ({ onClose }) => {
       const keyPair = rsaKeyManager.generateKeyPair();
       setHasKeys(true);
       setPublicKey(keyPair.publicKey);
-      setIsRegistered(false);
-      toast.success('RSA key pair generated successfully');
+      
+      // Automatically register the public key with the backend
+      const user = JSON.parse(localStorage.getItem('blockvault_user') || '{}');
+      if (user.jwt) {
+        try {
+          const response = await fetch(`${getApiBase()}/users/public_key`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${user.jwt}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              public_key_pem: keyPair.publicKey,
+            }),
+          });
+
+          if (response.ok) {
+            setIsRegistered(true);
+            toast.success('RSA keys generated and registered successfully!');
+          } else {
+            setIsRegistered(false);
+            const error = await response.text();
+            console.error('Failed to auto-register public key:', error);
+            toast('⚠️ Keys generated but registration failed. Please click "Register Public Key" button.', {
+              icon: '⚠️',
+              duration: 6000,
+            });
+          }
+        } catch (regError) {
+          setIsRegistered(false);
+          console.error('Auto-registration error:', regError);
+          toast('⚠️ Keys generated but registration failed. Please click "Register Public Key" button.', {
+            icon: '⚠️',
+            duration: 6000,
+          });
+        }
+      } else {
+        setIsRegistered(false);
+        toast.success('RSA key pair generated successfully');
+      }
     } catch (error) {
       toast.error('Failed to generate RSA keys');
     } finally {
@@ -206,16 +244,14 @@ export const RSAManager: React.FC<RSAManagerProps> = ({ onClose }) => {
               </div>
 
               <div className="flex flex-wrap gap-3">
-                {!isRegistered && (
-                  <Button
-                    onClick={registerPublicKey}
-                    loading={loading}
-                    leftIcon={<Shield className="w-4 h-4" />}
-                    className="bg-green-500 hover:bg-green-600"
-                  >
-                    Register Public Key
-                  </Button>
-                )}
+                <Button
+                  onClick={registerPublicKey}
+                  loading={loading}
+                  leftIcon={<Shield className="w-4 h-4" />}
+                  className={isRegistered ? "bg-accent-400/20 hover:bg-accent-400/30" : "bg-green-500 hover:bg-green-600"}
+                >
+                  {isRegistered ? 'Re-Register Public Key' : 'Register Public Key'}
+                </Button>
 
                 <Button
                   onClick={downloadKeys}

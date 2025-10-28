@@ -8,7 +8,7 @@ import traceback
 import hashlib
 from typing import Dict, Any, List, Optional, Tuple
 
-from flask import Blueprint, request, abort, send_file
+from flask import Blueprint, request, abort, send_file, current_app
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 
@@ -68,10 +68,19 @@ def _lookup_file(file_id: str) -> Tuple[Dict[str, Any], str]:
     except Exception:
         pass
     candidates.append(file_id)
+    
+    current_app.logger.debug(f"Looking up file_id: {file_id}, candidates: {candidates}")
+    
     for candidate in candidates:
         rec = coll.find_one({"_id": candidate})
         if rec:
+            current_app.logger.debug(f"Found file: {rec.get('original_name')}")
             return rec, _canonical_file_id(rec, file_id)
+    
+    # Additional debug: List all files to see what's in the database
+    all_files = list(coll.find({}))
+    current_app.logger.error(f"File not found. Available files: {[str(f.get('_id')) for f in all_files[:10]]}")
+    
     abort(404, "file not found")
 
 
@@ -179,7 +188,7 @@ def upload_file():  # type: ignore
         anchor_tx = None
 
     record = {
-        "owner": getattr(request, "address"),
+        "owner": getattr(request, "address").lower(),  # Normalize to lowercase
         "original_name": original_name,
         "enc_filename": enc_filename,
         "size": len(data),
@@ -208,7 +217,7 @@ def download_file(file_id: str):  # type: ignore
 
     rec, canonical_id = _lookup_file(file_id)
     owner = rec.get("owner")
-    requester = getattr(request, "address")
+    requester = getattr(request, "address").lower()  # Normalize to lowercase
     if owner != requester:
         share = _shares_collection().find_one({"file_id": canonical_id, "recipient": requester})
         if not share:
@@ -250,11 +259,32 @@ def download_file(file_id: str):  # type: ignore
             except OSError:
                 pass
 
+        # Determine MIME type for inline viewing
+        mimetype = None
+        if inline:
+            filename = rec["original_name"].lower()
+            if filename.endswith('.pdf'):
+                mimetype = 'application/pdf'
+            elif filename.endswith(('.png', '.jpg', '.jpeg')):
+                mimetype = 'image/jpeg' if filename.endswith(('.jpg', '.jpeg')) else 'image/png'
+            elif filename.endswith('.gif'):
+                mimetype = 'image/gif'
+            elif filename.endswith('.webp'):
+                mimetype = 'image/webp'
+            elif filename.endswith('.svg'):
+                mimetype = 'image/svg+xml'
+            elif filename.endswith(('.txt', '.md')):
+                mimetype = 'text/plain; charset=utf-8'
+            elif filename.endswith('.html'):
+                mimetype = 'text/html; charset=utf-8'
+            else:
+                mimetype = 'application/octet-stream'
+        
         return send_file(
             io.BytesIO(data),
             as_attachment=not inline,
             download_name=rec["original_name"],
-            mimetype=None if not inline else "application/octet-stream",
+            mimetype=mimetype,
         )
     except Exception as e:  # unexpected
         # Log stack for diagnostics
@@ -513,9 +543,17 @@ def verify_file(file_id: str):  # type: ignore
 @require_auth
 def share_file(file_id: str):  # type: ignore
     ensure_role(Role.OWNER)
-    owner = getattr(request, "address")
-    file_rec, canonical_id = _lookup_file(file_id)
+    owner = getattr(request, "address").lower()  # Normalize to lowercase
+    current_app.logger.info(f"📤 Share request: file_id={file_id}, owner={owner}")
+    
+    try:
+        file_rec, canonical_id = _lookup_file(file_id)
+    except Exception as e:
+        current_app.logger.error(f"❌ File lookup failed for {file_id}: {str(e)}")
+        abort(404, f"File not found: {file_id}")
+    
     if file_rec.get("owner") != owner:
+        current_app.logger.error(f"❌ Owner mismatch: file owner={file_rec.get('owner')}, requester={owner}")
         abort(403, "only the file owner can share")
 
     data = request.get_json(silent=True) or {}
@@ -695,6 +733,155 @@ def revoke_share(share_id: str):  # type: ignore
         "status": "revoked",
         "share_id": share_id,
     }
+
+
+@bp.post("/<file_id>/zkml-summary", strict_slashes=False)
+@require_auth
+def zkml_summarize_document(file_id: str):  # type: ignore
+    """
+    Generate ZKML-verified summary for a document
+    
+    POST /files/<file_id>/zkml-summary
+    {
+        "key": "encryption_passphrase",
+        "max_length": 150,  // optional
+        "min_length": 30   // optional
+    }
+    
+    Returns:
+    {
+        "summary": "Generated summary text",
+        "proof": {...},  // ZK proof
+        "metadata": {...},  // Inference metadata
+        "verified": true,
+        "file_id": "...",
+        "timestamp": 1234567890
+    }
+    """
+    try:
+        from flask import current_app
+        import json
+        import PyPDF2
+        
+        data = request.get_json()
+        if not data:
+            abort(400, "JSON data required")
+            
+        passphrase = data.get('key')
+        max_length = data.get('max_length', 150)
+        min_length = data.get('min_length', 30)
+        
+        if not passphrase:
+            abort(400, "Encryption key required")
+        
+        # Get file record
+        file_record = _maybe_get_file(file_id)
+        if not file_record:
+            abort(404, "File not found")
+        
+        # Check permissions
+        address = getattr(request, "address").lower()  # Normalize to lowercase
+        if file_record.get('owner') != address:
+            abort(403, "Unauthorized: You don't own this file")
+        
+        current_app.logger.info(f"ZKML summarization requested for file {file_id} by {address}")
+        
+        # Reconstruct encrypted file path (same as download_file does)
+        enc_filename = file_record.get('enc_filename')
+        if not enc_filename:
+            abort(404, f"No enc_filename in file record for file_id: {file_id}")
+        
+        storage_dir = ensure_storage_dir()
+        encrypted_path = storage_dir / enc_filename
+        
+        if not encrypted_path.exists():
+            current_app.logger.error(f"Encrypted file not found at {encrypted_path}")
+            abort(404, f"Encrypted file not found on disk: {enc_filename}")
+        
+        # Decrypt file to temp location
+        tmp_out = storage_dir / f"dec_{int(time.time()*1000)}_{file_record.get('original_name')}"
+        try:
+            crypto_decrypt(encrypted_path, tmp_out, passphrase, file_record.get("aad"))
+        except Exception as e:
+            current_app.logger.error(f"Decryption failed: {str(e)}")
+            abort(400, f"Decryption failed (bad passphrase or corrupted data): {str(e)}")
+        
+        # Read decrypted content
+        try:
+            with open(tmp_out, 'rb') as fh:
+                decrypted_content = fh.read()
+        except Exception as e:
+            current_app.logger.error(f"Failed to read decrypted file: {str(e)}")
+            abort(500, f"Failed to read decrypted file: {str(e)}")
+        finally:
+            # Clean up temp file
+            try:
+                if tmp_out.exists():
+                    os.remove(tmp_out)
+            except OSError:
+                pass
+        
+        # Convert to text based on file type
+        filename = file_record.get('original_name', '')
+        text_content = ""
+        
+        if filename.lower().endswith('.pdf'):
+            try:
+                pdf_reader = PyPDF2.PdfReader(io.BytesIO(decrypted_content))
+                text_content = '\n'.join([page.extract_text() for page in pdf_reader.pages])
+            except Exception as e:
+                current_app.logger.error(f"PDF extraction failed: {str(e)}")
+                abort(400, f"Failed to extract text from PDF: {str(e)}")
+        elif filename.lower().endswith(('.txt', '.md')):
+            try:
+                text_content = decrypted_content.decode('utf-8')
+            except UnicodeDecodeError:
+                text_content = decrypted_content.decode('utf-8', errors='ignore')
+        else:
+            abort(400, f"Unsupported file type: {filename}")
+        
+        if not text_content.strip():
+            abort(400, "No text content found in document")
+        
+        current_app.logger.info(f"Extracted {len(text_content)} characters from {filename}")
+        
+        # Run ZKML inference
+        try:
+            from ..core.zkml_inference import get_zkml_summarizer
+            summarizer = get_zkml_summarizer()
+            
+            summary, metadata = summarizer.run_inference(
+                text_content, 
+                max_length=max_length, 
+                min_length=min_length
+            )
+            
+            proof = summarizer.generate_zk_proof(text_content, summary, metadata)
+            verified = summarizer.verify_inference(text_content, summary, proof)
+            
+            current_app.logger.info(f"ZKML summary generated: {len(summary)} chars, verified: {verified}")
+            
+        except Exception as e:
+            current_app.logger.error(f"ZKML inference failed: {str(e)}")
+            abort(500, f"ZKML inference failed: {str(e)}")
+        
+        # Return results
+        response = {
+            "summary": summary,
+            "proof": proof,
+            "metadata": metadata,
+            "verified": verified,
+            "file_id": file_id,
+            "filename": filename,
+            "timestamp": metadata['timestamp']
+        }
+        
+        return response, 200
+        
+    except Exception as e:
+        current_app.logger.error(f'ZKML summary error: {str(e)}')
+        current_app.logger.error(traceback.format_exc())
+        abort(500, f"Internal server error: {str(e)}")
 
 
 # ---------------------- On-chain File Access (off-chain index) ----------------------

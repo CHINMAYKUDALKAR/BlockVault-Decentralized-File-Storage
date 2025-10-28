@@ -126,23 +126,23 @@ export const FileList: React.FC<FileListProps> = ({
   const getFileTypeColor = (fileName: string) => {
     const ext = fileName.split('.').pop()?.toLowerCase();
     if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'].includes(ext || '')) return 'from-pink-500 to-rose-500';
-    if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv'].includes(ext || '')) return 'from-purple-500 to-indigo-500';
+    if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv'].includes(ext || '')) return 'from-primary-500 to-indigo-500';
     if (['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'].includes(ext || '')) return 'from-green-500 to-emerald-500';
     if (['pdf', 'txt', 'md', 'doc', 'docx', 'rtf'].includes(ext || '')) return 'from-blue-500 to-cyan-500';
     if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext || '')) return 'from-orange-500 to-yellow-500';
-    return 'from-slate-500 to-slate-600';
+    return 'from-secondary-500 to-secondary-600';
   };
 
   if (type === 'shares') {
     return (
       <div className="space-y-4">
         {(shares || []).length === 0 ? (
-          <Card className="text-center py-16 bg-slate-800/30 backdrop-blur-sm border-slate-700/50">
-            <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Card className="text-center py-16 bg-slate-800/30 backdrop-blur-sm border-secondary-700/50">
+            <div className="w-20 h-20 bg-gradient-to-r from-primary-500 to-accent-400 rounded-full flex items-center justify-center mx-auto mb-6">
               <Share2 className="w-10 h-10 text-white" />
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">No Shares Yet</h3>
-            <p className="text-slate-400 max-w-md mx-auto">Files you share with others will appear here. Start sharing to see your active shares.</p>
+            <p className="text-text-secondary max-w-md mx-auto">Files you share with others will appear here. Start sharing to see your active shares.</p>
           </Card>
         ) : (
           <div className={`grid gap-4 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
@@ -153,30 +153,30 @@ export const FileList: React.FC<FileListProps> = ({
               const createdAt = share?.created_at || new Date().toISOString();
               
               return (
-                <Card key={shareId} className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50 hover:bg-slate-800/70 transition-all duration-200 group">
-                  <div className="p-4">
+                <Card key={shareId} variant="premium" className="group">
+                  <div>
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center space-x-3">
                         <div className={`w-12 h-12 bg-gradient-to-r ${getFileTypeColor(fileName)} rounded-lg flex items-center justify-center`}>
                           <span className="text-xl">{getFileIcon(fileName)}</span>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-medium text-white truncate">{fileName}</h3>
-                          <p className="text-sm text-slate-400">Shared with</p>
+                          <h3 className="font-semibold text-text-primary truncate">{fileName}</h3>
+                          <p className="text-sm text-text-secondary">Shared with</p>
                         </div>
                       </div>
                       <div className="relative">
                         <button
                           onClick={() => setShowActionsMenu(showActionsMenu === shareId ? null : shareId)}
-                          className="p-1 text-slate-400 hover:text-white transition-colors"
+                          className="p-1 text-text-secondary hover:text-text-primary transition-colors"
                         >
                           <MoreVertical className="w-4 h-4" />
                         </button>
                         {showActionsMenu === shareId && (
-                          <div className="absolute right-0 top-8 bg-slate-700 rounded-lg shadow-lg border border-slate-600 py-1 z-10">
+                          <div className="absolute right-0 top-8 bg-secondary-700 rounded-lg shadow-lg border border-secondary-600 py-1 z-10">
                             <button
                               onClick={() => handleRevokeShare(shareId)}
-                              className="w-full px-3 py-2 text-left text-red-400 hover:bg-slate-600 transition-colors text-sm"
+                              className="w-full px-3 py-2 text-left text-red-400 hover:bg-secondary-600 transition-colors text-sm"
                             >
                               Revoke Share
                             </button>
@@ -185,11 +185,11 @@ export const FileList: React.FC<FileListProps> = ({
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <div className="flex items-center space-x-2 text-sm text-slate-400">
+                      <div className="flex items-center space-x-2 text-sm text-text-secondary">
                         <User className="w-3 h-3" />
                         <span className="truncate">{sharedWith && typeof sharedWith === 'string' ? `${sharedWith.slice(0, 6)}...${sharedWith.slice(-4)}` : 'Unknown'}</span>
                       </div>
-                      <div className="flex items-center space-x-2 text-sm text-slate-400">
+                      <div className="flex items-center space-x-2 text-sm text-text-secondary">
                         <Clock className="w-3 h-3" />
                         <span>{formatDate(createdAt)}</span>
                       </div>
@@ -207,14 +207,14 @@ export const FileList: React.FC<FileListProps> = ({
   return (
     <div className="space-y-4">
       {(files || []).length === 0 ? (
-        <Card className="text-center py-16 bg-slate-800/30 backdrop-blur-sm border-slate-700/50">
-          <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+        <Card className="text-center py-16 bg-slate-800/30 backdrop-blur-sm border-secondary-700/50">
+          <div className="w-20 h-20 bg-gradient-to-r from-primary-500 to-accent-400 rounded-full flex items-center justify-center mx-auto mb-6">
             <File className="w-10 h-10 text-white" />
           </div>
           <h3 className="text-xl font-semibold text-white mb-2">
             {type === 'my-files' ? 'No Files Yet' : 'No Shared Files'}
           </h3>
-          <p className="text-slate-400 max-w-md mx-auto">
+          <p className="text-text-secondary max-w-md mx-auto">
             {type === 'my-files' 
               ? 'Upload your first file to get started with secure, encrypted storage.' 
               : 'Files shared with you will appear here.'
@@ -231,7 +231,7 @@ export const FileList: React.FC<FileListProps> = ({
             const folder = file?.folder;
             
             return (
-              <Card key={fileId} className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50 hover:bg-slate-800/70 transition-all duration-200 group">
+              <Card key={fileId} className="variant='premium' hover:bg-slate-800/70 transition-all duration-200 group">
                 <div className="p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center space-x-3 flex-1 min-w-0">
@@ -240,21 +240,21 @@ export const FileList: React.FC<FileListProps> = ({
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="font-medium text-white truncate">{fileName}</h3>
-                        <p className="text-sm text-slate-400">{formatFileSize(fileSize)}</p>
+                        <p className="text-sm text-text-secondary">{formatFileSize(fileSize)}</p>
                       </div>
                     </div>
                     <div className="relative flex-shrink-0">
                       <button
                         onClick={() => setShowActionsMenu(showActionsMenu === fileId ? null : fileId)}
-                        className="p-1 text-slate-400 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
+                        className="p-1 text-text-secondary hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100"
                       >
                         <MoreVertical className="w-4 h-4" />
                       </button>
                       {showActionsMenu === fileId && (
-                        <div className="absolute right-0 top-8 bg-slate-700 rounded-lg shadow-lg border border-slate-600 py-1 z-10 min-w-32">
+                        <div className="absolute right-0 top-8 bg-secondary-700 rounded-lg shadow-lg border border-secondary-600 py-1 z-10 min-w-32">
                           <button
                             onClick={() => handleDownload(fileId, file)}
-                            className="w-full px-3 py-2 text-left text-slate-300 hover:bg-slate-600 transition-colors text-sm flex items-center space-x-2"
+                            className="w-full px-3 py-2 text-left text-text-primary hover:bg-secondary-600 transition-colors text-sm flex items-center space-x-2"
                           >
                             <Download className="w-3 h-3" />
                             <span>Download</span>
@@ -262,7 +262,7 @@ export const FileList: React.FC<FileListProps> = ({
                           {type === 'my-files' && onShare && (
                             <button
                               onClick={() => onShare(fileId)}
-                              className="w-full px-3 py-2 text-left text-slate-300 hover:bg-slate-600 transition-colors text-sm flex items-center space-x-2"
+                              className="w-full px-3 py-2 text-left text-text-primary hover:bg-secondary-600 transition-colors text-sm flex items-center space-x-2"
                             >
                               <Share2 className="w-3 h-3" />
                               <span>Share</span>
@@ -271,7 +271,7 @@ export const FileList: React.FC<FileListProps> = ({
                           {type === 'my-files' && (
                             <button
                               onClick={() => handleDelete(fileId)}
-                              className="w-full px-3 py-2 text-left text-red-400 hover:bg-slate-600 transition-colors text-sm flex items-center space-x-2"
+                              className="w-full px-3 py-2 text-left text-red-400 hover:bg-secondary-600 transition-colors text-sm flex items-center space-x-2"
                             >
                               <Trash2 className="w-3 h-3" />
                               <span>Delete</span>
@@ -283,7 +283,7 @@ export const FileList: React.FC<FileListProps> = ({
                   </div>
                   
                   <div className="space-y-2">
-                    <div className="flex items-center space-x-2 text-sm text-slate-400">
+                    <div className="flex items-center space-x-2 text-sm text-text-secondary">
                       <Calendar className="w-3 h-3" />
                       <span>{formatDate(createdAt)}</span>
                     </div>
@@ -296,7 +296,7 @@ export const FileList: React.FC<FileListProps> = ({
                   </div>
 
                   {/* Quick Actions */}
-                  <div className="flex items-center space-x-2 mt-4 pt-3 border-t border-slate-700/50">
+                  <div className="flex items-center space-x-2 mt-4 pt-3 border-t border-secondary-700/50">
                     <Button
                       onClick={() => handleDownload(fileId, file)}
                       variant="outline"
@@ -328,25 +328,25 @@ export const FileList: React.FC<FileListProps> = ({
       {/* Passphrase Modal */}
       {showPassphraseModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md bg-slate-800/90 backdrop-blur-lg border-slate-700/50">
+          <Card className="w-full max-w-md bg-slate-800/90 backdrop-blur-lg border-secondary-700/50">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-accent-400 rounded-lg flex items-center justify-center">
                   <Lock className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">Enter Passphrase</h3>
-                  <p className="text-sm text-slate-400">Decrypt and download file</p>
+                  <p className="text-sm text-text-secondary">Decrypt and download file</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowPassphraseModal(false)}
-                className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-700/50"
+                className="p-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-secondary-700/50"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <p className="text-slate-400 mb-4">
+            <p className="text-text-secondary mb-4">
               Enter the passphrase used to encrypt this file.
             </p>
             <input
@@ -354,7 +354,7 @@ export const FileList: React.FC<FileListProps> = ({
               placeholder="Enter passphrase"
               value={passphrase}
               onChange={(e) => setPassphrase(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 mb-4"
+              className="w-full px-4 py-3 bg-secondary-700/50 border border-secondary-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 mb-4"
               autoFocus
             />
             <div className="flex space-x-3">
@@ -368,7 +368,7 @@ export const FileList: React.FC<FileListProps> = ({
               <Button
                 onClick={confirmDownload}
                 disabled={!passphrase}
-                className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                className="flex-1 bg-gradient-to-r from-primary-500 to-accent-400 hover:from-primary-600 hover:to-accent-500"
               >
                 Download
               </Button>

@@ -36,7 +36,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Start with true to prevent redirect during restoration
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -55,21 +55,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Check for existing session on mount and validate token
   useEffect(() => {
-    const savedUser = localStorage.getItem('blockvault_user');
-    if (savedUser) {
-      try {
-        const parsedUser = JSON.parse(savedUser);
-        setUser(parsedUser);
-        
-        // Validate token by making a test request
-        if (parsedUser.jwt) {
-          validateToken(parsedUser.jwt);
+    const restoreSession = async () => {
+      const savedUser = localStorage.getItem('blockvault_user');
+      if (savedUser) {
+        try {
+          const parsedUser = JSON.parse(savedUser);
+          setUser(parsedUser);
+          
+          // Validate token by making a test request
+          if (parsedUser.jwt) {
+            await validateToken(parsedUser.jwt);
+          }
+        } catch (error) {
+          console.error('Failed to parse saved user:', error);
+          localStorage.removeItem('blockvault_user');
         }
-      } catch (error) {
-        console.error('Failed to parse saved user:', error);
-        localStorage.removeItem('blockvault_user');
       }
-    }
+      // Set loading to false after restoration attempt completes
+      setLoading(false);
+    };
+
+    restoreSession();
   }, []);
 
   // Validate JWT token by making a test request
