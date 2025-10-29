@@ -2,10 +2,10 @@
 > blockvault-frontend@1.0.0 start
 > react-scripts start
 
-(node:40297) [DEP0176] DeprecationWarning: fs.F_OK is deprecated, use fs.constants.F_OK instead
+(node:53449) [DEP0176] DeprecationWarning: fs.F_OK is deprecated, use fs.constants.F_OK instead
 (Use `node --trace-deprecation ...` to show where the warning was created)
-(node:40297) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
-(node:40297) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+(node:53449) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+(node:53449) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
 Starting the development server...
 
 Compiled successfully!
@@ -13,12 +13,30 @@ Compiled successfully!
 You can now view blockvault-frontend in the browser.
 
   Local:            http://localhost:3000
-  On Your Network:  http://192.168.29.238:3000
+  On Your Network:  http://10.34.1.229:3000
 
 Note that the development build is not optimized.
 To create a production build, use npm run build.
 
 webpack compiled successfully
-Files successfully emitted, waiting for typecheck results...
-Issues checking in progress...
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled successfully
+Compiling...
+No issues found.
+Compiled with warnings.
+
+[eslint] 
+src/components/legal/SignatureRequests.tsx
+  Line 10:3:  'X' is defined but never used  @typescript-eslint/no-unused-vars
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in [eslint] 
+src/components/legal/SignatureRequests.tsx
+  Line 10:3:  'X' is defined but never used  @typescript-eslint/no-unused-vars
+
+webpack compiled with 1 warning
 No issues found.

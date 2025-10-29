@@ -1,36 +1,357 @@
+/Users/chinmaykudalkar/Desktop/BlockVault/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
  * Serving Flask app 'blockvault'
  * Debug mode: on
 [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:5000
- * Running on http://192.168.29.238:5000
+ * Running on http://10.34.1.229:5000
 [33mPress CTRL+C to quit[0m
  * Restarting with stat
+/Users/chinmaykudalkar/Desktop/BlockVault/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
  * Debugger is active!
- * Debugger PIN: 127-589-208
-127.0.0.1 - - [25/Oct/2025 00:48:46] "OPTIONS /auth/get_nonce HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:48:46] "POST /auth/get_nonce HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:48:55] "OPTIONS /auth/get_nonce HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:48:55] "POST /auth/get_nonce HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /files/ HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /files/shared HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /files/shares/outgoing HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /users/profile HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /files/ HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /files/shared HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /files/shares/outgoing HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "OPTIONS /users/profile HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /files/ HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /files/shared HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /files/shares/outgoing HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /users/profile HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /files/ HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /files/shared HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /files/shares/outgoing HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:07] "GET /users/profile HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:22] "OPTIONS /auth/get_nonce HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:22] "POST /auth/get_nonce HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:25] "OPTIONS /auth/login HTTP/1.1" 200 -
-127.0.0.1 - - [25/Oct/2025 00:49:25] "POST /auth/login HTTP/1.1" 200 -
-/opt/homebrew/Cellar/python@3.11/3.11.13/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
-  warnings.warn('resource_tracker: There appear to be %d '
+ * Debugger PIN: 107-538-351
+127.0.0.1 - - [29/Oct/2025 11:42:10] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:42:39] "OPTIONS /auth/get_nonce HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:42:40] "POST /auth/get_nonce HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:42:50] "OPTIONS /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:42:50] "POST /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:42:58] "OPTIONS /auth/get_nonce HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:42:58] "POST /auth/get_nonce HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:03] "OPTIONS /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:03] "POST /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:07] "OPTIONS /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:07] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:07] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:13] "OPTIONS /files/1761683818438_1 HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:13] "[33mDELETE /files/1761683818438_1 HTTP/1.1[0m" 404 -
+127.0.0.1 - - [29/Oct/2025 11:43:15] "OPTIONS /files/1761705344314_1 HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:15] "[33mDELETE /files/1761705344314_1 HTTP/1.1[0m" 404 -
+127.0.0.1 - - [29/Oct/2025 11:43:17] "OPTIONS /files/1761705427999_2 HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:17] "[33mDELETE /files/1761705427999_2 HTTP/1.1[0m" 404 -
+127.0.0.1 - - [29/Oct/2025 11:43:19] "OPTIONS /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:19] "OPTIONS /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:19] "OPTIONS /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:19] "OPTIONS /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:19] "GET /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:19] "GET /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:19] "GET /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:19] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:19] "GET /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:19] "GET /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:19] "GET /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:19] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:19] "OPTIONS /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:19] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:19] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:22] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:22] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:22] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:25] "OPTIONS /signature-requests/sig_req_1761705359735_ztglx5tul/status HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:25] "[33mPOST /signature-requests/sig_req_1761705359735_ztglx5tul/status HTTP/1.1[0m" 404 -
+127.0.0.1 - - [29/Oct/2025 11:43:25] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:26] "OPTIONS /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:26] "OPTIONS /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:26] "OPTIONS /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:26] "OPTIONS /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:26] "GET /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:26] "GET /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:26] "GET /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:26] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:26] "GET /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:26] "GET /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:26] "GET /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:26] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:26] "OPTIONS /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:26] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:26] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:28] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:28] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:28] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:29] "OPTIONS /signature-requests-sent?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:29] "GET /signature-requests-sent?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:29] "GET /signature-requests-sent?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:34] "GET /signature-requests-sent?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:39] "OPTIONS /signature-requests-sent?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:39] "GET /signature-requests-sent?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:42] "GET /signature-requests-sent?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:46] "OPTIONS /signature-requests-sent?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:46] "GET /signature-requests-sent?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:46] "GET /signature-requests-sent?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:47] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:47] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:47] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:52] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:57] "OPTIONS /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:57] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:57] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:57] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:57] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:58] "OPTIONS /users/public_key HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:43:58] "POST /users/public_key HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:01] "OPTIONS /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:01] "OPTIONS /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:01] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:01] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:02] "OPTIONS /users/public_key HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:02] "POST /users/public_key HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:03] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:03] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:09] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:09] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:14] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:14] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:16] "OPTIONS /files/ HTTP/1.1" 200 -
+IPFS add failed: HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/v0/add?pin=true (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10e19c460>: Failed to establish a new connection: [Errno 61] Connection refused'))
+127.0.0.1 - - [29/Oct/2025 11:44:16] "POST /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:16] "OPTIONS /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:16] "GET /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:19] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:19] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:24] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:24] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:29] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:29] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:34] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:34] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:39] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:45] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:45] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:46] "OPTIONS /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:46] "OPTIONS /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:46] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:46] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:51] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:51] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:51] "OPTIONS /files/1761718456207_0/share HTTP/1.1" 200 -
+[2025-10-29 11:44:51,403] INFO in files: 📤 Share request: file_id=1761718456207_0, owner=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a
+[2025-10-29 11:44:51,404] DEBUG in files: Looking up file_id: 1761718456207_0, candidates: ['1761718456207_0']
+[2025-10-29 11:44:51,404] DEBUG in files: Found file: COMMERCIAL LEASE AGREEMENT.docx
+127.0.0.1 - - [29/Oct/2025 11:44:51] "POST /files/1761718456207_0/share HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:51] "OPTIONS /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:51] "GET /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:54] "OPTIONS /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:54] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:54] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:59] "OPTIONS /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:44:59] "GET /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:45:05] "OPTIONS /files/1761718456207_0?key=1234 HTTP/1.1" 200 -
+[2025-10-29 11:45:05,661] DEBUG in files: Looking up file_id: 1761718456207_0, candidates: ['1761718456207_0']
+[2025-10-29 11:45:05,661] DEBUG in files: Found file: COMMERCIAL LEASE AGREEMENT.docx
+127.0.0.1 - - [29/Oct/2025 11:45:05] "GET /files/1761718456207_0?key=1234 HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:45:27] "OPTIONS /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:45:27] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:45:27] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:45:53] "OPTIONS /files/ HTTP/1.1" 200 -
+[2025-10-29 11:45:53,262] WARNING in ipfs: IPFS add failed: HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/v0/add?pin=true (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10e19c100>: Failed to establish a new connection: [Errno 61] Connection refused'))
+127.0.0.1 - - [29/Oct/2025 11:45:53] "POST /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:45:53] "GET /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:21] "OPTIONS /files/1761718553263_1/share HTTP/1.1" 200 -
+[2025-10-29 11:46:21,833] INFO in files: 📤 Share request: file_id=1761718553263_1, owner=0x63c5ddeebebba52208de0192f6947115cf22766d
+[2025-10-29 11:46:21,833] DEBUG in files: Looking up file_id: 1761718553263_1, candidates: ['1761718553263_1']
+[2025-10-29 11:46:21,833] DEBUG in files: Found file: sample_legal_doc.txt
+127.0.0.1 - - [29/Oct/2025 11:46:21] "POST /files/1761718553263_1/share HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:21] "OPTIONS /documents/1761718553263_1/request-signature HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:21] "[35m[1mPOST /documents/1761718553263_1/request-signature HTTP/1.1[0m" 201 -
+127.0.0.1 - - [29/Oct/2025 11:46:27] "OPTIONS /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:27] "OPTIONS /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:27] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:27] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:29] "OPTIONS /signature-requests?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:29] "OPTIONS /signature-requests?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:29] "GET /signature-requests?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:29] "GET /signature-requests?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:33] "OPTIONS /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:33] "GET /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:33] "OPTIONS /files/1761718553263_1?key=1234 HTTP/1.1" 200 -
+[2025-10-29 11:46:33,995] DEBUG in files: Looking up file_id: 1761718553263_1, candidates: ['1761718553263_1']
+[2025-10-29 11:46:33,995] DEBUG in files: Found file: sample_legal_doc.txt
+127.0.0.1 - - [29/Oct/2025 11:46:34] "GET /files/1761718553263_1?key=1234 HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:34] "GET /signature-requests?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:39] "OPTIONS /signature-requests?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:39] "GET /signature-requests?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:42] "OPTIONS /documents/1761718553263_1/sign HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:42] "[35m[1mPOST /documents/1761718553263_1/sign HTTP/1.1[0m" 201 -
+127.0.0.1 - - [29/Oct/2025 11:46:42] "OPTIONS /signature-requests/23b60637-beea-4be3-b309-3bebdf143b3b/status HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:42] "POST /signature-requests/23b60637-beea-4be3-b309-3bebdf143b3b/status HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:43] "GET /signature-requests?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:44] "GET /signature-requests?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:45] "OPTIONS /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:45] "OPTIONS /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:45] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:46:45] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:47:15] "OPTIONS /files/1761683173562_0/zkml-summary HTTP/1.1" 200 -
+[2025-10-29 11:47:15,797] ERROR in files: ZKML summary error: 404 Not Found: File not found
+[2025-10-29 11:47:15,801] ERROR in files: Traceback (most recent call last):
+  File "/Users/chinmaykudalkar/Desktop/BlockVault/blockvault/api/files.py", line 780, in zkml_summarize_document
+    abort(404, "File not found")
+  File "/Users/chinmaykudalkar/Desktop/BlockVault/venv/lib/python3.9/site-packages/flask/helpers.py", line 291, in abort
+    current_app.aborter(code, *args, **kwargs)
+  File "/Users/chinmaykudalkar/Desktop/BlockVault/venv/lib/python3.9/site-packages/werkzeug/exceptions.py", line 876, in __call__
+    raise self.mapping[code](*args, **kwargs)
+werkzeug.exceptions.NotFound: 404 Not Found: File not found
+
+127.0.0.1 - - [29/Oct/2025 11:47:15] "[35m[1mPOST /files/1761683173562_0/zkml-summary HTTP/1.1[0m" 500 -
+127.0.0.1 - - [29/Oct/2025 11:48:05] "OPTIONS /files/1761718553263_1/zkml-summary HTTP/1.1" 200 -
+[2025-10-29 11:48:05,494] INFO in files: ZKML summarization requested for file 1761718553263_1 by 0x63c5ddeebebba52208de0192f6947115cf22766d
+[2025-10-29 11:48:05,553] INFO in files: Extracted 28222 characters from sample_legal_doc.txt
+[2025-10-29 11:48:08,784] INFO in zkml_inference: Loading ZKML model from /Users/chinmaykudalkar/Desktop/BlockVault/models/bart-large-cnn
+[2025-10-29 11:48:14,902] INFO in zkml_inference: ✅ ZKML Model loaded successfully. Hash: 2ac2745c02ac987d...
+[2025-10-29 11:48:25,775] INFO in zkml_inference: ✅ Generated summary: 289 chars
+[2025-10-29 11:48:25,789] INFO in zkml_inference: ✅ Generated ZK proof
+[2025-10-29 11:48:25,789] INFO in zkml_inference: ZK verification result: True
+[2025-10-29 11:48:25,791] INFO in files: ZKML summary generated: 289 chars, verified: True
+127.0.0.1 - - [29/Oct/2025 11:48:25] "POST /files/1761718553263_1/zkml-summary HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:48:48] "OPTIONS /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:48:48] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:48:48] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:54:59] "OPTIONS /files/ HTTP/1.1" 200 -
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+[2025-10-29 11:54:59,237] WARNING in ipfs: IPFS add failed: HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/v0/add?pin=true (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x11a8892b0>: Failed to establish a new connection: [Errno 61] Connection refused'))
+127.0.0.1 - - [29/Oct/2025 11:54:59] "POST /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:55:31] "OPTIONS /auth/get_nonce HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:55:31] "POST /auth/get_nonce HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:55:36] "OPTIONS /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:55:36] "POST /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:55:44] "OPTIONS /auth/get_nonce HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:55:44] "POST /auth/get_nonce HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:55:50] "OPTIONS /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:55:50] "POST /auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:24] "OPTIONS /files/ HTTP/1.1" 200 -
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+[2025-10-29 11:56:24,495] WARNING in ipfs: IPFS add failed: HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/v0/add?pin=true (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x11a8b9a90>: Failed to establish a new connection: [Errno 61] Connection refused'))
+127.0.0.1 - - [29/Oct/2025 11:56:24] "POST /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:24] "OPTIONS /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:24] "GET /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:27] "OPTIONS /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:27] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:27] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:34] "OPTIONS /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:34] "OPTIONS /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:34] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:34] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:42] "OPTIONS /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:42] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:42] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:55] "OPTIONS /files/1761719184495_3/share HTTP/1.1" 200 -
+[2025-10-29 11:56:55,587] INFO in files: 📤 Share request: file_id=1761719184495_3, owner=0x63c5ddeebebba52208de0192f6947115cf22766d
+[2025-10-29 11:56:55,589] DEBUG in files: Looking up file_id: 1761719184495_3, candidates: ['1761719184495_3']
+[2025-10-29 11:56:55,589] DEBUG in files: Found file: COMMERCIAL LEASE AGREEMENT-1-1.pdf
+127.0.0.1 - - [29/Oct/2025 11:56:55] "POST /files/1761719184495_3/share HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:55] "OPTIONS /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:56:55] "GET /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "OPTIONS /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "OPTIONS /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "OPTIONS /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "OPTIONS /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "OPTIONS /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "OPTIONS /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "OPTIONS /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "OPTIONS /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "GET /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "GET /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "GET /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "GET /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "GET /files/shares/outgoing HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "GET /files/shared HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:05] "GET /users/profile HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:15] "OPTIONS /files/1761719184495_3?key=1234 HTTP/1.1" 200 -
+[2025-10-29 11:57:15,237] DEBUG in files: Looking up file_id: 1761719184495_3, candidates: ['1761719184495_3']
+[2025-10-29 11:57:15,237] DEBUG in files: Found file: COMMERCIAL LEASE AGREEMENT-1-1.pdf
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+127.0.0.1 - - [29/Oct/2025 11:57:15] "GET /files/1761719184495_3?key=1234 HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:21] "OPTIONS /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:21] "OPTIONS /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:21] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:57:21] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:59:40] "OPTIONS /files/ HTTP/1.1" 200 -
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+[2025-10-29 11:59:40,423] WARNING in ipfs: IPFS add failed: HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/v0/add?pin=true (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x11a8c4340>: Failed to establish a new connection: [Errno 61] Connection refused'))
+127.0.0.1 - - [29/Oct/2025 11:59:40] "POST /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:59:40] "GET /files/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:59:57] "OPTIONS /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:59:57] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 11:59:57] "GET /cases HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:11] "OPTIONS /files/1761719380423_4/share HTTP/1.1" 200 -
+[2025-10-29 12:00:11,789] INFO in files: 📤 Share request: file_id=1761719380423_4, owner=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a
+[2025-10-29 12:00:11,789] DEBUG in files: Looking up file_id: 1761719380423_4, candidates: ['1761719380423_4']
+[2025-10-29 12:00:11,790] DEBUG in files: Found file: sample_legal_doc.txt
+127.0.0.1 - - [29/Oct/2025 12:00:11] "POST /files/1761719380423_4/share HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:11] "OPTIONS /documents/1761719380423_4/request-signature HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:11] "[35m[1mPOST /documents/1761719380423_4/request-signature HTTP/1.1[0m" 201 -
+127.0.0.1 - - [29/Oct/2025 12:00:14] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:14] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:14] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:19] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:24] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:24] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:28] "OPTIONS /documents/1761719380423_4/sign HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:28] "[35m[1mPOST /documents/1761719380423_4/sign HTTP/1.1[0m" 201 -
+127.0.0.1 - - [29/Oct/2025 12:00:28] "OPTIONS /signature-requests/d3df1b3b-762f-42a3-ae8b-29f15ccf53c6/status HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:28] "POST /signature-requests/d3df1b3b-762f-42a3-ae8b-29f15ccf53c6/status HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:28] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:30] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:30] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:33] "OPTIONS /signature-requests?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:33] "OPTIONS /signature-requests?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:33] "GET /signature-requests?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:33] "GET /signature-requests?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:33] "OPTIONS /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:33] "OPTIONS /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:33] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:33] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:35] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:39] "OPTIONS /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:39] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:40] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:40] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:44] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:45] "OPTIONS /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:45] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:49] "OPTIONS /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:49] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:50] "GET /signature-requests?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:52] "OPTIONS /signature-requests-sent?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:52] "GET /signature-requests-sent?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:52] "GET /signature-requests-sent?user_address=0x63c5ddeebebba52208de0192f6947115cf22766d HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:54] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:59] "OPTIONS /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:00:59] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:01:04] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:01:09] "OPTIONS /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:01:09] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:01:14] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:01:19] "OPTIONS /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:01:19] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:01:24] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:01:29] "OPTIONS /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:01:29] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:01:34] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:02:06] "OPTIONS /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:02:06] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:03:06] "OPTIONS /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:03:06] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:04:06] "OPTIONS /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:04:06] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:05:06] "OPTIONS /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:05:06] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:06:06] "OPTIONS /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:06:06] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:07:06] "OPTIONS /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:07:06] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:13:06] "OPTIONS /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -
+127.0.0.1 - - [29/Oct/2025 12:13:06] "GET /signature-requests-sent?user_address=0xe9473bd7aa861ca1cc145cedd75a6dbf9928ae3a HTTP/1.1" 200 -

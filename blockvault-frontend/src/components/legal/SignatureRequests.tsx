@@ -142,6 +142,22 @@ export const SignatureRequests: React.FC = () => {
       } catch (err) {
         console.warn('⚠️ Could not notify server of signing action:', err);
       }
+
+      // Also update the signature request status directly (by request id) so the sender's sent-list updates reliably
+      try {
+        const resp2 = await fetch(`${getApiBase()}/signature-requests/${requestId}/status`, {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({ status: 'signed', signer: user?.address || '' })
+        });
+        if (!resp2.ok) {
+          console.warn('⚠️ Server signature-requests status update returned non-OK', await resp2.text());
+        } else {
+          console.log('📡 Signature request status updated on server');
+        }
+      } catch (err) {
+        console.warn('⚠️ Could not update signature request status on server:', err);
+      }
       
       // Update local state immediately to show signed status
       setSignatureRequests(prev => {

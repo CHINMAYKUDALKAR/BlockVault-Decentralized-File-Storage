@@ -58,25 +58,21 @@ export class ZKCircuitManager {
    * @returns ZK proof and public signals
    */
   async generateIntegrityProof(fileData: Uint8Array, fileHash: string): Promise<{proof: ZKProof, publicSignals: string[]}> {
-    try {
-      // Prepare circuit inputs
-      const circuitInputs = {
-        file_chunks: this.chunkDataForCircuit(fileData, 2),
-        file_hash: fileHash
-      };
-
-      // Generate proof using snarkjs
-      const { proof, publicSignals } = await groth16.fullProve(
-        circuitInputs,
-        '/circuits/integrity.wasm',
-        '/circuits/integrity_final.zkey'
-      );
-
-      return { proof, publicSignals };
-    } catch (error) {
-      console.error('Error generating integrity proof:', error);
-      throw new Error('Failed to generate integrity proof');
-    }
+    // Fast mock version for demos (instant instead of actual ZK computation)
+    await new Promise(resolve => setTimeout(resolve, 100)); // Minimal delay for UI feedback
+    
+    const proof: ZKProof = {
+      pi_a: ["1", "2", "3"],
+      pi_b: [["4", "5"], ["6", "7"], ["8", "9"]],
+      pi_c: ["10", "11", "12"],
+      protocol: "groth16",
+      curve: "bn128"
+    };
+    
+    const publicSignals = [fileHash.slice(0, 16)];
+    
+    console.log('⚡ Fast integrity proof generated (demo mode)');
+    return { proof, publicSignals };
   }
 
   /**
@@ -112,6 +108,33 @@ export class ZKCircuitManager {
       console.error('Error generating ZKPT proof:', error);
       throw new Error('Failed to generate ZKPT proof');
     }
+  }
+
+  /**
+   * Generate ZKPT proof (FAST version for demos - no actual ZK computation)
+   * @param originalHash The hash of the original document
+   * @param transformedHash The hash of the transformed document
+   * @returns Mock ZK proof and public signals (instant)
+   */
+  async generateZKPTProofFast(
+    originalHash: string,
+    transformedHash: string
+  ): Promise<{proof: ZKProof, publicSignals: string[]}> {
+    // Instant mock proof generation for demos
+    await new Promise(resolve => setTimeout(resolve, 50)); // Minimal delay for UI feedback
+    
+    const proof: ZKProof = {
+      pi_a: ["1", "2", "3"],
+      pi_b: [["4", "5"], ["6", "7"], ["8", "9"]],
+      pi_c: ["10", "11", "12"],
+      protocol: "groth16",
+      curve: "bn128"
+    };
+    
+    const publicSignals = [originalHash.slice(0, 16), transformedHash.slice(0, 16)];
+    
+    console.log('⚡ Fast ZKPT proof generated (demo mode)');
+    return { proof, publicSignals };
   }
 
   /**
@@ -159,20 +182,13 @@ export class ZKCircuitManager {
     c: [string, string];
     publicInputs: string[];
   }> {
-    try {
-      const calldata = await groth16.exportSolidityCallData(proof, publicSignals);
-      const argv = JSON.parse(`[${calldata}]`);
-      
-      return {
-        a: argv[0],
-        b: argv[1],
-        c: argv[2],
-        publicInputs: argv[3]
-      };
-    } catch (error) {
-      console.error('Error formatting proof for contract:', error);
-      throw new Error('Failed to format proof for contract');
-    }
+    // Fast mock version for demos (instant)
+    return {
+      a: [proof.pi_a[0], proof.pi_a[1]],
+      b: [[proof.pi_b[0][0], proof.pi_b[0][1]], [proof.pi_b[1][0], proof.pi_b[1][1]]],
+      c: [proof.pi_c[0], proof.pi_c[1]],
+      publicInputs: publicSignals
+    };
   }
 
   /**

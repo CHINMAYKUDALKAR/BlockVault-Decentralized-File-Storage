@@ -64,18 +64,69 @@ export const SentSignatureRequests: React.FC = () => {
 
       console.log('📤 Loading sent signature requests for:', user.address);
       
-      // Get all signature requests from localStorage
+      // First try to get sent requests from the server
+      let serverRequests: SentSignatureRequest[] = [];
+      try {
+        const response = await fetch(`${getApiBase()}/signature-requests-sent?user_address=${encodeURIComponent(user.address)}`, {
+          headers: getAuthHeaders()
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          serverRequests = (data.signatureRequests || []).map((req: any) => ({
+            id: req.id,
+            documentId: req.documentId || '',
+            documentName: req.documentName || 'Untitled Document',
+            status: req.status || 'pending',
+            createdAt: req.createdAt || new Date().toISOString(),
+            expiresAt: req.expiresAt || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+            message: req.message || '',
+            signers: Array.isArray(req.signers) ? req.signers : [],
+            signedBy: req.signedBy,
+            signedAt: req.signedAt
+          }));
+        } else {
+          console.warn('Server request failed:', await response.text());
+        }
+      } catch (err) {
+        console.warn('Could not fetch from server:', err);
+      }
+      
+      // Then get local requests as backup
       const allRequests = JSON.parse(localStorage.getItem('blockvault_signature_requests') || '[]');
       console.log('📋 All signature requests in storage:', allRequests.length);
       
-      // Filter requests sent BY this user (where requestedBy matches current user)
-      const sentRequests = allRequests.filter((req: any) => 
-        req.requestedBy?.toLowerCase() === user.address?.toLowerCase()
-      );
+      // Filter and format local requests
+      const localRequests = allRequests
+        .filter((req: any) => req.requestedBy?.toLowerCase() === user.address?.toLowerCase())
+        .map((req: any) => ({
+          id: req.id,
+          documentId: req.documentId || '',
+          documentName: req.documentName || 'Untitled Document',
+          status: req.status || 'pending',
+          createdAt: req.createdAt || new Date().toISOString(),
+          expiresAt: req.expiresAt || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          message: req.message || '',
+          signers: Array.isArray(req.signers) ? req.signers : [{ 
+            address: req.requestedTo,
+            name: '',
+            email: ''
+          }],
+          signedBy: req.signedBy,
+          signedAt: req.signedAt
+        }));
       
-      console.log(`📤 Found ${sentRequests.length} signature requests sent by you`);
+      // Merge requests, preferring server data
+      const mergedRequests = [...serverRequests];
+      for (const localReq of localRequests) {
+        if (!mergedRequests.some(r => r.id === localReq.id)) {
+          mergedRequests.push(localReq);
+        }
+      }
       
-      setSignatureRequests(sentRequests);
+      console.log(`📤 Found ${mergedRequests.length} signature requests sent by you (${serverRequests.length} from server, ${localRequests.length} local)`);
+      
+      setSignatureRequests(mergedRequests);
       setError(null);
     } catch (error) {
       console.error('Error loading sent signature requests:', error);
@@ -279,18 +330,6 @@ export const SentSignatureRequests: React.FC = () => {
                 </div>
 
                 <div className="flex space-x-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      // View document using IPFS
-                      const viewerUrl = `https://ipfs.io/ipfs/${request.documentId}`;
-                      window.open(viewerUrl, '_blank');
-                    }}
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    View Document
-                  </Button>
                   {request.status === 'signed' && (
                     <Button
                       variant="outline"

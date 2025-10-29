@@ -42,5 +42,21 @@ dist/
 # Storage
 storage/
 
+# ML Models (too large for GitHub)
+models/
+
+# Logs
+*.log
+backend.log
+frontend.log
+blockvault-frontend/frontend.log
+
+# Rust build artifacts
+blockvault_crypto/target/
+
+# Test files
+*.pdf
+COMMERCIAL LEASE AGREEMENT.pdf
+
 # Local Netlify folder
 .netlify

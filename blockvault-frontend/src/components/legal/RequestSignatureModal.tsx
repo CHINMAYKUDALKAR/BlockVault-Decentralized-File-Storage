@@ -209,9 +209,20 @@ export const RequestSignatureModal: React.FC<RequestSignatureModalProps> = ({
         });
 
         if (serverResp.ok) {
-          console.log('✅ Persisted signature requests on backend');
+          let body = null;
+          try { body = await serverResp.json(); } catch (e) { /* ignore */ }
+          console.log('✅ Persisted signature requests on backend', body);
+          toast.success('Signature requests persisted on the server');
         } else {
-          console.warn('⚠️ Backend rejected signature request persistence', await serverResp.text());
+          let errorText = '';
+          try {
+            const errJson = await serverResp.json();
+            errorText = errJson.error || JSON.stringify(errJson);
+          } catch (e) {
+            errorText = await serverResp.text();
+          }
+          console.warn('⚠️ Backend rejected signature request persistence', errorText);
+          toast.error('Failed to persist signature requests on server: ' + (errorText || serverResp.statusText));
         }
       } catch (serverErr) {
         console.warn('⚠️ Could not persist signature requests to backend:', serverErr);

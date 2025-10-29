@@ -320,6 +320,7 @@ def register_case_routes(app):
             
             # Store the signature request
             signature_requests_storage[request_id] = signature_request
+            print(f"[mock_cases] Stored signature request {request_id} for document {document_id} -> signers: {[s.get('address') for s in signers]}")
             
             # In a real implementation, this would send notifications to signers
             # For now, we'll just return success
@@ -371,13 +372,8 @@ def register_case_routes(app):
     def get_signature_requests():
         """Get signature requests for the current user"""
         try:
-            # Get current user from auth header
-            auth_header = request.headers.get('Authorization')
-            if not auth_header:
-                return jsonify({"error": "No authorization header"}), 401
-            
-            # Extract user address from JWT token (simplified for demo)
-            # In production, you'd decode the JWT token to get the user address
+            # Note: For mock/demo server we accept requests without Authorization header
+            # and rely on the `user_address` query parameter to identify the user.
             user_address = request.args.get('user_address', '')
             
             # Get signature requests for this user
@@ -409,12 +405,8 @@ def register_case_routes(app):
     def get_signature_requests_sent():
         """Get signature requests sent by the current user"""
         try:
-            # Get current user from auth header
-            auth_header = request.headers.get('Authorization')
-            if not auth_header:
-                return jsonify({"error": "No authorization header"}), 401
-            
-            # Extract user address from JWT token (simplified for demo)
+            # Note: For mock/demo server we accept requests without Authorization header
+            # and rely on the `user_address` query parameter to identify the user.
             user_address = request.args.get('user_address', '')
             
             # Get signature requests sent by this user
@@ -438,6 +430,32 @@ def register_case_routes(app):
                 "signatureRequests": sent_requests,
                 "total": len(sent_requests)
             })
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    @app.route('/signature-requests/<request_id>/status', methods=['POST'])
+    def update_signature_request_status(request_id):
+        """Update status (signed/declined) for a specific signature request"""
+        try:
+            data = request.get_json() or {}
+            status = data.get('status')
+            signer = data.get('signer', '')
+
+            if request_id not in signature_requests_storage:
+                return jsonify({"error": "Signature request not found"}), 404
+
+            req = signature_requests_storage[request_id]
+            # Update status and record actor/time
+            req['status'] = status
+            if status == 'signed':
+                req['signedBy'] = signer
+                req['signedAt'] = datetime.now().isoformat()
+            if status == 'declined':
+                req['declinedBy'] = signer
+                req['declinedAt'] = datetime.now().isoformat()
+
+            signature_requests_storage[request_id] = req
+            return jsonify({"signatureRequest": req}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 

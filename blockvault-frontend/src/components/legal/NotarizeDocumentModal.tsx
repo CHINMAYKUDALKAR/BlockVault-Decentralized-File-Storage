@@ -160,21 +160,17 @@ export const NotarizeDocumentModal: React.FC<NotarizeDocumentModalProps> = ({ on
 
   // Upload file to IPFS
   const uploadToIpfs = async (file: File): Promise<string> => {
-    // Simulate IPFS upload
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log(`Uploading file to IPFS: ${file.name} (${file.size} bytes)`);
+    // Fast simulation for demos (instant instead of 1 second)
+    await new Promise(resolve => setTimeout(resolve, 50));
+    console.log(`⚡ IPFS upload (fast mock): ${file.name}`);
     return `Qm${Math.random().toString(36).substring(2, 15)}`;
   };
 
   // Register document on blockchain
   const registerDocumentOnChain = async (cid: string, proof: any) => {
-    // Simulate smart contract call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    console.log('Document registered on chain:', { 
-      cid, 
-      proof,
-      note: 'Document notarized with ZK proof of integrity'
-    });
+    // Fast simulation for demos (instant instead of 2 seconds)
+    await new Promise(resolve => setTimeout(resolve, 100));
+    console.log('⚡ Document registered on chain (fast mock):', { cid });
   };
 
   const getStepIcon = (stepName: string) => {
