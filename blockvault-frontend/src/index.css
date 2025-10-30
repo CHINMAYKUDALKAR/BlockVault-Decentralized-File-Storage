@@ -113,6 +113,26 @@ html {
   animation: shimmer 2s linear infinite;
 }
 
+/* Scrolling text animation for long names */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left linear infinite;
+  display: inline-block;
+}
+
+.animate-scroll-left::after {
+  content: attr(data-text);
+  padding-left: 2rem;
+}
+
 /* Root container should fill viewport */
 #root {
   min-height: 100vh;
@@ -130,6 +150,24 @@ main {
 .stats-grid {
   position: relative;
   z-index: 1;
+}
+
+/* Custom scrollbar for modals */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.5);
 }
 
 body {

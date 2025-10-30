@@ -24,6 +24,7 @@ import { LoginPage } from '../components/LoginPage';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card } from '../components/ui/Card';
+import { ScrollingText } from '../components/ui/ScrollingText';
 
 export const Dashboard: React.FC = () => {
   const { isAuthenticated, user } = useAuth();

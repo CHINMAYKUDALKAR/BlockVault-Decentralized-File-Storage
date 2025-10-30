@@ -185,8 +185,8 @@ export const CreateCaseModal: React.FC<CreateCaseModalProps> = ({ onClose, onSuc
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-start justify-center z-[999] p-4 py-24 overflow-y-auto">
+      <Card variant="premium" className="w-full max-w-4xl shadow-2xl border-primary-500/30 animate-fade-in-up">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-white">Create New Case</h2>

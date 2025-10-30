@@ -29,6 +29,7 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Input } from '../components/ui/Input';
 import { Tooltip } from '../components/ui/Tooltip';
+import { ScrollingText } from '../components/ui/ScrollingText';
 import { NotarizeDocumentModal } from '../components/legal/NotarizeDocumentModal';
 import { RedactionModal } from '../components/legal/RedactionModal';
 import { RequestSignatureModal } from '../components/legal/RequestSignatureModal';
@@ -928,13 +929,13 @@ export const LegalDashboard: React.FC = () => {
             )}
           </div>
 
-          {/* Statistics Cards - 2x2 Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
+          {/* Statistics Cards - Responsive Compact Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 md:gap-4 lg:gap-6 mb-6 lg:mb-8">
             {statsCards.map((stat, index) => (
               <Card 
                 key={index} 
                 variant="premium" 
-                className="group relative overflow-visible animate-fade-in-up hover:shadow-[0_0_30px_rgba(123,92,244,0.2)] transition-all duration-300"
+                className="group relative overflow-visible animate-fade-in-up hover:shadow-[0_0_30px_rgba(123,92,244,0.2)] transition-all duration-300 rounded-xl lg:rounded-2xl"
                 style={{ 
                   animationDelay: `${index * 100}ms`,
                 }}
@@ -942,16 +943,16 @@ export const LegalDashboard: React.FC = () => {
                 {/* Background gradient */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                 
-                <div className="relative flex items-center justify-between gap-6 p-6 min-h-[140px]">
+                <div className="relative flex items-center justify-between gap-3 md:gap-4 lg:gap-6 p-3 md:p-4 lg:p-6 min-h-[110px] md:min-h-[130px] lg:min-h-[140px]">
                   <div className="flex-1 min-w-0 z-10">
-                    <p className="text-sm font-medium text-text-secondary mb-3 uppercase tracking-wider">{stat.title}</p>
-                    <div className="flex items-baseline gap-2 mb-3">
-                      <p className="text-4xl font-bold text-white group-hover:text-gradient transition-all duration-300">
+                    <p className="text-xs md:text-sm font-medium text-text-secondary mb-1.5 md:mb-2 uppercase tracking-wider">{stat.title}</p>
+                    <div className="flex items-baseline gap-2 mb-1.5 md:mb-2">
+                      <p className="text-xl md:text-2xl lg:text-3xl font-bold text-white group-hover:text-gradient transition-all duration-300">
                         {stat.value}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="flex items-center text-xs font-semibold text-status-successLight bg-status-success/10 px-2.5 py-1 rounded-full border border-status-success/20">
+                      <div className="flex items-center text-[10px] md:text-xs font-semibold text-status-successLight bg-status-success/10 px-2 py-0.5 md:px-2.5 md:py-1 rounded-full border border-status-success/20">
                         <TrendingUp className="w-3 h-3 mr-1 animate-bounce-subtle" />
                         {stat.change}
                       </div>
@@ -959,7 +960,7 @@ export const LegalDashboard: React.FC = () => {
                   </div>
                   <div className="relative flex-shrink-0 z-10">
                     <div 
-                      className="w-20 h-20 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-300"
+                      className="w-10 h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-300"
                       style={{
                         background: `linear-gradient(135deg, rgba(${
                           stat.color === 'blue' ? '99,102,241' :
@@ -975,7 +976,7 @@ export const LegalDashboard: React.FC = () => {
                       }}
                     >
                       <stat.icon 
-                        className="w-10 h-10 drop-shadow-lg"
+                        className="w-5 h-5 md:w-6 md:h-6 lg:w-8 lg:h-8 drop-shadow-lg"
                         style={{
                           color: stat.color === 'blue' ? '#818cf8' :
                                  stat.color === 'green' ? '#6ee7b7' :
@@ -1163,181 +1164,195 @@ export const LegalDashboard: React.FC = () => {
                       className="group animate-fade-in-up"
                       style={{ animationDelay: `${index * 75}ms` }}
                     >
-                      <div className={viewMode === 'list' ? "p-5" : "p-6"}>
-                        <div className={`flex items-start justify-between ${viewMode === 'list' ? 'mb-3' : 'mb-5'}`}>
-                          <div className="flex items-center space-x-4">
-                            <div className="relative">
-                              <div className={`${viewMode === 'list' ? 'w-12 h-12' : 'w-14 h-14'} bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                                <FileText className={`${viewMode === 'list' ? 'w-6 h-6' : 'w-7 h-7'} text-primary-400`} />
-                              </div>
-                              <div className="absolute inset-0 bg-primary-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity" />
+                      <div className="p-6 relative min-h-[440px] flex flex-col">
+
+                        {/* Header - Icon, Title, Date + Status inline */}
+                        <div className="flex items-start space-x-4 mb-5 overflow-hidden">
+                          <div className="relative flex-shrink-0">
+                            <div className="w-14 h-14 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                              <FileText className="w-7 h-7 text-primary-400" />
                             </div>
-                            <div>
-                              <h3 className="font-bold text-white text-base mb-1 group-hover:text-gradient transition-all">{document.name}</h3>
-                              <p className="text-sm text-text-secondary font-medium">
+                            <div className="absolute inset-0 bg-primary-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="mb-1.5">
+                              <ScrollingText
+                                text={document.name}
+                                className="font-bold text-white text-base group-hover:text-gradient transition-all"
+                                speed={8}
+                              />
+                            </div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="text-xs text-text-tertiary font-normal">
                                 {new Date(document.timestamp).toLocaleDateString('en-US', { 
                                   month: 'short', 
                                   day: 'numeric', 
                                   year: 'numeric' 
                                 })}
                               </p>
+                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider backdrop-blur-sm whitespace-nowrap ${
+                                document.status === 'registered' ? 'bg-status-success/15 text-status-successLight border border-status-success/40' :
+                                document.status === 'awaiting_signatures' ? 'bg-status-warning/15 text-status-warningLight border border-status-warning/40' :
+                                document.status === 'executed' ? 'bg-status-info/15 text-status-infoLight border border-status-info/40' :
+                                'bg-status-error/15 text-status-errorLight border border-status-error/40'
+                              }`}>
+                                {getStatusIcon(document.status)}
+                                <span>{document.status.replace('_', ' ')}</span>
+                              </span>
                             </div>
-                          </div>
-                          <div className="flex items-center space-x-2 flex-shrink-0">
-                            <div className="relative flex-shrink-0">
-                              {getStatusIcon(document.status)}
-                              {document.status === 'awaiting_signatures' && (
-                                <div className="absolute inset-0 animate-ping">
-                                  <Clock className="w-4 h-4 text-yellow-500 opacity-75" />
-                                </div>
-                              )}
-                            </div>
-                            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide backdrop-blur-sm whitespace-nowrap ${
-                              document.status === 'registered' ? 'bg-status-success/10 text-status-successLight border border-status-success/30' :
-                              document.status === 'awaiting_signatures' ? 'bg-status-warning/10 text-status-warningLight border border-status-warning/30' :
-                              document.status === 'executed' ? 'bg-status-info/10 text-status-infoLight border border-status-info/30' :
-                              'bg-status-error/10 text-status-errorLight border border-status-error/30'
-                            }`}>
-                              {document.status.replace('_', ' ')}
-                            </span>
                           </div>
                         </div>
 
+                        {/* Metadata Section - Lighter & Cleaner */}
                         {viewMode === 'grid' && (
-                          <div className="space-y-3 mb-5 p-4 bg-secondary-900/30 rounded-xl border border-secondary-700/30">
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-text-secondary font-medium">Hash:</span>
-                              <code className="text-white font-mono text-xs bg-secondary-800/50 px-2 py-1 rounded">
-                                {document.docHash.slice(0, 10)}...
-                              </code>
-                            </div>
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-text-secondary font-medium">IPFS CID:</span>
-                              <code className="text-primary-400 font-mono text-xs bg-primary-500/5 px-2 py-1 rounded border border-primary-500/20">
-                                {document.cid.slice(0, 10)}...
-                              </code>
-                            </div>
-                            {document.parentHash && (
-                              <div className="flex items-center justify-between text-sm">
-                                <span className="text-text-secondary font-medium">Parent:</span>
-                                <code className="text-accent-400 font-mono text-xs bg-accent-500/5 px-2 py-1 rounded border border-accent-500/20">
-                                  {document.parentHash.slice(0, 10)}...
-                                </code>
+                          <div className="mb-6 flex-grow">
+                            <div className="space-y-2 p-3 bg-secondary-900/15 rounded-lg border border-secondary-700/15">
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="text-text-tertiary font-light">Hash:</span>
+                                <Tooltip content={document.docHash}>
+                                  <code className="text-[10px] text-slate-400 font-mono bg-secondary-900/30 px-1.5 py-0.5 rounded cursor-help hover:text-primary-300 transition-colors">
+                                    {document.docHash.slice(0, 10)}...
+                                  </code>
+                                </Tooltip>
                               </div>
-                            )}
-                            {document.transformationType && (
-                              <div className="flex items-center justify-between text-sm">
-                                <span className="text-text-secondary font-medium">Type:</span>
-                                <span className="text-accent-400 capitalize font-semibold px-2 py-1 bg-accent-500/10 rounded">
-                                  {document.transformationType}
-                                </span>
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="text-text-tertiary font-light">IPFS CID:</span>
+                                <Tooltip content={document.cid}>
+                                  <code className="text-[10px] text-slate-400 font-mono bg-secondary-900/30 px-1.5 py-0.5 rounded truncate max-w-[120px] cursor-help hover:text-accent-300 transition-colors">
+                                    {document.cid.slice(0, 10)}...
+                                  </code>
+                                </Tooltip>
                               </div>
-                            )}
+                              {document.parentHash && (
+                                <div className="flex items-center justify-between text-xs">
+                                  <span className="text-text-tertiary font-light">Parent:</span>
+                                  <Tooltip content={document.parentHash}>
+                                    <code className="text-[10px] text-slate-400 font-mono bg-secondary-900/30 px-1.5 py-0.5 rounded cursor-help hover:text-accent-300 transition-colors">
+                                      {document.parentHash.slice(0, 10)}...
+                                    </code>
+                                  </Tooltip>
+                                </div>
+                              )}
+                              {document.transformationType && (
+                                <div className="flex items-center justify-between text-xs pt-1.5 border-t border-secondary-700/15">
+                                  <span className="text-text-tertiary font-light">Type:</span>
+                                  <span className="text-[10px] text-accent-300 capitalize font-medium px-1.5 py-0.5 bg-accent-500/5 rounded">
+                                    {document.transformationType}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         )}
 
-                        <div className={`flex ${viewMode === 'list' ? 'flex-wrap gap-2' : 'flex-wrap gap-2'}`}>
-                          {canPerformAction('canCreateRedactions') ? (
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={() => handleDocumentAction('redact', document)}
-                              className="hover:bg-primary-500/10 hover:border-primary-500/50 hover:text-primary-400"
-                              leftIcon={<Edit className="w-3.5 h-3.5" />}
-                            >
-                              Redact
-                            </Button>
-                          ) : (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              disabled
-                              className="opacity-40 cursor-not-allowed"
-                              title={`${getRoleDisplayName(currentUser?.currentRole || 'client')} role cannot create redactions`}
-                              leftIcon={<Lock className="w-3.5 h-3.5" />}
-                            >
-                              Redact
-                            </Button>
-                          )}
-
-                          {canPerformAction('canRequestSignatures') ? (
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={() => handleDocumentAction('request-signature', document)}
-                              className="hover:bg-accent-500/10 hover:border-accent-500/50 hover:text-accent-400"
-                              leftIcon={<Users className="w-3.5 h-3.5" />}
-                            >
-                              Request
-                            </Button>
-                          ) : (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              disabled
-                              className="opacity-40 cursor-not-allowed"
-                              title={`${getRoleDisplayName(currentUser?.currentRole || 'client')} role cannot request signatures`}
-                              leftIcon={<Lock className="w-3.5 h-3.5" />}
-                            >
-                              Request
-                            </Button>
-                          )}
-
-                          {canPerformAction('canRunZKMLAnalysis') ? (
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={() => handleDocumentAction('analyze', document)}
-                              className="hover:bg-status-info/10 hover:border-status-info/50 hover:text-status-info"
-                              leftIcon={<Brain className="w-3.5 h-3.5" />}
-                            >
-                              Analyze
-                            </Button>
-                          ) : (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              disabled
-                              className="opacity-40 cursor-not-allowed"
-                              title={`${getRoleDisplayName(currentUser?.currentRole || 'client')} role cannot run AI analysis`}
-                              leftIcon={<Lock className="w-3.5 h-3.5" />}
-                            >
-                              Analyze
-                            </Button>
-                          )}
-
+                        {/* Action Buttons - Compact 3-Column Grid */}
+                        <div className="grid grid-cols-3 gap-2 mt-auto">
+                          {/* Row 1 */}
                           <Tooltip content="Download document">
                             <Button
                               size="sm"
-                              variant="secondary"
+                              variant="primary"
                               onClick={() => handleDocumentAction('download', document)}
-                              className="hover:bg-status-success/10 hover:border-status-success/50 hover:text-status-success"
                               leftIcon={<Download className="w-3.5 h-3.5" />}
+                              className="w-full"
                             >
                               Download
                             </Button>
                           </Tooltip>
                           
+                          {canPerformAction('canRequestSignatures') ? (
+                            <Tooltip content="Request signatures">
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => handleDocumentAction('request-signature', document)}
+                                className="w-full hover:bg-accent-500/10 hover:border-accent-500/50"
+                                leftIcon={<PenTool className="w-3.5 h-3.5" />}
+                              >
+                                Signatures
+                              </Button>
+                            </Tooltip>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled
+                              className="w-full opacity-40"
+                              leftIcon={<Lock className="w-3.5 h-3.5" />}
+                            >
+                              Signatures
+                            </Button>
+                          )}
+
+                          {canPerformAction('canCreateRedactions') ? (
+                            <Tooltip content="Create redaction">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDocumentAction('redact', document)}
+                                className="w-full hover:bg-primary-500/10 hover:border-primary-500/50"
+                                leftIcon={<Edit className="w-3.5 h-3.5" />}
+                              >
+                                Redact
+                              </Button>
+                            </Tooltip>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled
+                              className="w-full opacity-40"
+                              leftIcon={<Lock className="w-3.5 h-3.5" />}
+                            >
+                              Redact
+                            </Button>
+                          )}
+
+                          {/* Row 2 */}
+                          {canPerformAction('canRunZKMLAnalysis') ? (
+                            <Tooltip content="AI analysis">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDocumentAction('analyze', document)}
+                                className="w-full hover:bg-status-info/10 hover:border-status-info/50"
+                                leftIcon={<Brain className="w-3.5 h-3.5" />}
+                              >
+                                Analyze
+                              </Button>
+                            </Tooltip>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled
+                              className="w-full opacity-40"
+                              leftIcon={<Lock className="w-3.5 h-3.5" />}
+                            >
+                              Analyze
+                            </Button>
+                          )}
+
                           {document.status !== 'revoked' && (
                             <>
-                              <Tooltip content="Manage who can access this document">
+                              <Tooltip content="Manage access">
                                 <Button
                                   size="sm"
                                   variant="outline"
                                   onClick={() => handleDocumentAction('revoke-access', document)}
-                                  className="hover:bg-primary-500/10 hover:border-primary-500/50"
+                                  className="w-full hover:bg-primary-500/10 hover:border-primary-500/50"
                                   leftIcon={<UserMinus className="w-3.5 h-3.5" />}
                                 >
                                   Access
                                 </Button>
                               </Tooltip>
                               
-                              <Tooltip content="Mark document as revoked (irreversible)">
+                              <Tooltip content="Revoke document">
                                 <Button
                                   size="sm"
                                   variant="outline"
                                   onClick={() => handleDocumentAction('revoke-document', document)}
-                                  className="text-status-warning hover:bg-status-warning/10 hover:border-status-warning/50"
+                                  className="w-full text-status-warning hover:bg-status-warning/10 hover:border-status-warning/50"
                                   leftIcon={<FileX className="w-3.5 h-3.5" />}
                                 >
                                   Revoke
@@ -1346,15 +1361,16 @@ export const LegalDashboard: React.FC = () => {
                             </>
                           )}
                           
-                          <Tooltip content="Delete document permanently">
+                          {/* Delete - Full Width */}
+                          <Tooltip content="Delete permanently">
                             <Button
                               size="sm"
                               variant="outline"
                               onClick={() => handleDocumentAction('delete', document)}
-                              className="text-status-error hover:bg-status-error/10 hover:border-status-error/50"
+                              className="col-span-3 text-status-error hover:bg-status-error/10 hover:border-status-error/50 border-status-error/30"
                               leftIcon={<X className="w-3.5 h-3.5" />}
                             >
-                              Delete
+                              Delete Document
                             </Button>
                           </Tooltip>
                         </div>
@@ -1706,7 +1722,7 @@ export const LegalDashboard: React.FC = () => {
           onSuccess={() => {
             setShowNotarizeModal(false);
             refreshDocuments();
-            toast.success('Document notarized successfully!');
+            // Toast is already shown in the modal
           }}
         />
       )}
@@ -1722,7 +1738,7 @@ export const LegalDashboard: React.FC = () => {
             setShowRedactionModal(false);
             setSelectedDocument(null);
             refreshDocuments(); // Refresh the documents list to show the new redacted document
-            toast.success('Verifiable redaction created!');
+            // Toast is already shown in the modal
           }}
         />
       )}
@@ -1808,8 +1824,8 @@ export const LegalDashboard: React.FC = () => {
 
       {/* Role Change Modal */}
       {showRoleChangeModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <Card variant="premium" className="w-full max-w-2xl">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-start justify-center z-[999] p-4 py-24 overflow-y-auto">
+          <Card variant="premium" className="w-full max-w-2xl shadow-2xl border-accent-500/30 animate-fade-in-up">
             {/* Modal Header */}
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-secondary-600/50">
               <div className="flex items-center space-x-3">

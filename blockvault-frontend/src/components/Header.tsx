@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Wallet, LogOut, User, AlertCircle, Key, Scale, Smartphone } from 'lucide-react';
+import { Shield, Wallet, LogOut, User, AlertCircle, Key, Scale, Smartphone, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { ThemeToggle } from './ui/ThemeToggle';
 import { Tooltip } from './ui/Tooltip';
+import { ScrollingText } from './ui/ScrollingText';
 import { RSAManager } from './RSAManager';
 import { MobileWalletModal } from './MobileWalletModal';
 import { rsaKeyManager } from '../utils/rsa';
@@ -15,7 +16,17 @@ export const Header: React.FC = () => {
   const [showMobileWallet, setShowMobileWallet] = useState(false);
   const [hasRSAKeys, setHasRSAKeys] = useState(false);
   const [pendingSignatureRequests, setPendingSignatureRequests] = useState(0);
+  const [showAddress, setShowAddress] = useState(() => {
+    // Load preference from localStorage
+    const saved = localStorage.getItem('blockvault_show_address');
+    return saved !== null ? saved === 'true' : true;
+  });
   const location = useLocation();
+
+  // Save address visibility preference
+  React.useEffect(() => {
+    localStorage.setItem('blockvault_show_address', String(showAddress));
+  }, [showAddress]);
 
   React.useEffect(() => {
     const checkRSAKeys = () => {
@@ -79,9 +90,6 @@ export const Header: React.FC = () => {
           {/* Gradient overlay */}
           <div className="absolute inset-0 dark:bg-gradient-to-r dark:from-secondary-900/50 dark:via-secondary-900/80 dark:to-secondary-900/50 light:bg-white backdrop-blur-3xl" />
           
-          {/* Full-width subtle border */}
-          <div className="absolute bottom-0 left-0 right-0 h-px dark:bg-gradient-to-r dark:from-transparent dark:via-primary-500/30 dark:to-transparent light:bg-gray-200" />
-          
           {/* Header Content */}
           <div className="relative container mx-auto px-6 py-6">
         <div className="flex items-center justify-between">
@@ -124,7 +132,7 @@ export const Header: React.FC = () => {
 
             {/* Navigation Links */}
             {isAuthenticated && (
-              <nav className="flex items-center space-x-3">
+              <nav className="flex items-center space-x-3 mr-8">
                 <Link
                   to="/dashboard"
                   className={`relative flex items-center space-x-2.5 px-5 py-3 rounded-xl text-sm font-bold transition-all duration-300 group ${
@@ -138,9 +146,6 @@ export const Header: React.FC = () => {
                   )}
                   <Shield className={`w-5 h-5 ${location.pathname === '/dashboard' ? 'drop-shadow-lg' : 'group-hover:scale-110 transition-transform'}`} />
                   <span>Files</span>
-                  {location.pathname === '/dashboard' && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-400 via-accent-400 to-primary-400 rounded-full" />
-                  )}
                 </Link>
                 <Link
                   to="/legal"
@@ -155,9 +160,6 @@ export const Header: React.FC = () => {
                   )}
                   <Scale className={`w-5 h-5 ${location.pathname === '/legal' ? 'drop-shadow-lg' : 'group-hover:scale-110 transition-transform'}`} />
                   <span>Legal</span>
-                  {location.pathname === '/legal' && (
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-400 via-accent-400 to-primary-400 rounded-full" />
-                  )}
                   {pendingSignatureRequests > 0 && (
                     <div className="relative">
                       <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-status-error to-red-600 text-white text-xs font-bold shadow-lg shadow-status-error/50 animate-bounce-subtle">
@@ -206,11 +208,13 @@ export const Header: React.FC = () => {
 
             {isConnected && !isAuthenticated && (
               <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2 px-4 py-2 glass-premium rounded-xl border border-secondary-600/50">
-                  <div className="w-2 h-2 bg-status-success rounded-full animate-pulse"></div>
-                  <span className="text-sm text-text-secondary font-mono font-medium">
-                    {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}
-                  </span>
+                <div className="flex items-center space-x-2 px-4 py-2 glass-premium rounded-xl border border-secondary-600/50 max-w-[200px]">
+                  <div className="w-2 h-2 bg-status-success rounded-full animate-pulse flex-shrink-0"></div>
+                  <ScrollingText
+                    text={user?.address || ''}
+                    className="text-sm text-text-secondary font-mono font-medium"
+                    speed={6}
+                  />
                 </div>
                 <button
                   onClick={login}
@@ -235,15 +239,33 @@ export const Header: React.FC = () => {
 
             {isAuthenticated && (
               <div className="flex items-center space-x-3 animate-fade-in">
-                <div className="flex items-center space-x-3 px-4 py-2.5 glass-premium rounded-xl border border-status-success/30 shadow-lg group hover:shadow-xl transition-all duration-300">
-                  <div className="relative">
-                    <div className="w-2.5 h-2.5 bg-status-success rounded-full shadow-lg shadow-status-success/50 animate-pulse"></div>
-                    <div className="absolute inset-0 bg-status-success rounded-full animate-ping opacity-75"></div>
+                {showAddress && (
+                  <div className="flex items-center space-x-3 px-4 py-2.5 glass-premium rounded-xl border border-status-success/30 shadow-lg group hover:shadow-xl transition-all duration-300 max-w-[240px]">
+                    <div className="relative flex-shrink-0">
+                      <div className="w-2.5 h-2.5 bg-status-success rounded-full shadow-lg shadow-status-success/50 animate-pulse"></div>
+                      <div className="absolute inset-0 bg-status-success rounded-full animate-ping opacity-75"></div>
+                    </div>
+                    <ScrollingText
+                      text={user?.address || ''}
+                      className="text-sm text-white font-mono font-bold tracking-wider"
+                      speed={6}
+                    />
                   </div>
-                  <span className="text-sm text-white font-mono font-bold tracking-wider">
-                    {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}
-                  </span>
-                </div>
+                )}
+                
+                {/* Toggle Address Visibility */}
+                <Tooltip content={showAddress ? 'Hide address' : 'Show address'}>
+                  <button
+                    onClick={() => setShowAddress(!showAddress)}
+                    className="p-2 glass-premium rounded-lg border border-secondary-600/30 hover:border-primary-500/50 transition-all group"
+                  >
+                    {showAddress ? (
+                      <EyeOff className="w-4 h-4 text-text-secondary group-hover:text-primary-400 transition-colors" />
+                    ) : (
+                      <Eye className="w-4 h-4 text-text-secondary group-hover:text-status-success transition-colors" />
+                    )}
+                  </button>
+                </Tooltip>
                 <button
                   onClick={() => setShowRSAManager(true)}
                   className={`relative flex items-center space-x-2.5 px-4 py-2.5 rounded-xl font-bold transition-all duration-300 shadow-lg group overflow-hidden ${

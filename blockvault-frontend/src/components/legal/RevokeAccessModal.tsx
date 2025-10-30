@@ -63,8 +63,8 @@ export const RevokeAccessModal: React.FC<RevokeAccessModalProps> = ({
   const addressesWithAccess = accessList.filter(addr => verifiedAccess[addr]);
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-xl flex items-center justify-center z-50 p-4 animate-fade-in">
-      <Card variant="premium" className="w-full max-w-2xl animate-scale-in relative overflow-hidden">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-xl flex items-start justify-center z-[999] p-4 py-24 overflow-y-auto animate-fade-in">
+      <Card variant="premium" className="w-full max-w-2xl animate-scale-in relative shadow-2xl border-primary-500/30">
         {/* Decorative background */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-500/5 pointer-events-none" />
         

@@ -48,8 +48,8 @@ export const RevokeDocumentModal: React.FC<RevokeDocumentModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-xl flex items-center justify-center z-50 p-4 animate-fade-in">
-      <Card variant="premium" className="w-full max-w-lg animate-scale-in relative overflow-hidden">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-xl flex items-start justify-center z-[999] p-4 py-24 overflow-y-auto animate-fade-in">
+      <Card variant="premium" className="w-full max-w-lg animate-scale-in relative shadow-2xl border-status-warning/30">
         {/* Decorative background */}
         <div className="absolute inset-0 bg-gradient-to-br from-status-error/5 via-transparent to-red-600/5 pointer-events-none" />
         

@@ -14,6 +14,7 @@ import {
 import { useFiles } from '../contexts/FileContext';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
+import { ScrollingText } from './ui/ScrollingText';
 
 interface FileListProps {
   files?: any[];
@@ -172,7 +173,11 @@ export const FileList: React.FC<FileListProps> = ({
                           <div className="absolute inset-0 rounded-xl bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-white truncate mb-1 group-hover:text-gradient transition-all">{fileName}</h3>
+                          <ScrollingText
+                            text={fileName}
+                            className="font-bold text-white mb-1 group-hover:text-gradient transition-all"
+                            speed={8}
+                          />
                           <p className="text-sm text-text-secondary font-medium">Shared with recipient</p>
                         </div>
                       </div>
@@ -263,7 +268,11 @@ export const FileList: React.FC<FileListProps> = ({
                         <div className="absolute inset-0 rounded-xl bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-white truncate mb-1 group-hover:text-primary-300 transition-colors">{fileName}</h3>
+                        <ScrollingText
+                          text={fileName}
+                          className="font-semibold text-white mb-1 group-hover:text-primary-300 transition-colors"
+                          speed={8}
+                        />
                         <p className="text-xs text-text-secondary font-medium">{formatFileSize(fileSize)}</p>
                       </div>
                     </div>

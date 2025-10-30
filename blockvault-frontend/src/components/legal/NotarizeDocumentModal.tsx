@@ -186,8 +186,8 @@ export const NotarizeDocumentModal: React.FC<NotarizeDocumentModalProps> = ({ on
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-start justify-center z-[999] p-4 py-24 overflow-y-auto">
+      <Card variant="premium" className="w-full max-w-2xl shadow-2xl border-primary-500/30 animate-fade-in-up">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
