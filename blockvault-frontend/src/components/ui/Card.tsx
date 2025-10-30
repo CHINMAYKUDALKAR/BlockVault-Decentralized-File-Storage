@@ -23,7 +23,7 @@ export const Card: React.FC<CardProps> = ({
   return (
     <div
       className={clsx(
-        'p-8 transition-all duration-400 relative overflow-hidden',
+        'p-6 transition-all duration-400 relative',
         variants[variant],
         hover && 'card-hover',
         'noise-texture',

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Wallet, LogOut, User, AlertCircle, Key, Scale, Smartphone } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { ThemeToggle } from './ui/ThemeToggle';
+import { Tooltip } from './ui/Tooltip';
 import { RSAManager } from './RSAManager';
 import { MobileWalletModal } from './MobileWalletModal';
 import { rsaKeyManager } from '../utils/rsa';
@@ -71,82 +73,98 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <header className="w-full sticky top-0 z-50">
+      <header className="w-full sticky top-0 z-50 animate-slide-down shadow-lg dark:shadow-black/30 light:shadow-black/10">
         {/* Glassmorphic Header Background */}
-        <div className="relative">
-          <div 
-            className="absolute inset-0 bg-gradient-to-r from-[#161B22] via-[#161B22]/95 to-[#161B22] backdrop-blur-2xl"
-            style={{
-              background: 'linear-gradient(135deg, #161B22 0%, rgba(22, 27, 34, 0.95) 50%, #161B22 100%)',
-              backdropFilter: 'blur(24px)',
-              WebkitBackdropFilter: 'blur(24px)',
-            }}
-          />
+        <div className="relative glass-premium border-b dark:border-primary-500/10 light:border-gray-200">
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 dark:bg-gradient-to-r dark:from-secondary-900/50 dark:via-secondary-900/80 dark:to-secondary-900/50 light:bg-white backdrop-blur-3xl" />
           
-          {/* Accent Divider Line */}
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-400/60 to-transparent animate-pulse" />
+          {/* Full-width subtle border */}
+          <div className="absolute bottom-0 left-0 right-0 h-px dark:bg-gradient-to-r dark:from-transparent dark:via-primary-500/30 dark:to-transparent light:bg-gray-200" />
           
           {/* Header Content */}
-          <div className="relative container mx-auto px-6 py-5">
+          <div className="relative container mx-auto px-6 py-6">
         <div className="flex items-center justify-between">
           {/* Logo & Navigation */}
           <div className="flex items-center space-x-8">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => window.location.reload()}
-                className="flex items-center space-x-4 hover:opacity-90 transition-all duration-300 group"
-                title="Click to refresh page"
+                className="flex items-center space-x-4 transition-all duration-300 group"
+                title="BlockVault - Click to refresh"
               >
-                <div className="w-12 h-12 rounded-2xl overflow-hidden premium-shadow-lg group-hover:scale-105 transition-transform duration-300">
-                  <img 
-                    src="/logo.png" 
-                    alt="BlockVault Logo" 
-                    className="w-full h-full object-contain"
-                    onError={(e) => {
-                      // Fallback to icon if image fails to load
-                      e.currentTarget.style.display = 'none';
-                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                    }}
-                  />
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 via-primary-600 to-accent-400 rounded-2xl flex items-center justify-center hidden animate-glow">
-                    <Shield className="w-7 h-7 text-white drop-shadow-lg" />
+                <div className="relative">
+                  <div className="w-14 h-14 rounded-2xl overflow-hidden premium-shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                    <img 
+                      src="/logo.png" 
+                      alt="BlockVault Logo" 
+                      className="w-full h-full object-contain"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                      }}
+                    />
+                    <div className="w-14 h-14 bg-gradient-to-br from-primary-500 via-primary-600 to-accent-500 rounded-2xl flex items-center justify-center hidden shadow-2xl">
+                      <Shield className="w-8 h-8 text-white drop-shadow-2xl" />
+                    </div>
                   </div>
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500 -z-10" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-black text-text-primary font-display tracking-tight">BlockVault</h1>
-                  <p className="text-sm text-text-secondary font-medium">Secure File Storage</p>
+                  <h1 className="text-2xl font-black text-white font-display tracking-tight bg-clip-text group-hover:text-gradient transition-all duration-300">
+                    BlockVault
+                  </h1>
+                  <p className="text-sm text-text-secondary font-semibold group-hover:text-primary-400 transition-colors">
+                    Secure File Storage
+                  </p>
                 </div>
               </button>
             </div>
 
             {/* Navigation Links */}
             {isAuthenticated && (
-              <nav className="flex items-center space-x-2">
+              <nav className="flex items-center space-x-3">
                 <Link
                   to="/dashboard"
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                  className={`relative flex items-center space-x-2.5 px-5 py-3 rounded-xl text-sm font-bold transition-all duration-300 group ${
                     location.pathname === '/dashboard'
-                      ? 'bg-accent-400/20 text-accent-400 border border-accent-400/30'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary-800/50 hover:border hover:border-secondary-600/30'
+                      ? 'bg-gradient-to-r from-primary-500/90 via-primary-600/90 to-accent-500/90 text-white shadow-md'
+                      : 'text-text-secondary hover:text-white hover:bg-secondary-700/40'
                   }`}
                 >
-                  <Shield className="w-5 h-5" />
+                  {location.pathname === '/dashboard' && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary-500 to-accent-500 rounded-xl blur-md opacity-30 -z-10" />
+                  )}
+                  <Shield className={`w-5 h-5 ${location.pathname === '/dashboard' ? 'drop-shadow-lg' : 'group-hover:scale-110 transition-transform'}`} />
                   <span>Files</span>
+                  {location.pathname === '/dashboard' && (
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-400 via-accent-400 to-primary-400 rounded-full" />
+                  )}
                 </Link>
                 <Link
                   to="/legal"
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 relative ${
+                  className={`relative flex items-center space-x-2.5 px-5 py-3 rounded-xl text-sm font-bold transition-all duration-300 group ${
                     location.pathname === '/legal'
-                      ? 'bg-accent-400/20 text-accent-400 border border-accent-400/30'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-secondary-800/50 hover:border hover:border-secondary-600/30'
+                      ? 'bg-gradient-to-r from-primary-500/90 via-primary-600/90 to-accent-500/90 text-white shadow-md'
+                      : 'text-text-secondary hover:text-white hover:bg-secondary-700/40'
                   }`}
                 >
-                  <Scale className="w-5 h-5" />
+                  {location.pathname === '/legal' && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary-500 to-accent-500 rounded-xl blur-md opacity-30 -z-10" />
+                  )}
+                  <Scale className={`w-5 h-5 ${location.pathname === '/legal' ? 'drop-shadow-lg' : 'group-hover:scale-110 transition-transform'}`} />
                   <span>Legal</span>
+                  {location.pathname === '/legal' && (
+                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-400 via-accent-400 to-primary-400 rounded-full" />
+                  )}
                   {pendingSignatureRequests > 0 && (
-                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-status-error text-white text-xs font-bold animate-pulse">
-                      {pendingSignatureRequests}
-                    </span>
+                    <div className="relative">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-status-error to-red-600 text-white text-xs font-bold shadow-lg shadow-status-error/50 animate-bounce-subtle">
+                        {pendingSignatureRequests}
+                      </span>
+                      <span className="absolute inset-0 rounded-full bg-status-error animate-ping opacity-75" />
+                    </div>
                   )}
                 </Link>
               </nav>
@@ -155,16 +173,20 @@ export const Header: React.FC = () => {
 
           {/* Actions & Wallet Status */}
           <div className="flex items-center space-x-4">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+            
             {!isConnected && (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3 animate-fade-in">
                 {!isMobile && (
                   <button
                     onClick={connectWallet}
                     disabled={loading}
-                    className="flex items-center space-x-2 px-5 py-3 bg-gradient-to-r from-primary-500 to-accent-400 text-white rounded-xl font-semibold hover:from-primary-600 hover:to-accent-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-primary-500/25"
+                    className="relative flex items-center space-x-3 px-6 py-3.5 bg-gradient-to-r from-primary-500 via-primary-600 to-accent-500 text-white rounded-xl font-bold hover:from-primary-600 hover:via-primary-700 hover:to-accent-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary-500/30 hover:shadow-xl hover:shadow-primary-500/40 hover:scale-105 active:scale-95 group overflow-hidden"
                   >
-                    <Wallet className="w-4 h-4" />
-                    <span>Connect Wallet</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/20 to-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                    <Wallet className="w-5 h-5 relative z-10 drop-shadow-lg" />
+                    <span className="relative z-10">Connect Wallet</span>
                   </button>
                 )}
                 
@@ -172,10 +194,11 @@ export const Header: React.FC = () => {
                   <button
                     onClick={() => setShowMobileWallet(true)}
                     disabled={loading}
-                    className="flex items-center space-x-2 px-5 py-3 bg-gradient-to-r from-primary-500 to-accent-400 text-white rounded-xl font-semibold hover:from-primary-600 hover:to-accent-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-primary-500/25"
+                    className="relative flex items-center space-x-3 px-6 py-3.5 bg-gradient-to-r from-primary-500 via-primary-600 to-accent-500 text-white rounded-xl font-bold hover:from-primary-600 hover:via-primary-700 hover:to-accent-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary-500/30 hover:shadow-xl hover:shadow-primary-500/40 hover:scale-105 active:scale-95 group overflow-hidden"
                   >
-                    <Smartphone className="w-4 h-4" />
-                    <span>Connect Mobile Wallet</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/20 to-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                    <Smartphone className="w-5 h-5 relative z-10 drop-shadow-lg" />
+                    <span className="relative z-10">Connect Mobile</span>
                   </button>
                 )}
               </div>
@@ -211,31 +234,36 @@ export const Header: React.FC = () => {
             )}
 
             {isAuthenticated && (
-              <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2 px-3 py-2 bg-status-success/10 rounded-lg border border-status-success/20">
-                  <div className="w-2 h-2 bg-status-success rounded-full"></div>
-                  <span className="text-sm text-status-success font-mono">
+              <div className="flex items-center space-x-3 animate-fade-in">
+                <div className="flex items-center space-x-3 px-4 py-2.5 glass-premium rounded-xl border border-status-success/30 shadow-lg group hover:shadow-xl transition-all duration-300">
+                  <div className="relative">
+                    <div className="w-2.5 h-2.5 bg-status-success rounded-full shadow-lg shadow-status-success/50 animate-pulse"></div>
+                    <div className="absolute inset-0 bg-status-success rounded-full animate-ping opacity-75"></div>
+                  </div>
+                  <span className="text-sm text-white font-mono font-bold tracking-wider">
                     {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}
                   </span>
                 </div>
                 <button
                   onClick={() => setShowRSAManager(true)}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+                  className={`relative flex items-center space-x-2.5 px-4 py-2.5 rounded-xl font-bold transition-all duration-300 shadow-lg group overflow-hidden ${
                     hasRSAKeys 
-                      ? 'bg-status-success/10 text-status-success border border-status-success/30 hover:bg-status-success/20'
-                      : 'bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20'
+                      ? 'bg-gradient-to-r from-status-success/20 to-status-successLight/20 text-status-successLight border border-status-success/40 hover:from-status-success/30 hover:to-status-successLight/30 hover:shadow-status-success/30'
+                      : 'bg-gradient-to-r from-status-warning/20 to-status-warningLight/20 text-status-warningLight border border-status-warning/40 hover:from-status-warning/30 hover:to-status-warningLight/30 hover:shadow-status-warning/30 animate-bounce-subtle'
                   }`}
                 >
-                  <Key className="w-4 h-4" />
-                  <span>{hasRSAKeys ? 'RSA Keys' : 'Setup RSA'}</span>
+                  <Key className={`w-4 h-4 ${!hasRSAKeys && 'animate-wiggle'}`} />
+                  <span className="text-sm">{hasRSAKeys ? 'RSA Keys' : 'Setup RSA'}</span>
                 </button>
-                <button
-                  onClick={logout}
-                  className="flex items-center space-x-2 px-4 py-2 bg-status-error/10 text-status-error border border-status-error/30 rounded-lg hover:bg-status-error/20 transition-all duration-200"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Logout</span>
-                </button>
+                <Tooltip content="Disconnect wallet">
+                  <button
+                    onClick={logout}
+                    className="relative flex items-center space-x-2.5 px-4 py-2.5 bg-gradient-to-r from-status-error/15 to-red-600/15 text-status-errorLight border border-status-error/40 rounded-xl font-bold hover:from-status-error/25 hover:to-red-600/25 transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-status-error/20 group overflow-hidden"
+                  >
+                    <LogOut className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
+                    <span className="text-sm">Logout</span>
+                  </button>
+                </Tooltip>
               </div>
             )}
 

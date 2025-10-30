@@ -265,6 +265,21 @@ export const LoginPage: React.FC = () => {
       {showMobileWallet && (
         <MobileWalletModal onClose={() => setShowMobileWallet(false)} />
       )}
+
+      {/* Footer */}
+      <footer className="absolute bottom-0 left-0 right-0 border-t border-primary-500/10 bg-slate-900/50 backdrop-blur-lg">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex flex-col items-center justify-center">
+            <p className="text-xs text-text-secondary">
+              Made with{' '}
+              <span className="inline-block animate-pulse text-status-error drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]">
+                ❤️
+              </span>{' '}
+              in India 🇮🇳
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

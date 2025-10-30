@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   FileText, 
   Shield, 
@@ -20,15 +20,22 @@ import {
   Eye,
   LogOut,
   X,
-  ArrowRight
+  ArrowRight,
+  UserMinus,
+  FileX,
+  Settings
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Input } from '../components/ui/Input';
+import { Tooltip } from '../components/ui/Tooltip';
 import { NotarizeDocumentModal } from '../components/legal/NotarizeDocumentModal';
 import { RedactionModal } from '../components/legal/RedactionModal';
 import { RequestSignatureModal } from '../components/legal/RequestSignatureModal';
 import { ZKMLAnalysisModal } from '../components/legal/ZKMLAnalysisModal';
+import { RevokeAccessModal } from '../components/legal/RevokeAccessModal';
+import { RevokeDocumentModal } from '../components/legal/RevokeDocumentModal';
+import { ContractPauseBanner } from '../components/legal/ContractPauseBanner';
 import { SignatureRequests } from '../components/legal/SignatureRequests';
 import { SentSignatureRequests } from '../components/legal/SentSignatureRequests';
 import { CreateCaseModal } from '../components/case/CreateCaseModal';
@@ -43,6 +50,7 @@ import { debugUserPermissions } from '../utils/debugPermissions';
 import { testAllPermissions } from '../utils/testPermissions';
 import { testPermissionMapping } from '../utils/testPermissionMapping';
 import { useCase } from '../contexts/CaseContext';
+import { useCommonShortcuts } from '../hooks/useKeyboardShortcuts';
 import toast from 'react-hot-toast';
 
 interface LegalDocument {
@@ -111,30 +119,35 @@ const CaseManagementTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-lg font-semibold text-white">Case Management</h3>
-          <p className="text-sm text-slate-400">
+          <h2 className="text-3xl font-black text-white font-display mb-2 text-gradient">Case Management</h2>
+          <p className="text-text-secondary text-base font-medium">
             Create and manage legal case files with role-based access control
           </p>
         </div>
-        <div className="flex items-center space-x-3">
-          <div className="text-sm text-slate-400">
-            {cases.length} cases
+        <div className="flex items-center space-x-4">
+          <div className="px-4 py-2 glass-premium rounded-xl border border-primary-500/20">
+            <span className="text-sm text-text-secondary font-medium">Cases: </span>
+            <span className="text-lg font-bold text-primary-400">
+              {cases.length}
+            </span>
           </div>
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
             onClick={handleRefresh}
             leftIcon={<RefreshCw className="w-4 h-4" />}
-            className="bg-slate-800/50 border-slate-700/50"
+            className="hover:bg-primary-500/10 hover:border-primary-500/50"
           >
             Refresh
           </Button>
           <Button
             onClick={() => setShowCreateCaseModal(true)}
-            className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700"
+            variant="primary"
+            size="sm"
             leftIcon={<Plus className="w-4 h-4" />}
+            className="shadow-xl shadow-primary-500/30"
           >
             New Case
           </Button>
@@ -142,89 +155,107 @@ const CaseManagementTab: React.FC = () => {
       </div>
 
       {cases.length === 0 ? (
-        <div className="text-center py-12">
-          <Users className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-white mb-2">No Cases Found</h3>
-          <p className="text-slate-400 mb-4">
-            Create your first legal case to get started with case management
+        <Card variant="premium" className="text-center py-20 animate-fade-in-up">
+          <div className="relative mb-8 inline-block">
+            <div className="w-28 h-28 bg-gradient-to-br from-primary-500 via-primary-600 to-accent-500 rounded-3xl flex items-center justify-center mx-auto animate-float shadow-2xl">
+              <Users className="w-14 h-14 text-white drop-shadow-2xl" />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl blur-3xl opacity-30 animate-glow-pulse" />
+          </div>
+          <h3 className="text-3xl font-bold text-white mb-4 text-gradient">No Cases Found</h3>
+          <p className="text-text-secondary max-w-lg mx-auto text-lg leading-relaxed mb-8">
+            Create your first legal case to get started with case management and role-based access control
           </p>
           <Button
             onClick={() => setShowCreateCaseModal(true)}
-            className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700"
-            leftIcon={<Plus className="w-4 h-4" />}
+            variant="primary"
+            size="lg"
+            leftIcon={<Plus className="w-5 h-5" />}
           >
             Create First Case
           </Button>
-        </div>
+        </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cases.map((caseItem) => (
-            <Card key={caseItem.id} className="hover:bg-slate-800/50 transition-colors">
+          {cases.map((caseItem, index) => (
+            <Card 
+              key={caseItem.id} 
+              variant="premium" 
+              className="group animate-fade-in-up"
+              style={{ animationDelay: `${index * 75}ms` }}
+            >
               <div className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                      <Users className="w-5 h-5 text-blue-500" />
+                <div className="flex items-start justify-between mb-5">
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
+                      <div className="w-14 h-14 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <Users className="w-7 h-7 text-primary-400" />
+                      </div>
+                      <div className="absolute inset-0 bg-primary-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-white">{caseItem.title}</h3>
-                      <p className="text-sm text-slate-400">
-                        {new Date(caseItem.createdAt).toLocaleDateString()}
+                      <h3 className="font-bold text-white text-lg mb-1 group-hover:text-gradient transition-all">{caseItem.title}</h3>
+                      <p className="text-sm text-text-secondary font-medium">
+                        {new Date(caseItem.createdAt).toLocaleDateString('en-US', { 
+                          month: 'short', 
+                          day: 'numeric', 
+                          year: 'numeric' 
+                        })}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${
-                      caseItem.status === 'active' ? 'bg-green-500/10 text-green-400' :
-                      caseItem.status === 'closed' ? 'bg-red-500/10 text-red-400' :
-                      'bg-yellow-500/10 text-yellow-400'
+                    <span className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-sm ${
+                      caseItem.status === 'active' ? 'bg-status-success/10 text-status-successLight border border-status-success/30' :
+                      caseItem.status === 'closed' ? 'bg-status-error/10 text-status-errorLight border border-status-error/30' :
+                      'bg-status-warning/10 text-status-warningLight border border-status-warning/30'
                     }`}>
                       {caseItem.status}
                     </span>
                   </div>
                 </div>
 
-                <div className="space-y-2 mb-4">
-                  <p className="text-sm text-slate-300 line-clamp-2">{caseItem.description}</p>
+                <div className="space-y-3 mb-5 p-4 bg-secondary-900/30 rounded-xl border border-secondary-700/30">
+                  <p className="text-sm text-text-primary line-clamp-2 leading-relaxed">{caseItem.description}</p>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-400">Case ID:</span>
-                    <span className="text-white font-mono text-xs">
-                      {caseItem.id.slice(0, 8)}...
-                    </span>
+                    <span className="text-text-secondary font-medium">Case ID:</span>
+                    <code className="text-white font-mono text-xs bg-secondary-800/50 px-2 py-1 rounded">
+                      {caseItem.id.slice(0, 10)}...
+                    </code>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-400">Priority:</span>
-                    <span className={`text-xs ${
-                      caseItem.priority === 'high' ? 'text-red-400' :
-                      caseItem.priority === 'medium' ? 'text-yellow-400' :
-                      'text-green-400'
+                    <span className="text-text-secondary font-medium">Priority:</span>
+                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+                      caseItem.priority === 'high' ? 'bg-status-error/15 text-status-errorLight border border-status-error/30' :
+                      caseItem.priority === 'medium' ? 'bg-status-warning/15 text-status-warningLight border border-status-warning/30' :
+                      'bg-status-success/15 text-status-successLight border border-status-success/30'
                     }`}>
-                      {caseItem.priority}
+                      {caseItem.priority.toUpperCase()}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex gap-2">
                   <Button
                     size="sm"
-                    variant="outline"
+                    variant="secondary"
                     onClick={() => {
-                      // Navigate to case details
                       console.log('View case:', caseItem.id);
                     }}
+                    className="flex-1 hover:bg-primary-500/10 hover:border-primary-500/50 hover:text-primary-400"
+                    leftIcon={<Eye className="w-3.5 h-3.5" />}
                   >
-                    <Eye className="w-3 h-3 mr-1" />
                     View
                   </Button>
                   <Button
                     size="sm"
-                    variant="outline"
+                    variant="secondary"
                     onClick={() => {
-                      // Edit case
                       console.log('Edit case:', caseItem.id);
                     }}
+                    className="flex-1 hover:bg-accent-500/10 hover:border-accent-500/50 hover:text-accent-400"
+                    leftIcon={<Edit className="w-3.5 h-3.5" />}
                   >
-                    <Edit className="w-3 h-3 mr-1" />
                     Edit
                   </Button>
                 </div>
@@ -259,11 +290,21 @@ export const LegalDashboard: React.FC = () => {
   const [showZKMLModal, setShowZKMLModal] = useState(false);
   const [showCreateCaseModal, setShowCreateCaseModal] = useState(false);
   const [showRequestSignatureModal, setShowRequestSignatureModal] = useState(false);
+  const [showRevokeAccessModal, setShowRevokeAccessModal] = useState(false);
+  const [showRevokeDocumentModal, setShowRevokeDocumentModal] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<LegalDocument | null>(null);
   const [showDebugPanel, setShowDebugPanel] = useState(false);
   const [debugResults, setDebugResults] = useState<any>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showRoleChangeModal, setShowRoleChangeModal] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Keyboard shortcuts
+  useCommonShortcuts({
+    onSearch: () => searchInputRef.current?.focus(),
+    onRefresh: () => refreshDocuments(),
+    onNew: () => canPerformAction('canCreateCase') && setShowCreateCaseModal(true),
+  });
 
   // Load legal documents from localStorage only (no mock data)
   const [legalDocuments, setLegalDocuments] = useState<LegalDocument[]>(() => {
@@ -447,6 +488,12 @@ export const LegalDashboard: React.FC = () => {
         break;
       case 'download':
         handleDownloadDocument(document);
+        break;
+      case 'revoke-access':
+        setShowRevokeAccessModal(true);
+        break;
+      case 'revoke-document':
+        setShowRevokeDocumentModal(true);
         break;
       case 'delete':
         handleDeleteDocument(document);
@@ -748,114 +795,40 @@ export const LegalDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Header Section */}
-      <div className="bg-slate-900/50 backdrop-blur-lg border-b border-slate-700/50 sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between mb-6">
+    <div className="flex flex-col min-h-screen">
+      {/* Contract Pause Banner */}
+      <ContractPauseBanner />
+      
+      {/* Top Navigation Bar Only - Sticky */}
+      <header className="bg-slate-900/95 backdrop-blur-lg border-b border-slate-700/50 sticky top-0 z-40 shadow-lg shadow-black/30">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-accent-400 rounded-lg flex items-center justify-center">
-                <Shield className="w-7 h-7 text-white" />
+              <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-accent-400 rounded-lg flex items-center justify-center">
+                <Shield className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-white mb-2">
+                <h1 className="text-xl font-bold text-white">
                   BlockVault <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-accent-400">Legal</span>
                 </h1>
-                <div className="flex items-center space-x-2">
-                  <p className="text-slate-400">ZK-powered legal document management</p>
-                  {currentUser?.currentRole && (
-                    <>
-                      <span className="text-slate-500">•</span>
-                      <button
-                        onClick={() => setShowRoleChangeModal(true)}
-                        className="group flex items-center space-x-2 text-sm font-semibold hover:text-accent-400 transition-all duration-200 px-3 py-1.5 rounded-lg hover:bg-accent-400/15 border border-transparent hover:border-accent-400/30"
-                        title="Click to change role"
-                      >
-                        <span className="text-accent-400">{getRoleDisplayName(currentUser.currentRole)}</span>
-                        <Edit className="w-3.5 h-3.5 text-text-secondary group-hover:text-accent-400 transition-colors" />
-                      </button>
-                    </>
-                  )}
-                  {userProfile?.firmName && (
-                    <>
-                      <span className="text-slate-500">•</span>
-                      <span className="text-sm text-green-400 font-medium">
-                        {userProfile.firmName}
-                      </span>
-                    </>
-                  )}
-                </div>
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              {userProfile?.firmName && isOnboarded && (
-                <Button
-                  onClick={() => {
-                    if (window.confirm('Are you sure you want to logout from your firm? This will clear your role and firm data.')) {
-                      logoutFromFirm();
-                      toast.success('Successfully logged out from firm');
-                    }
-                  }}
-                  variant="outline"
+              {/* Debug button - only visible in dev */}
+              {process.env.NODE_ENV === 'development' && (
+                <Button 
+                  variant="ghost" 
                   size="sm"
-                  className="flex items-center space-x-2"
+                  onClick={() => setShowDebugPanel(!showDebugPanel)}
+                  className="text-slate-500 hover:text-white"
                 >
-                  <LogOut className="w-4 h-4" />
-                  <span>Logout from Firm</span>
+                  <Settings className="w-4 h-4" />
                 </Button>
-              )}
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setShowDebugPanel(!showDebugPanel)}
-                className="bg-slate-800/50 border-slate-700/50"
-              >
-                Debug
-              </Button>
-              {currentUser?.currentRole && (
-                <div className={`flex items-center space-x-2 px-4 py-2 rounded-xl border ${
-                  canPerformAction('canCreateCase')
-                    ? 'bg-status-success/10 border-status-success/30 text-status-success'
-                    : 'bg-status-error/10 border-status-error/30 text-status-error'
-                }`}>
-                  {canPerformAction('canCreateCase') ? (
-                    <>
-                      <CheckCircle className="w-4 h-4" />
-                      <span className="text-sm font-semibold">Can Create Cases</span>
-                    </>
-                  ) : (
-                    <>
-                      <Lock className="w-4 h-4" />
-                      <span className="text-sm font-semibold">Cannot Create Cases</span>
-                    </>
-                  )}
-                </div>
               )}
             </div>
           </div>
-
-          {/* Statistics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {statsCards.map((stat, index) => (
-              <Card key={index} className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50 hover:bg-slate-800/70 transition-all duration-200">
-                <div className="flex items-center justify-between p-4">
-                  <div>
-                    <p className="text-sm text-slate-400 mb-1">{stat.title}</p>
-                    <p className="text-2xl font-bold text-white">{stat.value}</p>
-                    <p className="text-xs text-green-400 flex items-center mt-1">
-                      <TrendingUp className="w-3 h-3 mr-1" />
-                      {stat.change}
-                    </p>
-                  </div>
-                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center bg-${stat.color}-500/10`}>
-                    <stat.icon className={`w-6 h-6 text-${stat.color}-400`} />
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
         </div>
-      </div>
+      </header>
 
       {/* Debug Panel */}
       {showDebugPanel && (
@@ -867,23 +840,36 @@ export const LegalDashboard: React.FC = () => {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={runDebugTests}
+                  onClick={() => {
+                    console.log('Current User:', currentUser);
+                    console.log('User Profile:', userProfile);
+                    console.log('Is Onboarded:', isOnboarded);
+                    setDebugResults({
+                      currentUser,
+                      userProfile,
+                      isOnboarded,
+                      canCreateCase: canPerformAction('canCreateCase')
+                    });
+                  }}
                 >
-                  API Tests
+                  Log State
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={runPermissionTests}
+                  onClick={() => {
+                    console.log('Current User:', currentUser);
+                    console.log('Search Query:', searchQuery);
+                    console.log('Selected Tab:', selectedTab);
+                    setDebugResults({ 
+                      currentUser, 
+                      searchQuery, 
+                      selectedTab,
+                      timestamp: new Date().toISOString()
+                    });
+                  }}
                 >
-                  Permission Tests
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={runPermissionMappingTests}
-                >
-                  Mapping Tests
+                  Debug Info
                 </Button>
               </div>
             </div>
@@ -898,80 +884,223 @@ export const LegalDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        {/* Search and Actions */}
-        <div className="flex flex-col lg:flex-row gap-4 mb-6">
+      {/* Main Scrollable Content */}
+      <main className="flex-1 overflow-y-auto page-transition">
+        <div className="container mx-auto px-4 py-6 pb-24">
+          
+          {/* Role and Firm Badges */}
+          <div className="flex items-center gap-3 flex-wrap mb-6">
+            {currentUser?.currentRole && (
+              <button
+                onClick={() => setShowRoleChangeModal(true)}
+                className="group flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-primary-500/10 to-accent-500/10 border border-primary-500/30 hover:border-primary-500/50 transition-all duration-200"
+                title="Click to change role"
+              >
+                <span className="text-xs font-bold text-primary-300 uppercase tracking-wider">
+                  {getRoleDisplayName(currentUser.currentRole)}
+                </span>
+                <Edit className="w-3 h-3 text-primary-400 group-hover:scale-110 transition-transform" />
+              </button>
+            )}
+            {userProfile?.firmName && (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-status-success/10 to-status-successLight/10 border border-status-success/30">
+                  <div className="w-2 h-2 bg-status-success rounded-full animate-pulse" />
+                  <span className="text-xs font-bold text-status-successLight uppercase tracking-wider">
+                    {userProfile.firmName}
+                  </span>
+                </div>
+                {/* Leave Firm Button - Always Visible */}
+                <Tooltip content="Leave Firm">
+                  <button
+                    onClick={() => {
+                      if (window.confirm(`Are you sure you want to leave ${userProfile.firmName}? You can rejoin anytime by re-onboarding.`)) {
+                        logoutFromFirm();
+                        toast.success('Successfully left firm');
+                      }
+                    }}
+                    className="p-1.5 rounded-lg text-status-errorLight hover:bg-status-error/10 hover:text-status-error transition-all group"
+                  >
+                    <LogOut className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
+                  </button>
+                </Tooltip>
+              </div>
+            )}
+          </div>
+
+          {/* Statistics Cards - 2x2 Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
+            {statsCards.map((stat, index) => (
+              <Card 
+                key={index} 
+                variant="premium" 
+                className="group relative overflow-visible animate-fade-in-up hover:shadow-[0_0_30px_rgba(123,92,244,0.2)] transition-all duration-300"
+                style={{ 
+                  animationDelay: `${index * 100}ms`,
+                }}
+              >
+                {/* Background gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                
+                <div className="relative flex items-center justify-between gap-6 p-6 min-h-[140px]">
+                  <div className="flex-1 min-w-0 z-10">
+                    <p className="text-sm font-medium text-text-secondary mb-3 uppercase tracking-wider">{stat.title}</p>
+                    <div className="flex items-baseline gap-2 mb-3">
+                      <p className="text-4xl font-bold text-white group-hover:text-gradient transition-all duration-300">
+                        {stat.value}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center text-xs font-semibold text-status-successLight bg-status-success/10 px-2.5 py-1 rounded-full border border-status-success/20">
+                        <TrendingUp className="w-3 h-3 mr-1 animate-bounce-subtle" />
+                        {stat.change}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="relative flex-shrink-0 z-10">
+                    <div 
+                      className="w-20 h-20 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-300"
+                      style={{
+                        background: `linear-gradient(135deg, rgba(${
+                          stat.color === 'blue' ? '99,102,241' :
+                          stat.color === 'green' ? '16,185,129' :
+                          stat.color === 'purple' ? '168,85,247' :
+                          '251,146,60'
+                        }, 0.2), rgba(${
+                          stat.color === 'blue' ? '99,102,241' :
+                          stat.color === 'green' ? '16,185,129' :
+                          stat.color === 'purple' ? '168,85,247' :
+                          '251,146,60'
+                        }, 0.3))`
+                      }}
+                    >
+                      <stat.icon 
+                        className="w-10 h-10 drop-shadow-lg"
+                        style={{
+                          color: stat.color === 'blue' ? '#818cf8' :
+                                 stat.color === 'green' ? '#6ee7b7' :
+                                 stat.color === 'purple' ? '#c084fc' :
+                                 '#fdba74'
+                        }}
+                      />
+                    </div>
+                    <div 
+                      className="absolute inset-0 rounded-2xl blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-300 -z-10"
+                      style={{
+                        background: stat.color === 'blue' ? 'rgba(99,102,241,0.2)' :
+                                   stat.color === 'green' ? 'rgba(16,185,129,0.2)' :
+                                   stat.color === 'purple' ? 'rgba(168,85,247,0.2)' :
+                                   'rgba(251,146,60,0.2)'
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Bottom accent line */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left pointer-events-none" />
+              </Card>
+            ))}
+          </div>
+
+          {/* Search and Actions - Grouped toolbar */}
+        <div className="glass rounded-2xl p-4 mb-8 border border-secondary-700/30">
+          <div className="flex flex-col lg:flex-row gap-4">
           <div className="flex-1">
             <Input
+              ref={searchInputRef}
               type="text"
-              placeholder="Search legal documents..."
+              placeholder="Search legal documents, cases, signatures... (Ctrl+K)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              leftIcon={<Search className="w-4 h-4" />}
-              className="bg-slate-800/50 border-slate-700/50"
+              leftIcon={<Search className="w-5 h-5" />}
+              variant="premium"
+              className="text-base"
             />
           </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={refreshDocuments}
-              leftIcon={<RefreshCw className="w-4 h-4" />}
-              className="bg-slate-800/50 border-slate-700/50"
-            >
-              Refresh
-            </Button>
-            <div className="flex bg-slate-800/50 rounded-lg p-1">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-md transition-colors ${
-                  viewMode === 'grid' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'
-                }`}
+          <div className="flex items-center space-x-3">
+            <Tooltip content="Refresh all data (Ctrl+R)">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={refreshDocuments}
+                leftIcon={<RefreshCw className="w-4 h-4" />}
+                className="hover:bg-primary-500/10 hover:border-primary-500/50"
               >
-                <Grid className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 rounded-md transition-colors ${
-                  viewMode === 'list' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                <List className="w-4 h-4" />
-              </button>
+                Refresh
+              </Button>
+            </Tooltip>
+            <div className="flex glass-premium rounded-xl p-1.5 gap-1">
+              <Tooltip content="Grid View">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2.5 rounded-lg transition-all duration-300 ${
+                    viewMode === 'grid' 
+                      ? 'bg-gradient-to-r from-primary-500 to-accent-500 text-white shadow-lg' 
+                      : 'text-text-secondary hover:text-white hover:bg-secondary-700/50'
+                  }`}
+                  aria-label="Grid View"
+                >
+                  <Grid className="w-4 h-4" />
+                </button>
+              </Tooltip>
+              <Tooltip content="List View">
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-2.5 rounded-lg transition-all duration-300 ${
+                    viewMode === 'list' 
+                      ? 'bg-gradient-to-r from-primary-500 to-accent-500 text-white shadow-lg' 
+                      : 'text-text-secondary hover:text-white hover:bg-secondary-700/50'
+                  }`}
+                  aria-label="List View"
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </Tooltip>
             </div>
             {canPerformAction('canCreateCase') && (
-              <Button
-                variant="outline"
-                onClick={() => setShowCreateCaseModal(true)}
-                leftIcon={<Plus className="w-4 h-4" />}
-                className="bg-slate-800/50 border-slate-700/50"
-              >
-                New Case
-              </Button>
+              <Tooltip content="Create new case (Ctrl+N)">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => setShowCreateCaseModal(true)}
+                  leftIcon={<Plus className="w-4 h-4" />}
+                >
+                  New Case
+                </Button>
+              </Tooltip>
             )}
+          </div>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex space-x-1 bg-slate-800/50 p-1 rounded-lg mb-6">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setSelectedTab(tab.id as any)}
-                className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-md transition-all duration-200 ${
-                  selectedTab === tab.id
-                    ? 'bg-gradient-to-r from-primary-500 to-accent-400 text-white shadow-lg'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
+        {/* Tabs - Enhanced with icons visible */}
+        <div className="glass-premium rounded-2xl p-1.5 mb-8 overflow-x-auto">
+          <div className="flex space-x-2 min-w-max">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = selectedTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setSelectedTab(tab.id as any)}
+                  className={`relative flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-xl transition-all duration-300 font-semibold group ${
+                    isActive
+                      ? 'bg-gradient-to-r from-primary-500/90 via-primary-600/90 to-accent-500/90 text-white shadow-lg'
+                      : 'text-text-secondary hover:text-white hover:bg-secondary-700/40 hover:shadow-[0_0_15px_rgba(123,92,244,0.1)]'
+                  }`}
+                >
+                  {isActive && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary-500 to-accent-500 rounded-xl blur-md opacity-25" />
+                  )}
+                  <Icon className={`w-5 h-5 relative z-10 ${isActive ? 'drop-shadow-lg' : 'group-hover:scale-110 transition-transform'}`} />
+                  <span className="relative z-10 whitespace-nowrap text-sm">{tab.label}</span>
+                  {isActive && (
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-primary-400 via-accent-400 to-primary-400 rounded-full" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Tab Content */}
@@ -985,89 +1114,121 @@ export const LegalDashboard: React.FC = () => {
           {selectedTab === 'documents' && (
             <div className="space-y-6">
               {/* Upload Button */}
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-text-primary font-display">Legal Documents</h2>
-                  <p className="text-text-secondary text-sm mt-1">Notarize, manage, and track your legal documents</p>
+                  <h2 className="text-3xl font-black text-white font-display mb-2 text-gradient">Legal Documents</h2>
+                  <p className="text-text-secondary text-base font-medium">Notarize, manage, and track your legal documents on blockchain</p>
                 </div>
                 <Button
                   onClick={() => setShowNotarizeModal(true)}
-                  className="bg-gradient-to-r from-primary-500 to-accent-400"
-                  leftIcon={<Shield className="w-4 h-4" />}
+                  variant="primary"
+                  size="lg"
+                  leftIcon={<Shield className="w-5 h-5" />}
+                  className="shadow-xl shadow-primary-500/30"
                 >
                   Notarize Document
                 </Button>
               </div>
 
               {filteredDocuments.length === 0 ? (
-                <div className="text-center py-12">
-                  <FileText className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-white mb-2">No Legal Documents</h3>
-                  <p className="text-slate-400 mb-4">
-                    Notarize documents to create an immutable blockchain record
+                <Card variant="premium" className="text-center py-20 animate-fade-in-up">
+                  <div className="relative mb-8 inline-block">
+                    <div className="w-28 h-28 bg-gradient-to-br from-primary-500 via-primary-600 to-accent-500 rounded-3xl flex items-center justify-center mx-auto animate-float shadow-2xl">
+                      <FileText className="w-14 h-14 text-white drop-shadow-2xl" />
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl blur-3xl opacity-30 animate-glow-pulse" />
+                  </div>
+                  <h3 className="text-3xl font-bold text-white mb-4 text-gradient">No Legal Documents</h3>
+                  <p className="text-text-secondary max-w-lg mx-auto text-lg leading-relaxed mb-8">
+                    Notarize documents to create an immutable blockchain record with zero-knowledge proofs
                   </p>
                   <Button
                     onClick={() => setShowNotarizeModal(true)}
-                    variant="outline"
-                    leftIcon={<Shield className="w-4 h-4" />}
+                    variant="primary"
+                    size="lg"
+                    leftIcon={<Shield className="w-5 h-5" />}
                   >
                     Notarize Your First Document
                   </Button>
-                </div>
+                </Card>
               ) : (
                 <div className={viewMode === 'grid' 
                   ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" 
-                  : "space-y-4"
+                  : "space-y-5"
                 }>
-                  {filteredDocuments.map((document) => (
-                    <Card key={document.id} className="hover:bg-slate-800/50 transition-colors">
-                      <div className={viewMode === 'list' ? "p-4" : "p-6"}>
-                        <div className={`flex items-start justify-between ${viewMode === 'list' ? 'mb-2' : 'mb-4'}`}>
-                          <div className="flex items-center space-x-3">
-                            <div className={`${viewMode === 'list' ? 'w-8 h-8' : 'w-10 h-10'} bg-blue-500/10 rounded-lg flex items-center justify-center`}>
-                              <FileText className={`${viewMode === 'list' ? 'w-4 h-4' : 'w-5 h-5'} text-blue-500`} />
+                  {filteredDocuments.map((document, index) => (
+                    <Card 
+                      key={document.id} 
+                      variant="premium" 
+                      className="group animate-fade-in-up"
+                      style={{ animationDelay: `${index * 75}ms` }}
+                    >
+                      <div className={viewMode === 'list' ? "p-5" : "p-6"}>
+                        <div className={`flex items-start justify-between ${viewMode === 'list' ? 'mb-3' : 'mb-5'}`}>
+                          <div className="flex items-center space-x-4">
+                            <div className="relative">
+                              <div className={`${viewMode === 'list' ? 'w-12 h-12' : 'w-14 h-14'} bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                                <FileText className={`${viewMode === 'list' ? 'w-6 h-6' : 'w-7 h-7'} text-primary-400`} />
+                              </div>
+                              <div className="absolute inset-0 bg-primary-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity" />
                             </div>
                             <div>
-                              <h3 className="font-medium text-white">{document.name}</h3>
-                              <p className="text-sm text-slate-400">
-                                {new Date(document.timestamp).toLocaleDateString()}
+                              <h3 className="font-bold text-white text-base mb-1 group-hover:text-gradient transition-all">{document.name}</h3>
+                              <p className="text-sm text-text-secondary font-medium">
+                                {new Date(document.timestamp).toLocaleDateString('en-US', { 
+                                  month: 'short', 
+                                  day: 'numeric', 
+                                  year: 'numeric' 
+                                })}
                               </p>
                             </div>
                           </div>
-                          <div className="flex items-center space-x-2">
-                            {getStatusIcon(document.status)}
-                            <span className="text-xs text-slate-400 capitalize">
+                          <div className="flex items-center space-x-2 flex-shrink-0">
+                            <div className="relative flex-shrink-0">
+                              {getStatusIcon(document.status)}
+                              {document.status === 'awaiting_signatures' && (
+                                <div className="absolute inset-0 animate-ping">
+                                  <Clock className="w-4 h-4 text-yellow-500 opacity-75" />
+                                </div>
+                              )}
+                            </div>
+                            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide backdrop-blur-sm whitespace-nowrap ${
+                              document.status === 'registered' ? 'bg-status-success/10 text-status-successLight border border-status-success/30' :
+                              document.status === 'awaiting_signatures' ? 'bg-status-warning/10 text-status-warningLight border border-status-warning/30' :
+                              document.status === 'executed' ? 'bg-status-info/10 text-status-infoLight border border-status-info/30' :
+                              'bg-status-error/10 text-status-errorLight border border-status-error/30'
+                            }`}>
                               {document.status.replace('_', ' ')}
                             </span>
                           </div>
                         </div>
 
                         {viewMode === 'grid' && (
-                          <div className="space-y-2 mb-4">
+                          <div className="space-y-3 mb-5 p-4 bg-secondary-900/30 rounded-xl border border-secondary-700/30">
                             <div className="flex items-center justify-between text-sm">
-                              <span className="text-slate-400">Hash:</span>
-                              <span className="text-white font-mono text-xs">
-                                {document.docHash.slice(0, 8)}...
-                              </span>
+                              <span className="text-text-secondary font-medium">Hash:</span>
+                              <code className="text-white font-mono text-xs bg-secondary-800/50 px-2 py-1 rounded">
+                                {document.docHash.slice(0, 10)}...
+                              </code>
                             </div>
                             <div className="flex items-center justify-between text-sm">
-                              <span className="text-slate-400">IPFS CID:</span>
-                              <span className="text-white font-mono text-xs">
-                                {document.cid.slice(0, 8)}...
-                              </span>
+                              <span className="text-text-secondary font-medium">IPFS CID:</span>
+                              <code className="text-primary-400 font-mono text-xs bg-primary-500/5 px-2 py-1 rounded border border-primary-500/20">
+                                {document.cid.slice(0, 10)}...
+                              </code>
                             </div>
                             {document.parentHash && (
                               <div className="flex items-center justify-between text-sm">
-                                <span className="text-slate-400">Parent Document:</span>
-                                <span className="text-blue-400 font-mono text-xs">
-                                  {document.parentHash.slice(0, 8)}...
-                                </span>
+                                <span className="text-text-secondary font-medium">Parent:</span>
+                                <code className="text-accent-400 font-mono text-xs bg-accent-500/5 px-2 py-1 rounded border border-accent-500/20">
+                                  {document.parentHash.slice(0, 10)}...
+                                </code>
                               </div>
                             )}
                             {document.transformationType && (
                               <div className="flex items-center justify-between text-sm">
-                                <span className="text-slate-400">Transformation:</span>
-                                <span className="text-primary-400 capitalize">
+                                <span className="text-text-secondary font-medium">Type:</span>
+                                <span className="text-accent-400 capitalize font-semibold px-2 py-1 bg-accent-500/10 rounded">
                                   {document.transformationType}
                                 </span>
                               </div>
@@ -1075,14 +1236,15 @@ export const LegalDashboard: React.FC = () => {
                           </div>
                         )}
 
-                        <div className={`flex ${viewMode === 'list' ? 'flex-wrap gap-1' : 'flex-wrap gap-2'}`}>
+                        <div className={`flex ${viewMode === 'list' ? 'flex-wrap gap-2' : 'flex-wrap gap-2'}`}>
                           {canPerformAction('canCreateRedactions') ? (
                             <Button
                               size="sm"
-                              variant="outline"
+                              variant="secondary"
                               onClick={() => handleDocumentAction('redact', document)}
+                              className="hover:bg-primary-500/10 hover:border-primary-500/50 hover:text-primary-400"
+                              leftIcon={<Edit className="w-3.5 h-3.5" />}
                             >
-                              <Edit className="w-3 h-3 mr-1" />
                               Redact
                             </Button>
                           ) : (
@@ -1090,22 +1252,22 @@ export const LegalDashboard: React.FC = () => {
                               size="sm"
                               variant="outline"
                               disabled
-                              className="opacity-50 cursor-not-allowed"
+                              className="opacity-40 cursor-not-allowed"
                               title={`${getRoleDisplayName(currentUser?.currentRole || 'client')} role cannot create redactions`}
+                              leftIcon={<Lock className="w-3.5 h-3.5" />}
                             >
-                              <Lock className="w-3 h-3 mr-1" />
                               Redact
                             </Button>
                           )}
 
-
                           {canPerformAction('canRequestSignatures') ? (
                             <Button
                               size="sm"
-                              variant="outline"
+                              variant="secondary"
                               onClick={() => handleDocumentAction('request-signature', document)}
+                              className="hover:bg-accent-500/10 hover:border-accent-500/50 hover:text-accent-400"
+                              leftIcon={<Users className="w-3.5 h-3.5" />}
                             >
-                              <Users className="w-3 h-3 mr-1" />
                               Request
                             </Button>
                           ) : (
@@ -1113,10 +1275,10 @@ export const LegalDashboard: React.FC = () => {
                               size="sm"
                               variant="outline"
                               disabled
-                              className="opacity-50 cursor-not-allowed"
+                              className="opacity-40 cursor-not-allowed"
                               title={`${getRoleDisplayName(currentUser?.currentRole || 'client')} role cannot request signatures`}
+                              leftIcon={<Lock className="w-3.5 h-3.5" />}
                             >
-                              <Lock className="w-3 h-3 mr-1" />
                               Request
                             </Button>
                           )}
@@ -1124,10 +1286,11 @@ export const LegalDashboard: React.FC = () => {
                           {canPerformAction('canRunZKMLAnalysis') ? (
                             <Button
                               size="sm"
-                              variant="outline"
+                              variant="secondary"
                               onClick={() => handleDocumentAction('analyze', document)}
+                              className="hover:bg-status-info/10 hover:border-status-info/50 hover:text-status-info"
+                              leftIcon={<Brain className="w-3.5 h-3.5" />}
                             >
-                              <Brain className="w-3 h-3 mr-1" />
                               Analyze
                             </Button>
                           ) : (
@@ -1135,32 +1298,65 @@ export const LegalDashboard: React.FC = () => {
                               size="sm"
                               variant="outline"
                               disabled
-                              className="opacity-50 cursor-not-allowed"
+                              className="opacity-40 cursor-not-allowed"
                               title={`${getRoleDisplayName(currentUser?.currentRole || 'client')} role cannot run AI analysis`}
+                              leftIcon={<Lock className="w-3.5 h-3.5" />}
                             >
-                              <Lock className="w-3 h-3 mr-1" />
                               Analyze
                             </Button>
                           )}
 
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDocumentAction('download', document)}
-                          >
-                            <Download className="w-3 h-3 mr-1" />
-                            Download
-                          </Button>
+                          <Tooltip content="Download document">
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => handleDocumentAction('download', document)}
+                              className="hover:bg-status-success/10 hover:border-status-success/50 hover:text-status-success"
+                              leftIcon={<Download className="w-3.5 h-3.5" />}
+                            >
+                              Download
+                            </Button>
+                          </Tooltip>
                           
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDocumentAction('delete', document)}
-                            className="text-red-400 hover:text-red-300 hover:border-red-400"
-                          >
-                            <X className="w-3 h-3 mr-1" />
-                            Delete
-                          </Button>
+                          {document.status !== 'revoked' && (
+                            <>
+                              <Tooltip content="Manage who can access this document">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleDocumentAction('revoke-access', document)}
+                                  className="hover:bg-primary-500/10 hover:border-primary-500/50"
+                                  leftIcon={<UserMinus className="w-3.5 h-3.5" />}
+                                >
+                                  Access
+                                </Button>
+                              </Tooltip>
+                              
+                              <Tooltip content="Mark document as revoked (irreversible)">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleDocumentAction('revoke-document', document)}
+                                  className="text-status-warning hover:bg-status-warning/10 hover:border-status-warning/50"
+                                  leftIcon={<FileX className="w-3.5 h-3.5" />}
+                                >
+                                  Revoke
+                                </Button>
+                              </Tooltip>
+                            </>
+                          )}
+                          
+                          <Tooltip content="Delete document permanently">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDocumentAction('delete', document)}
+                              className="text-status-error hover:bg-status-error/10 hover:border-status-error/50"
+                              leftIcon={<X className="w-3.5 h-3.5" />}
+                            >
+                              Delete
+                            </Button>
+                          </Tooltip>
                         </div>
                       </div>
                     </Card>
@@ -1174,23 +1370,26 @@ export const LegalDashboard: React.FC = () => {
           {selectedTab === 'sent-signatures' && <SentSignatureRequests />}
           {selectedTab === 'analysis' && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-white">AI Analysis Results</h3>
-                  <p className="text-sm text-slate-400">
-                    Verifiable AI analysis results using ZKML protocols
+                  <h2 className="text-3xl font-black text-white font-display mb-2 text-gradient">AI Analysis Results</h2>
+                  <p className="text-text-secondary text-base font-medium">
+                    Verifiable AI analysis results using zero-knowledge machine learning
                   </p>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <div className="text-sm text-slate-400">
-                    {legalDocuments.filter(doc => doc.aiAnalysis).length} analyzed documents
+                <div className="flex items-center space-x-4">
+                  <div className="px-4 py-2 glass-premium rounded-xl border border-primary-500/20">
+                    <span className="text-sm text-text-secondary font-medium">Analyzed: </span>
+                    <span className="text-lg font-bold text-primary-400">
+                      {legalDocuments.filter(doc => doc.aiAnalysis).length}
+                    </span>
                   </div>
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     onClick={refreshDocuments}
                     leftIcon={<RefreshCw className="w-4 h-4" />}
-                    className="bg-slate-800/50 border-slate-700/50"
+                    className="hover:bg-primary-500/10 hover:border-primary-500/50"
                   >
                     Refresh
                   </Button>
@@ -1198,22 +1397,35 @@ export const LegalDashboard: React.FC = () => {
               </div>
 
               {legalDocuments.filter(doc => doc.aiAnalysis).length === 0 ? (
-                <div className="text-center py-12">
-                  <Brain className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-white mb-2">No AI Analysis Results</h3>
-                  <p className="text-slate-400">
-                    Run AI analysis on your legal documents to see results here
+                <Card variant="premium" className="text-center py-20 animate-fade-in-up">
+                  <div className="relative mb-8 inline-block">
+                    <div className="w-28 h-28 bg-gradient-to-br from-primary-500 via-primary-600 to-accent-500 rounded-3xl flex items-center justify-center mx-auto animate-float shadow-2xl">
+                      <Brain className="w-14 h-14 text-white drop-shadow-2xl" />
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl blur-3xl opacity-30 animate-glow-pulse" />
+                  </div>
+                  <h3 className="text-3xl font-bold text-white mb-4 text-gradient">No AI Analysis Results</h3>
+                  <p className="text-text-secondary max-w-lg mx-auto text-lg leading-relaxed">
+                    Run AI analysis on your legal documents using zero-knowledge machine learning to see results here
                   </p>
-                </div>
+                </Card>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {legalDocuments.filter(doc => doc.aiAnalysis).map((document) => (
-                    <Card key={document.id} className="hover:bg-slate-800/50 transition-colors">
+                  {legalDocuments.filter(doc => doc.aiAnalysis).map((document, index) => (
+                    <Card 
+                      key={document.id} 
+                      variant="premium" 
+                      className="group animate-fade-in-up"
+                      style={{ animationDelay: `${index * 75}ms` }}
+                    >
                       <div className="p-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-primary-500/10 rounded-lg flex items-center justify-center">
-                              <Brain className="w-5 h-5 text-primary-500" />
+                        <div className="flex items-start justify-between mb-5">
+                          <div className="flex items-center space-x-4">
+                            <div className="relative">
+                              <div className="w-14 h-14 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <Brain className="w-7 h-7 text-primary-400" />
+                              </div>
+                              <div className="absolute inset-0 bg-primary-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity" />
                             </div>
                             <div>
                               <h3 className="font-medium text-white">{document.name}</h3>
@@ -1303,23 +1515,26 @@ export const LegalDashboard: React.FC = () => {
 
           {selectedTab === 'chain' && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-white">Chain of Custody</h3>
-                  <p className="text-sm text-slate-400">
-                    Complete audit trail of all document actions and transformations
+                  <h2 className="text-3xl font-black text-white font-display mb-2 text-gradient">Chain of Custody</h2>
+                  <p className="text-text-secondary text-base font-medium">
+                    Complete immutable audit trail of all document actions and transformations
                   </p>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <div className="text-sm text-slate-400">
-                    {chainOfCustody.length} entries
+                <div className="flex items-center space-x-4">
+                  <div className="px-4 py-2 glass-premium rounded-xl border border-primary-500/20">
+                    <span className="text-sm text-text-secondary font-medium">Entries: </span>
+                    <span className="text-lg font-bold text-primary-400">
+                      {chainOfCustody.length}
+                    </span>
                   </div>
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     onClick={refreshDocuments}
                     leftIcon={<RefreshCw className="w-4 h-4" />}
-                    className="bg-slate-800/50 border-slate-700/50"
+                    className="hover:bg-primary-500/10 hover:border-primary-500/50"
                   >
                     Refresh
                   </Button>
@@ -1327,102 +1542,132 @@ export const LegalDashboard: React.FC = () => {
               </div>
 
               {chainOfCustody.length === 0 ? (
-                <div className="text-center py-12">
-                  <Shield className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-white mb-2">No Chain of Custody Data</h3>
-                  <p className="text-slate-400">
-                    Upload and process documents to see the complete audit trail
+                <Card variant="premium" className="text-center py-20 animate-fade-in-up">
+                  <div className="relative mb-8 inline-block">
+                    <div className="w-28 h-28 bg-gradient-to-br from-primary-500 via-primary-600 to-accent-500 rounded-3xl flex items-center justify-center mx-auto animate-float shadow-2xl">
+                      <Shield className="w-14 h-14 text-white drop-shadow-2xl" />
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl blur-3xl opacity-30 animate-glow-pulse" />
+                  </div>
+                  <h3 className="text-3xl font-bold text-white mb-4 text-gradient">No Chain of Custody Data</h3>
+                  <p className="text-text-secondary max-w-lg mx-auto text-lg leading-relaxed">
+                    Upload and process documents to see the complete audit trail with immutable blockchain timestamps
                   </p>
-                </div>
+                </Card>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {chainOfCustody.map((entry, index) => (
-                    <Card key={entry.id} className="hover:bg-slate-800/50 transition-colors">
-                      <div className="p-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-center space-x-3">
-                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                              entry.type === 'creation' ? 'bg-green-500/10' :
-                              entry.type === 'transformation' ? 'bg-primary-500/10' :
-                              entry.type === 'signature' ? 'bg-blue-500/10' :
-                              entry.type === 'analysis' ? 'bg-orange-500/10' :
-                              'bg-slate-500/10'
-                            }`}>
-                              {entry.type === 'creation' && <FileText className="w-5 h-5 text-green-500" />}
-                              {entry.type === 'transformation' && <Edit className="w-5 h-5 text-primary-500" />}
-                              {entry.type === 'signature' && <PenTool className="w-5 h-5 text-blue-500" />}
-                              {entry.type === 'analysis' && <Brain className="w-5 h-5 text-orange-500" />}
+                    <Card 
+                      key={entry.id} 
+                      variant="premium" 
+                      className="group animate-fade-in-up relative"
+                      style={{ animationDelay: `${index * 50}ms` }}
+                    >
+                      {/* Connection line to next entry */}
+                      {index < chainOfCustody.length - 1 && (
+                        <div className="absolute left-[47px] -bottom-5 w-0.5 h-5 bg-gradient-to-b from-primary-500/50 to-transparent z-0" />
+                      )}
+                      
+                      <div className="p-6 relative">
+                        <div className="flex items-start justify-between mb-5">
+                          <div className="flex items-center space-x-4">
+                            <div className="relative">
+                              <div className={`w-14 h-14 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 ${
+                                entry.type === 'creation' ? 'bg-gradient-to-br from-status-success/20 to-status-successLight/20' :
+                                entry.type === 'transformation' ? 'bg-gradient-to-br from-primary-500/20 to-accent-500/20' :
+                                entry.type === 'signature' ? 'bg-gradient-to-br from-status-info/20 to-status-infoLight/20' :
+                                entry.type === 'analysis' ? 'bg-gradient-to-br from-status-warning/20 to-status-warningLight/20' :
+                                'bg-gradient-to-br from-secondary-600/20 to-secondary-700/20'
+                              }`}>
+                                {entry.type === 'creation' && <FileText className="w-7 h-7 text-status-success" />}
+                                {entry.type === 'transformation' && <Edit className="w-7 h-7 text-primary-400" />}
+                                {entry.type === 'signature' && <PenTool className="w-7 h-7 text-status-info" />}
+                                {entry.type === 'analysis' && <Brain className="w-7 h-7 text-status-warning" />}
+                              </div>
+                              <div className={`absolute inset-0 rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity ${
+                                entry.type === 'creation' ? 'bg-status-success/20' :
+                                entry.type === 'transformation' ? 'bg-primary-500/20' :
+                                entry.type === 'signature' ? 'bg-status-info/20' :
+                                'bg-status-warning/20'
+                              }`} />
                             </div>
                             <div>
-                              <h4 className="font-medium text-white">{entry.action}</h4>
-                              <p className="text-sm text-slate-400">{entry.documentName}</p>
+                              <h4 className="font-bold text-white text-lg mb-1 group-hover:text-gradient transition-all">{entry.action}</h4>
+                              <p className="text-sm text-text-secondary font-medium">{entry.documentName}</p>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <div className="text-sm text-slate-400">
-                              {new Date(entry.timestamp).toLocaleString()}
+                          <div className="text-right space-y-1">
+                            <div className="text-sm text-text-primary font-semibold">
+                              {new Date(entry.timestamp).toLocaleDateString('en-US', { 
+                                month: 'short', 
+                                day: 'numeric', 
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
                             </div>
-                            <div className="text-xs text-slate-500">
+                            <div className="text-xs text-text-tertiary font-mono">
                               {entry.user}
                             </div>
                           </div>
                         </div>
 
-                        <div className="space-y-2 mb-4">
-                          <p className="text-sm text-slate-300">{entry.details}</p>
+                        <div className="space-y-3 mb-4">
+                          <p className="text-sm text-text-primary leading-relaxed p-3 bg-secondary-900/30 rounded-lg border border-secondary-700/30">
+                            {entry.details}
+                          </p>
                           
-                          {entry.hash && (
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-slate-400">Document Hash:</span>
-                              <span className="text-white font-mono text-xs">
-                                {entry.hash.slice(0, 16)}...
-                              </span>
-                            </div>
-                          )}
+                          <div className="grid grid-cols-1 gap-3">
+                            {entry.hash && (
+                              <div className="flex items-center justify-between text-sm p-2 bg-secondary-900/30 rounded-lg">
+                                <span className="text-text-secondary font-medium">Document Hash:</span>
+                                <code className="text-white font-mono text-xs bg-secondary-800/50 px-2 py-1 rounded">
+                                  {entry.hash.slice(0, 16)}...
+                                </code>
+                              </div>
+                            )}
 
-                          {entry.cid && (
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-slate-400">IPFS CID:</span>
-                              <span className="text-white font-mono text-xs">
-                                {entry.cid.slice(0, 16)}...
-                              </span>
-                            </div>
-                          )}
+                            {entry.cid && (
+                              <div className="flex items-center justify-between text-sm p-2 bg-secondary-900/30 rounded-lg">
+                                <span className="text-text-secondary font-medium">IPFS CID:</span>
+                                <code className="text-primary-400 font-mono text-xs bg-primary-500/5 px-2 py-1 rounded border border-primary-500/20">
+                                  {entry.cid.slice(0, 16)}...
+                                </code>
+                              </div>
+                            )}
 
-                          {entry.parentHash && (
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-slate-400">Parent Document:</span>
-                              <span className="text-blue-400 font-mono text-xs">
-                                {entry.parentHash.slice(0, 16)}...
-                              </span>
-                            </div>
-                          )}
+                            {entry.parentHash && (
+                              <div className="flex items-center justify-between text-sm p-2 bg-secondary-900/30 rounded-lg">
+                                <span className="text-text-secondary font-medium">Parent Document:</span>
+                                <code className="text-accent-400 font-mono text-xs bg-accent-500/5 px-2 py-1 rounded border border-accent-500/20">
+                                  {entry.parentHash.slice(0, 16)}...
+                                </code>
+                              </div>
+                            )}
 
-                          {entry.transformationType && (
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-slate-400">Transformation:</span>
-                              <span className="text-purple-400 capitalize">
-                                {entry.transformationType}
-                              </span>
-                            </div>
-                          )}
+                            {entry.transformationType && (
+                              <div className="flex items-center justify-between text-sm p-2 bg-secondary-900/30 rounded-lg">
+                                <span className="text-text-secondary font-medium">Transformation:</span>
+                                <span className="text-accent-400 capitalize font-bold px-2 py-1 bg-accent-500/10 rounded">
+                                  {entry.transformationType}
+                                </span>
+                              </div>
+                            )}
 
-                          {entry.verified !== undefined && (
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-slate-400">Verified:</span>
-                              <span className={`${entry.verified ? 'text-green-400' : 'text-red-400'}`}>
-                                {entry.verified ? 'Yes' : 'No'}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Chain connection line */}
-                        {index < chainOfCustody.length - 1 && (
-                          <div className="flex justify-center">
-                            <div className="w-px h-4 bg-slate-600"></div>
+                            {entry.verified !== undefined && (
+                              <div className="flex items-center justify-between text-sm p-2 bg-secondary-900/30 rounded-lg">
+                                <span className="text-text-secondary font-medium">Verified:</span>
+                                <span className={`font-bold px-2.5 py-1 rounded-full ${
+                                  entry.verified 
+                                    ? 'bg-status-success/15 text-status-successLight border border-status-success/30' 
+                                    : 'bg-status-error/15 text-status-errorLight border border-status-error/30'
+                                }`}>
+                                  {entry.verified ? '✓ Yes' : '✗ No'}
+                                </span>
+                              </div>
+                            )}
                           </div>
-                        )}
+                        </div>
                       </div>
                     </Card>
                   ))}
@@ -1431,7 +1676,27 @@ export const LegalDashboard: React.FC = () => {
             </div>
           )}
         </div>
-      </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="relative border-t border-primary-500/10 bg-slate-900/50 backdrop-blur-lg">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex flex-col items-center justify-center space-y-2">
+            <p className="text-sm text-text-secondary">
+              Made with{' '}
+              <span className="inline-block animate-pulse text-status-error drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]">
+                ❤️
+              </span>{' '}
+              in India 🇮🇳
+            </p>
+            <div className="flex items-center space-x-2 text-xs text-text-tertiary">
+              <span className="w-2 h-2 bg-status-success rounded-full animate-pulse"></span>
+              <span>All systems operational</span>
+            </div>
+          </div>
+        </div>
+      </footer>
 
       {/* Modals */}
 
@@ -1489,6 +1754,42 @@ export const LegalDashboard: React.FC = () => {
             setSelectedDocument(null);
             refreshDocuments();
             toast.success('AI analysis completed!');
+          }}
+        />
+      )}
+
+      {showRevokeAccessModal && selectedDocument && (
+        <RevokeAccessModal
+          documentHash={selectedDocument.docHash}
+          documentName={selectedDocument.name}
+          accessList={[]} // TODO: Fetch actual access list from contract
+          onClose={() => {
+            setShowRevokeAccessModal(false);
+            setSelectedDocument(null);
+          }}
+          onSuccess={() => {
+            setShowRevokeAccessModal(false);
+            setSelectedDocument(null);
+            refreshDocuments();
+            toast.success('Access revoked successfully!');
+          }}
+        />
+      )}
+
+      {showRevokeDocumentModal && selectedDocument && (
+        <RevokeDocumentModal
+          documentHash={selectedDocument.docHash}
+          documentName={selectedDocument.name}
+          documentStatus={selectedDocument.status}
+          onClose={() => {
+            setShowRevokeDocumentModal(false);
+            setSelectedDocument(null);
+          }}
+          onSuccess={() => {
+            setShowRevokeDocumentModal(false);
+            setSelectedDocument(null);
+            refreshDocuments();
+            toast.success('Document revoked successfully!');
           }}
         />
       )}
@@ -1588,14 +1889,32 @@ export const LegalDashboard: React.FC = () => {
             </div>
 
             {/* Footer */}
-            <div className="flex justify-end space-x-3 pt-4 border-t border-secondary-600/50">
-              <Button
-                onClick={() => setShowRoleChangeModal(false)}
-                variant="outline"
-                size="md"
-              >
-                Cancel
-              </Button>
+            <div className="flex justify-between items-center pt-4 border-t border-secondary-600/50">
+              {/* Leave Firm option */}
+              {userProfile?.firmName && (
+                <button
+                  onClick={() => {
+                    if (window.confirm(`Are you sure you want to leave ${userProfile.firmName}? You can rejoin anytime by re-onboarding.`)) {
+                      logoutFromFirm();
+                      setShowRoleChangeModal(false);
+                      toast.success('Successfully left firm');
+                    }
+                  }}
+                  className="flex items-center space-x-2 text-sm text-status-errorLight hover:text-status-error transition-colors group"
+                >
+                  <LogOut className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+                  <span>Leave {userProfile.firmName}</span>
+                </button>
+              )}
+              <div className="flex space-x-3">
+                <Button
+                  onClick={() => setShowRoleChangeModal(false)}
+                  variant="outline"
+                  size="md"
+                >
+                  Cancel
+                </Button>
+              </div>
             </div>
           </Card>
         </div>

@@ -379,22 +379,31 @@ export const SignatureRequests: React.FC = () => {
 
   if (loading && signatureRequests.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      <div className="flex flex-col items-center justify-center h-64 space-y-4">
+        <div className="relative">
+          <div className="w-12 h-12 border-4 border-primary-500/30 border-t-primary-500 rounded-full animate-spin" />
+          <div className="absolute inset-0 rounded-full bg-primary-500/20 blur-lg animate-glow-pulse" />
+        </div>
+        <p className="text-text-secondary font-medium animate-pulse">Loading signature requests...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-8">
-        <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-white mb-2">Error Loading Signature Requests</h3>
-        <p className="text-slate-400 mb-4">{error}</p>
-        <Button onClick={loadSignatureRequests}>
+      <Card variant="premium" className="text-center py-12 animate-shake">
+        <div className="relative mb-6 inline-block">
+          <div className="w-16 h-16 bg-gradient-to-br from-status-error/20 to-status-error/40 rounded-2xl flex items-center justify-center mx-auto shadow-xl">
+            <AlertTriangle className="w-8 h-8 text-status-error drop-shadow-lg" />
+          </div>
+          <div className="absolute inset-0 bg-status-error/30 rounded-2xl blur-xl" />
+        </div>
+        <h3 className="text-xl font-bold text-white mb-3">Error Loading Signature Requests</h3>
+        <p className="text-text-secondary mb-6 max-w-md mx-auto">{error}</p>
+        <Button onClick={loadSignatureRequests} variant="primary">
           Try Again
         </Button>
-      </div>
+      </Card>
     );
   }
 
@@ -450,33 +459,53 @@ export const SignatureRequests: React.FC = () => {
 
       {/* Signature Requests List */}
       {signatureRequests.length === 0 ? (
-        <div className="text-center py-12">
-          <FileText className="w-16 h-16 text-slate-500 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-white mb-2">No Signature Requests</h3>
-          <p className="text-slate-400">
+        <Card variant="premium" className="text-center py-20 animate-fade-in-up">
+          <div className="relative mb-8 inline-block">
+            <div className="w-24 h-24 bg-gradient-to-br from-primary-500 via-primary-600 to-accent-500 rounded-2xl flex items-center justify-center mx-auto animate-float shadow-2xl">
+              <FileText className="w-12 h-12 text-white drop-shadow-lg" />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl blur-2xl opacity-30 animate-glow-pulse" />
+          </div>
+          <h3 className="text-2xl font-bold text-white mb-3 text-gradient">No Signature Requests</h3>
+          <p className="text-text-secondary max-w-md mx-auto text-lg">
             You don't have any pending signature requests at the moment.
           </p>
-        </div>
+        </Card>
       ) : (
-        <div className="space-y-4">
-          {signatureRequests.map((request) => (
-            <Card key={request.id} className="hover:bg-slate-800/50 transition-colors">
+        <div className="space-y-5">
+          {signatureRequests.map((request, index) => (
+            <Card 
+              key={request.id} 
+              variant="premium" 
+              className="group animate-fade-in-up"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
               <div className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center">
-                      <FileText className="w-5 h-5 text-slate-300" />
+                <div className="flex items-start justify-between mb-5">
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
+                      <div className="w-14 h-14 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <FileText className="w-7 h-7 text-primary-400" />
+                      </div>
+                      <div className="absolute inset-0 bg-primary-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-white">{request.documentName}</h3>
-                      <p className="text-sm text-slate-400">
-                        Requested by {request.requestedBy.slice(0, 6)}...{request.requestedBy.slice(-4)}
+                      <h3 className="font-bold text-white text-lg mb-1 group-hover:text-gradient transition-all">{request.documentName}</h3>
+                      <p className="text-sm text-text-secondary font-medium">
+                        Requested by <span className="text-primary-400 font-mono">{request.requestedBy.slice(0, 6)}...{request.requestedBy.slice(-4)}</span>
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    {getStatusIcon(request.status)}
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(request.status)}`}>
+                  <div className="flex items-center space-x-3">
+                    <div className="relative">
+                      {getStatusIcon(request.status)}
+                      {request.status === 'pending' && (
+                        <div className="absolute inset-0 animate-ping">
+                          <Clock className="w-4 h-4 text-yellow-500 opacity-75" />
+                        </div>
+                      )}
+                    </div>
+                    <span className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${getStatusColor(request.status)} backdrop-blur-sm`}>
                       {request.status}
                     </span>
                   </div>
@@ -510,38 +539,43 @@ export const SignatureRequests: React.FC = () => {
                 </div>
 
                 {request.status === 'pending' && !isExpired(request.expiresAt) && (
-                  <div className="flex space-x-3">
+                  <div className="flex flex-wrap gap-3">
                     <Button
                       onClick={() => signDocument(request.id, request.documentId)}
                       disabled={loading}
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-gradient-to-r from-status-success to-status-successLight hover:from-status-success/90 hover:to-status-successLight/90 shadow-lg shadow-status-success/25 hover:shadow-xl hover:shadow-status-success/40 transition-all"
+                      leftIcon={<CheckCircle className="w-4 h-4" />}
                     >
-                      <CheckCircle className="w-4 h-4 mr-2" />
                       Sign Document
                     </Button>
                     <Button
                       onClick={() => declineSignature(request.id, request.documentId)}
                       variant="outline"
                       disabled={loading}
+                      className="hover:bg-status-error/10 hover:border-status-error/50 hover:text-status-error"
                     >
                       Decline
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="secondary"
                       size="sm"
                       onClick={() => handleDownloadDocument(request)}
                       disabled={loadingPreview}
+                      leftIcon={<Download className="w-4 h-4" />}
+                      loading={loadingPreview}
                     >
-                      <Download className="w-4 h-4 mr-2" />
-                      {loadingPreview ? 'Downloading...' : 'Download Document'}
+                      {loadingPreview ? 'Downloading...' : 'Download'}
                     </Button>
                   </div>
                 )}
 
                 {request.status === 'signed' && (
-                  <div className="flex items-center space-x-2 text-green-400">
-                    <CheckCircle className="w-4 h-4" />
-                    <span className="text-sm">You have signed this document</span>
+                  <div className="flex items-center space-x-3 px-4 py-3 bg-status-success/10 border border-status-success/30 rounded-xl">
+                    <div className="relative">
+                      <CheckCircle className="w-5 h-5 text-status-success" />
+                      <div className="absolute inset-0 bg-status-success/30 rounded-full blur-md animate-glow-pulse" />
+                    </div>
+                    <span className="text-sm font-semibold text-status-successLight">You have signed this document</span>
                   </div>
                 )}
               </div>

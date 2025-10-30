@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { clsx } from 'clsx';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -9,7 +9,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   variant?: 'default' | 'premium';
 }
 
-export const Input: React.FC<InputProps> = ({
+export const Input = forwardRef<HTMLInputElement, InputProps>(({
   leftIcon,
   rightIcon,
   error,
@@ -17,7 +17,7 @@ export const Input: React.FC<InputProps> = ({
   variant = 'default',
   className,
   ...props
-}) => {
+}, ref) => {
   return (
     <div className="space-y-2 group">
       {label && (
@@ -32,6 +32,7 @@ export const Input: React.FC<InputProps> = ({
           </div>
         )}
         <input
+          ref={ref}
           className={clsx(
             'w-full px-5 py-4 text-text-primary placeholder-text-secondary/60 focus:outline-none focus:ring-2 transition-all duration-300 backdrop-blur-xl font-medium',
             variant === 'default' && 'glass rounded-xl border border-secondary-600/40 focus:ring-accent-400/50 focus:border-accent-400/60 hover:border-secondary-600/60',
@@ -54,4 +55,6 @@ export const Input: React.FC<InputProps> = ({
       )}
     </div>
   );
-};
+});
+
+Input.displayName = 'Input';

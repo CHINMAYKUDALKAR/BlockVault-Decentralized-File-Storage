@@ -9,13 +9,15 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthProvider } from './contexts/AuthContext';
 import { FileProvider } from './contexts/FileContext';
 import { RBACProvider } from './contexts/RBACContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 function App() {
   return (
-    <AuthProvider>
-      <FileProvider>
-        <RBACProvider>
-          <Router>
+    <ThemeProvider>
+      <AuthProvider>
+        <FileProvider>
+          <RBACProvider>
+            <Router>
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/dashboard" element={
@@ -64,9 +66,10 @@ function App() {
               },
             }}
           />
-        </RBACProvider>
-      </FileProvider>
-    </AuthProvider>
+          </RBACProvider>
+        </FileProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

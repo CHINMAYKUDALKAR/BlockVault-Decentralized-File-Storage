@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Wallet, ArrowRight } from 'lucide-react';
+import { Wallet, ArrowRight, Shield, Brain, Lock, Share2, FileCheck } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import toast from 'react-hot-toast';
@@ -42,52 +42,138 @@ export const WalletConnection: React.FC<WalletConnectionProps> = ({ onConnect })
     }
   };
 
+  const features = [
+    {
+      icon: FileCheck,
+      title: 'Verifiable Redaction',
+      description: 'ZKPT-powered document privacy',
+      color: 'from-blue-500 to-purple-500'
+    },
+    {
+      icon: Brain,
+      title: 'AI Analysis',
+      description: 'Cryptographic proof validation',
+      color: 'from-purple-500 to-pink-500'
+    },
+    {
+      icon: Lock,
+      title: 'Role-Based Access',
+      description: 'Granular permission control',
+      color: 'from-green-500 to-emerald-500'
+    },
+    {
+      icon: Shield,
+      title: 'Chain of Custody',
+      description: 'Blockchain-anchored tracking',
+      color: 'from-cyan-500 to-blue-500'
+    },
+    {
+      icon: Share2,
+      title: 'Secure Sharing',
+      description: 'End-to-end encryption',
+      color: 'from-orange-500 to-red-500'
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <div className="p-8 text-center">
-          <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Wallet className="w-8 h-8 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Animated background pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-20 left-20 w-72 h-72 bg-primary-500 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-accent-500 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      </div>
+
+      <Card variant="premium" className="w-full max-w-2xl relative animate-fade-in-up border-primary-500/20">
+        <div className="p-10 text-center">
+          {/* Logo Icon */}
+          <div className="relative mx-auto mb-8 w-24 h-24">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl blur-2xl opacity-50 animate-pulse"></div>
+            <div className="relative w-full h-full bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-300">
+              <Wallet className="w-12 h-12 text-white drop-shadow-lg" />
+            </div>
           </div>
           
-          <h1 className="text-2xl font-bold text-white mb-4">
-            Welcome to BlockVault Legal
+          {/* Title */}
+          <h1 className="text-4xl font-black text-white mb-4 text-gradient animate-fade-in">
+            Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-accent-400">BlockVault Legal</span>
           </h1>
           
-          <p className="text-slate-400 mb-8">
-            Connect your wallet to access secure legal document management with zero-knowledge proofs and blockchain verification.
+          {/* Description */}
+          <p className="text-lg text-slate-300 mb-10 max-w-xl mx-auto leading-relaxed animate-fade-in" style={{ animationDelay: '0.1s' }}>
+            Connect your wallet to access the most secure legal document management platform powered by <span className="text-primary-400 font-semibold">zero-knowledge proofs</span> and <span className="text-accent-400 font-semibold">blockchain verification</span>.
           </p>
 
-          <Button
-            onClick={connectWallet}
-            disabled={connecting}
-            className="w-full"
-            size="lg"
-          >
-            {connecting ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Connecting...
-              </>
-            ) : (
-              <>
-                <Wallet className="w-4 h-4 mr-2" />
-                Connect Wallet
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </>
-            )}
-          </Button>
-
-          <div className="mt-6 p-4 bg-slate-800/50 rounded-lg">
-            <h3 className="text-sm font-medium text-white mb-2">Features:</h3>
-            <ul className="text-xs text-slate-400 space-y-1">
-              <li>• Verifiable document redaction (ZKPT)</li>
-              <li>• AI analysis with cryptographic proofs (ZKML)</li>
-              <li>• Role-based access control</li>
-              <li>• Blockchain-anchored chain of custody</li>
-              <li>• Secure document sharing</li>
-            </ul>
+          {/* Connect Button - Premium */}
+          <div className="relative w-full max-w-md mx-auto mb-10 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            {/* Glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300 animate-pulse"></div>
+            
+            {/* Button */}
+            <button
+              onClick={connectWallet}
+              disabled={connecting}
+              className="relative w-full group overflow-hidden rounded-2xl"
+            >
+              {/* Animated gradient background */}
+              <div className="absolute inset-0 bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500 animate-gradient bg-[length:200%_100%]"></div>
+              
+              {/* Shimmer effect */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer bg-[length:200%_100%]"></div>
+              </div>
+              
+              {/* Content */}
+              <div className="relative flex items-center justify-center px-8 py-5 text-lg font-bold text-white transform group-hover:scale-[1.02] transition-transform duration-300">
+                {connecting ? (
+                  <>
+                    <div className="flex items-center space-x-3">
+                      <div className="relative w-6 h-6">
+                        <div className="absolute inset-0 border-4 border-white/30 rounded-full"></div>
+                        <div className="absolute inset-0 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                      </div>
+                      <span className="animate-pulse">Connecting Wallet...</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Wallet className="w-6 h-6 mr-3 group-hover:rotate-12 transition-transform duration-300" />
+                    <span className="tracking-wide">Connect Wallet</span>
+                    <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-2 transition-transform duration-300" />
+                  </>
+                )}
+              </div>
+              
+              {/* Bottom shine */}
+              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent"></div>
+            </button>
+            
+            {/* Helper text */}
+            <p className="mt-3 text-center text-xs text-slate-400">
+              MetaMask or WalletConnect compatible
+            </p>
           </div>
+
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className="group glass rounded-xl p-4 hover:scale-105 transition-all duration-300 animate-fade-in-up cursor-pointer"
+                style={{ animationDelay: `${0.3 + index * 0.1}s` }}
+              >
+                <div className={`w-12 h-12 bg-gradient-to-br ${feature.color} rounded-lg flex items-center justify-center mb-3 mx-auto group-hover:rotate-12 transition-transform duration-300 shadow-lg`}>
+                  <feature.icon className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-sm font-bold text-white mb-1">{feature.title}</h3>
+                <p className="text-xs text-slate-400">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Footer Note */}
+          <p className="mt-8 text-xs text-slate-500 animate-fade-in" style={{ animationDelay: '0.8s' }}>
+            🔒 Secure • 🌐 Decentralized • 🚀 Lightning Fast
+          </p>
         </div>
       </Card>
     </div>

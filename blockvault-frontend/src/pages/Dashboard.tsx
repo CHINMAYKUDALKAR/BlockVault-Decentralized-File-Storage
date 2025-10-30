@@ -141,40 +141,42 @@ export const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Header Section */}
-      <div className="bg-slate-900/50 backdrop-blur-lg border-b border-slate-700/50 sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-3xl font-bold text-white mb-2">
-                Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-accent-400">
-                  {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}
-                </span>
-              </h1>
-              <p className="text-slate-400">Manage your secure files with end-to-end encryption</p>
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      {/* Main Scrollable Content */}
+      <main className="flex-1 overflow-y-auto page-transition">
+        <div className="container mx-auto px-4 py-6 pb-24">
+          {/* Header Section - Now Scrollable */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h1 className="text-3xl font-bold text-white mb-2">
+                  Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-accent-400">
+                    {user?.address?.slice(0, 6)}...{user?.address?.slice(-4)}
+                  </span>
+                </h1>
+                <p className="text-slate-400">Manage your secure files with end-to-end encryption</p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Button
+                  onClick={() => setShowStats(!showStats)}
+                  variant="outline"
+                  size="sm"
+                  leftIcon={showStats ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                >
+                  {showStats ? 'Hide Stats' : 'Show Stats'}
+                </Button>
+                 <Button
+                   onClick={() => setShowUpload(true)}
+                   leftIcon={<Plus className="w-4 h-4" />}
+                   className="bg-gradient-to-r from-primary-500 to-accent-400 hover:from-primary-600 hover:to-accent-500"
+                 >
+                   Upload File
+                 </Button>
+              </div>
             </div>
-            <div className="flex items-center space-x-3">
-              <Button
-                onClick={() => setShowStats(!showStats)}
-                variant="outline"
-                size="sm"
-                leftIcon={showStats ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              >
-                {showStats ? 'Hide Stats' : 'Show Stats'}
-              </Button>
-               <Button
-                 onClick={() => setShowUpload(true)}
-                 leftIcon={<Plus className="w-4 h-4" />}
-                 className="bg-gradient-to-r from-primary-500 to-accent-400 hover:from-primary-600 hover:to-accent-500"
-               >
-                 Upload File
-               </Button>
-            </div>
-          </div>
 
-          {/* Statistics Cards */}
-          {showStats && (
+            {/* Statistics Cards - Now Scrollable */}
+            {showStats && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               {statsCards.map((stat, index) => (
                 <Card key={index} className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50 hover:bg-slate-800/70 transition-all duration-200">
@@ -195,6 +197,7 @@ export const Dashboard: React.FC = () => {
               ))}
             </div>
           )}
+          </div>
 
           {/* Search and Filters */}
           <div className="flex flex-col lg:flex-row gap-4">
@@ -258,11 +261,8 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        {/* Tabs */}
+          {/* Tabs */}
         <div className="flex space-x-1 bg-slate-800/50 p-1 rounded-lg mb-6">
           <button
             onClick={() => setActiveTab('my-files')}
@@ -351,7 +351,7 @@ export const Dashboard: React.FC = () => {
             />
           )}
         </div>
-      </div>
+      </main>
 
       {/* Upload Modal */}
       {showUpload && (
@@ -370,6 +370,25 @@ export const Dashboard: React.FC = () => {
           }}
         />
       )}
+
+      {/* Footer */}
+      <footer className="relative mt-12 border-t border-primary-500/10 bg-slate-900/50 backdrop-blur-lg">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex flex-col items-center justify-center space-y-2">
+            <p className="text-sm text-text-secondary">
+              Made with{' '}
+              <span className="inline-block animate-pulse text-status-error drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]">
+                ❤️
+              </span>{' '}
+              in India 🇮🇳
+            </p>
+            <div className="flex items-center space-x-2 text-xs text-text-tertiary">
+              <span className="w-2 h-2 bg-status-success rounded-full animate-pulse"></span>
+              <span>All systems operational</span>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

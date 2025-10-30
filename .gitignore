@@ -44,6 +44,20 @@ storage/
 
 # ML Models (too large for GitHub)
 models/
+*.h5
+*.pkl
+*.pth
+*.pt
+*.onnx
+*.pb
+*.tflite
+*.safetensors
+*.bin
+*.model
+*.weights
+**/models/
+**/checkpoints/
+**/saved_models/
 
 # Logs
 *.log
